@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TaxC | Nigerian Tax Calculator</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="manifest" href="site.webmanifest">
+    <style>
+        :root {
+            --green: #008751;
+            --dark-green: #006400;
+            --soft: #f6fff6;
+            --muted: #666;
+            --card: #ffffff;
+            --main-color: #008751;
+            --dark-text: #111;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0 }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--soft); color: #111; min-height: 100vh;
+            display: flex; flex-direction: column;
+        }
+        .nav {
+            position: fixed; top: 0; left: 0; right: 0; height: 56px;
+            background: var(--card); display: flex; align-items: center; justify-content: space-between;
+            padding: 0 6%; box-shadow: 0 1px 8px rgba(0,0,0,0.06); z-index: 50;
+        }
+        .nav .brand {
+            display: flex; align-items: center; text-decoration: none; color: var(--dark-text);
+        }
+        .brand-logo {
+            height: 24px; width: 24px; margin-right: 8px;
+        }
+        .nav .brand strong {
+            color: var(--main-color); font-size: 1.25rem;
+        }
+        .nav-menu { display: flex; gap: 20px; align-items: center }
+        .nav-menu a { color: var(--dark-green); text-decoration: none; font-weight: 600; font-size: 0.95rem }
+        .cta-small { background: var(--green); color: #fff; padding: 8px 14px; border-radius: 8px; border: none; cursor: pointer }
+        .nav-dropdown-menu {
+            position: relative; 
+            padding: 0; 
+            display: flex; 
+            align-items: center; 
+            list-style: none;
+        }
+        .nav-dropdown-menu summary {
+            color: var(--green); 
+            font-weight: 600; 
+            font-size: 0.95rem; 
+            padding: 0; 
+            cursor: pointer; 
+            outline: none; 
+            list-style: none; 
+            display: flex; 
+            align-items: center;
+            height: 100%; 
+        }
+        
+        .nav-dropdown-menu summary::marker, 
+        .nav-dropdown-menu summary::-webkit-details-marker {
+            display: none; content: "";
+        }
+        .nav-dropdown-menu summary:after {
+            content: ''; display: inline-block; width: 0; height: 0; margin-left: 8px; vertical-align: middle;
+            border-top: 4px solid var(--green); border-left: 4px solid transparent; border-right: 4px solid transparent;
+            transition: transform 0.2s ease-in-out;
+        }
+        .nav-dropdown-menu[open] summary:after {
+            transform: rotate(180deg);
+        }
+        .dropdown-content {
+            position: absolute; top: 40px; left: -20px; width: 300px; background-color: var(--card);
+            border: 1px solid #eee; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 15px; z-index: 100; line-height: 1.4;
+        }
+        .dropdown-content p {
+            font-size: 0.9rem; color: var(--dark-green); margin-top: 0; margin-bottom: 5px; font-weight: 600;
+        }
+        .dropdown-content ul {
+            list-style: disc inside; padding-left: 0; margin-bottom: 5px;
+        }
+        .dropdown-content li {
+            font-size: 0.85rem; color: var(--muted); margin-bottom: 2px;
+        }
+        .dropdown-cta {
+            display: block; text-align: center; background: var(--green); color: #fff !important;
+            padding: 8px 14px; border-radius: 6px; text-decoration: none !important; font-size: 0.9rem !important;
+            font-weight: 700 !important; margin-top: 5px;
+        }
+        .hamburger {
+            display: none; position: relative; transition: transform 0.2s ease-in-out; background: none;
+            border: none; cursor: pointer; color: var(--dark-green); padding: 5px; font-size: 1.5rem;
+        }
+        .hamburger::before {
+            content: '\2261'; display: inline-block; transition: content 0.2s ease-in-out, transform 0.2s ease-in-out; line-height: 1;
+        }
+        .hamburger.is-active::before {
+            content: '\00D7'; font-size: 1.7rem; transform: rotate(90deg);
+        }
+        .mobile-menu {
+            display: none; position: fixed; top: 56px; left: 0; right: 0; background: var(--card);
+            flex-direction: column; padding: 10px 6%; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 40;
+        }
+        .mobile-menu a, .mobile-menu details {
+            margin: 5px 0; color: var(--dark-green); text-decoration: none; font-weight: 600; font-size: 1rem;
+        }
+        .mobile-menu .nav-dropdown-menu {
+            padding: 0; 
+        }
+        .mobile-menu .nav-dropdown-menu summary {
+            display: flex; 
+            align-items: center; 
+            padding: 0; 
+            margin: 0; 
+            font-weight: 600;
+            color: var(--dark-green);
+            list-style: none;
+        }
+        .mobile-menu .nav-dropdown-menu summary:after {
+            content: ''; 
+            display: inline-block; 
+            width: 0; 
+            height: 0; 
+            margin-left: 8px; 
+            border-left: 4px solid var(--green); 
+            border-top: 4px solid transparent; 
+            border-bottom: 4px solid transparent; 
+            transition: transform 0.2s ease-in-out; 
+        }
+        .mobile-menu .nav-dropdown-menu[open] summary:after {
+            transform: rotate(180deg);
+        }
+        .mobile-menu .dropdown-content {
+            position: static; width: auto; box-shadow: none; border: none; padding: 0;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 90px 6% 40px; }
+        .hero {
+            display: flex; gap: 30px; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #fff 60%, #f9fff9 100%); padding: 48px; border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,100,0,0.04);
+        }
+        .hero-left { flex: 1; width: 100%; max-width: 600px; margin: 0 auto; }
+        .hero-left h1 { color: var(--green); margin-bottom: 20px; }
+        .hero-left .tagline { color: var(--green); margin-bottom: 15px; }
+        .hero-left .lead { color: var(--green); margin-bottom: 20px; }
+        .card { background: var(--card); padding: 12px; border-radius: 12px; box-shadow: 0 6px 18px rgba(0,0,0,0.04); max-width: 600px }
+        .row { display: flex; gap: 10px; align-items: center; margin-bottom: 4px }
+        .row.col { flex-direction: column; align-items: stretch }
+
+        /* DESKTOP STYLES */
+        @media (min-width: 901px) {
+            .state-row {
+                display: flex; align-items: center; margin-bottom: 12px; width: 100%;
+            }
+            .state-row .state-label {
+                text-align: left; width: 80px; padding-right: 10px;
+            }
+            .state-row .state-input-wrapper {
+                max-width: 200px; flex-grow: 1;
+            }
+        }
+        
+        /* MOBILE STYLES (RESPONSIVE REFINEMENTS) */
+        @media (max-width: 900px) {
+            .nav-menu { display: none }
+            .hamburger { display: block }
+            .mobile-menu[open] { display: flex }
+            .desktop-cta { display: none; }
+            
+            /* 1. Overall Layout */
+            .container { 
+                padding: 60px 4% 20px; 
+            }
+            .hero { 
+                flex-direction: column; 
+                padding: 24px 15px; 
+                border-radius: 8px;
+            }
+            .hero-left h1 { font-size: 1.5rem; margin-bottom: 10px; }
+            .hero-left .tagline { font-size: 1rem; margin-bottom: 8px; }
+            .hero-left .lead { font-size: 0.9rem; margin-bottom: 12px; }
+            
+            /* 2. Card and Input Size */
+            .card { padding: 12px; margin-bottom: 15px; }
+            input[type="number"], select, input[type="email"], input[type="text"] { font-size: 0.9rem; padding: 8px; }
+            .btn-primary, .btn-ghost { padding: 8px 12px; font-size: 0.9rem; }
+
+            /* 3. State Row */
+            .state-row {
+                display: flex; flex-direction: column; align-items: flex-start;
+                margin-bottom: 12px;
+            }
+            .state-row .state-label {
+                width: 100%; text-align: left; padding-right: 0; margin-bottom: 4px;
+            }
+            .state-row .state-input-wrapper {
+                width: 100%;
+            }
+
+            /* 4. Income Source Block */
+            .income-source-block {
+                padding: 10px;
+            }
+            .income-source-block .row {
+                flex-direction: column;
+                gap: 0;
+                width: 100%;
+                align-items: stretch;
+                margin-bottom: 8px;
+            }
+            .income-source-block .row > div {
+                flex: none;
+                width: 100%;
+                padding: 0;
+                margin-bottom: 8px;
+            }
+            .income-source-block .row label {
+                margin-bottom: 2px;
+            }
+            .income-type, .income-frequency {
+                font-size: 0.9rem;
+                padding: 8px;
+                width: 100%;
+                display: block;
+                margin-bottom: 0;
+            }
+            
+            /* 5. Monthly Income Grid */
+            .monthly-income-container .monthly-income-row {
+                grid-template-columns: repeat(3, 1fr); 
+                gap: 6px;
+            }
+            .monthly-income-container input {
+                font-size: 0.8rem;
+                padding: 6px;
+            }
+
+            /* 6. Deduction fields and note */
+            .row.col input {
+                margin-bottom: 8px;
+            }
+
+            /* 7. Scroll offset for sections */
+            #how-it-works, #faq, #ebooks, #chat-agent, #calc-section {
+                scroll-margin-top: 56px;
+            }
+        }
+        /* End Mobile Styles */
+
+        label { font-size: 0.9rem; color: #333; margin-bottom: 4px; display: block }
+        input[type="number"], select, input[type="email"], input[type="text"] {
+            padding: 8px 10px; border-radius: 8px; border: 1px solid #e6e6e6; font-size: 1rem; width: 100%;
+            position: relative;
+        }
+        .small { font-size: 0.9rem; color: var(--muted) }
+        .btn-primary { background: var(--green); color: #fff; padding: 10px 16px; border-radius: 10px; border: none; cursor: pointer; font-weight: 600 }
+        .btn-ghost { background: #fff; border: 1px solid var(--green); color: var(--green); padding: 8px 12px; border-radius: 10px; cursor: pointer }
+        .income-source-block {
+            border: 1px solid #eee; padding: 12px;
+            border-radius: 8px; margin-bottom: 10px;
+            position: relative;
+        }
+        .remove-btn {
+            position: absolute; top: 5px; right: 5px; background: #f00; color: #fff; border: none;
+            border-radius: 50%; width: 20px; height: 20px; line-height: 20px; text-align: center; cursor: pointer;
+            font-size: 14px; padding: 0; display: flex; align-items: center; justify-content: center;
+        }
+        .remove-btn:hover { background: #c00; }
+        .tooltip {
+            position: relative; display: inline-block; cursor: pointer; margin-left: 5px;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden; width: 200px; background-color: #333; color: #fff; text-align: center;
+            border-radius: 6px; padding: 5px; position: absolute; z-index: 1; bottom: 125%; left: 50%;
+            margin-left: -100px; opacity: 0; transition: opacity 0.3s;
+        }
+        .tooltip .tooltiptext::after {
+            content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px;
+            border-style: solid; border-color: #333 transparent transparent transparent;
+        }
+        .tooltip .tooltiptext.show { visibility: visible; opacity: 1; }
+        .result { margin-top: 8px; padding: 8px; border-radius: 10px; background: #f8fff8; border: 1px solid rgba(0,135,60,0.06) }
+        .result h4 { margin: 0 0 4px; color: var(--dark-green) }
+        .result p { margin: 0; font-size: 1rem; color: #222 }
+        .section { margin-top: 24px }
+        .grid { display: flex; gap: 20px; flex-wrap: wrap }
+        .box { flex: 1; min-width: 220px; background: #fff; padding: 12px; border-radius: 10px; box-shadow: 0 6px 18px rgba(0,0,0,0.03) }
+        .box h4 { margin: 0 0 4px; color: var(--green) }
+        .cta-banner { margin-top: 24px; background: var(--dark-green); color: #fff; padding: 20px; border-radius: 12px; text-align: center }
+        footer { margin-top: 24px; padding: 12px; text-align: center; color: #666 }
+        .monthly-total {
+            margin-top: 4px;
+            text-align: right; font-size: 0.95rem; color: var(--dark-green); font-weight: 600;
+        }
+        .income-type, .income-frequency {
+            width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #e6e6e6; font-size: 1rem;
+        }
+        .row { align-items: flex-end; }
+        .gross-income-container label, .monthly-income-container label {
+            display: flex; align-items: center;
+        }
+        .gross-income-container input, .gross-income-container label, .monthly-income-container input, .monthly-income-container label {
+            width: 100%;
+        }
+        .report-link {
+            color: var(--green); 
+            font-weight: 600; 
+            text-decoration: underline; 
+            white-space: nowrap; 
+        }
+        .report-link:hover {
+            color: var(--dark-green);
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a class="brand" href="#">
+            <img src="favicon.ico" alt="TaxC Logo" class="brand-logo">
+            <strong>TaxC</strong>
+        </a>
+        <button class="hamburger" onclick="toggleMobileMenu()"></button>
+        <div class="nav-menu" id="nav-menu">
+            <details class="nav-dropdown-menu">
+                <summary>Get Detailed Report</summary>
+                <div class="dropdown-content">
+                    <p>Get a full PDF report of your tax estimate for only ₦500.</p>
+                    <ul>
+                        <li>Tax Compliance Flow: Step-by-step NTA 2025/2026 calculation.</li>
+                        <li>Deduction Summary: Confirmation of Rent Relief, Pension, etc.</li>
+                        <li>Tax Band Breakdown: How each segment of your income was taxed.</li>
+                        <li>Filing Guidance: How to file your tax according to your State IRS.</li>
+                    </ul>
+                    <a href="#" class="dropdown-cta" onclick="document.getElementById('calc-section').scrollIntoView({behavior:'smooth'}); this.closest('details').removeAttribute('open'); event.preventDefault();">Calculate & Get Report</a>
+                </div>
+            </details>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#faq">FAQ</a>
+            <a href="#ebooks">Ebooks</a>
+            <a href="#chat-agent">Chat with Tax Agent</a>
+        </div>
+        <div class="desktop-cta">
+            <button class="cta-small" onclick="document.getElementById('calc-section').scrollIntoView({behavior:'smooth'})">Calculate</button>
+        </div>
+    </nav>
+    <div class="mobile-menu" id="mobile-menu">
+        <details class="nav-dropdown-menu">
+            <summary>Detailed Report</summary>
+            <div class="dropdown-content">
+                <p>Get a full PDF report of your tax estimate for only ₦500.</p>
+                <ul>
+                    <li>Tax Compliance Flow: Step-by-step NTA 2025/2026 calculation.</li>
+                    <li>Deduction Summary: Confirmation of Rent Relief, Pension, etc.</li>
+                    <li>Tax Band Breakdown: How each segment of your income was taxed.</li>
+                    <li>Filing Guidance: How to file your tax according to your State IRS.</li>
+                </ul>
+                <a href="#" class="dropdown-cta" onclick="document.getElementById('calc-section').scrollIntoView({behavior:'smooth'}); toggleMobileMenu(); event.preventDefault();">Calculate & Get Report</a>
+            </div>
+        </details>
+        <a href="#how-it-works" class="nav-link" onclick="scrollToSection(event)">How It Works</a>
+        <a href="#faq" class="nav-link" onclick="scrollToSection(event)">FAQ</a>
+        <a href="#ebooks" class="nav-link" onclick="scrollToSection(event)">Ebooks</a>
+        <a href="#chat-agent" class="nav-link" onclick="scrollToSection(event)">Chat with Tax Agent</a>
+        <button class="cta-small" style="margin-top: 10px; width: 100%; padding: 8px;" onclick="document.getElementById('calc-section').scrollIntoView({behavior:'smooth'}); toggleMobileMenu();">Calculate Now</button>
+    </div>
+    <main class="container">
+        <section class="hero" aria-labelledby="hero-heading">
+            <div class="hero-left">
+                <h1 id="hero-heading">Find out how much tax you actually owe</h1>
+                <div class="tagline">Nigeria's simple tax calculator</div>
+                <p class="lead">TaxC helps Nigerians calculate and understand their taxes easily. No stress, no jargon, no wahala.</p>
+                <div class="card" id="calc-section" aria-live="polite">
+                    <div class="state-row">
+                        <label for="state" class="state-label">State</label>
+                        <div class="state-input-wrapper">
+                            <select id="state">
+                                <option value="abuja">Abuja (FCT)</option>
+                                <option value="lagos">Lagos</option>
+                                <option value="abia">Abia</option>
+                                <option value="adamawa">Adamawa</option>
+                                <option value="akwa-ibom">Akwa Ibom</option>
+                                <option value="anambra">Anambra</option>
+                                <option value="bauchi">Bauchi</option>
+                                <option value="bayelsa">Bayelsa</option>
+                                <option value="benue">Benue</option>
+                                <option value="borno">Borno</option>
+                                <option value="cross-river">Cross River</option>
+                                <option value="delta">Delta</option>
+                                <option value="ebonyi">Ebonyi</option>
+                                <option value="edo">Edo</option>
+                                <option value="ekiti">Ekiti</option>
+                                <option value="enugu">Enugu</option>
+                                <option value="gombe">Gombe</option>
+                                <option value="imo">Imo</option>
+                                <option value="jigawa">Jigawa</option>
+                                <option value="kaduna">Kaduna</option>
+                                <option value="kano">Kano</option>
+                                <option value="katsina">Katsina</option>
+                                <option value="kebbi">Kebbi</option>
+                                <option value="kogi">Kogi</option>
+                                <option value="kwara">Kwara</option>
+                                <option value="nasarawa">Nasarawa</option>
+                                <option value="niger">Niger</option>
+                                <option value="ogun">Ogun</option>
+                                <option value="ondo">Ondo</option>
+                                <option value="osun">Osun</option>
+                                <option value="oyo">Oyo</option>
+                                <option value="plateau">Plateau</option>
+                                <option value="rivers">Rivers</option>
+                                <option value="sokoto">Sokoto</option>
+                                <option value="taraba">Taraba</option>
+                                <option value="yobe">Yobe</option>
+                                <option value="zamfara">Zamfara</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="income-sources-container"></div>
+                    <div style="margin-bottom: 10px;">
+                        <button class="btn-ghost" onclick="addIncomeSource()" style="width: 100%;">+ Add Another Income Source</button>
+                    </div>
+                    <div class="row col">
+                        <label>Allowable Deductions (If applicable)</label>
+                        <input id="pension" type="text" class="deduction-input" placeholder="Pension contribution (₦)" oninput="updateFormattedValue(this)">
+                        <input id="rent" type="text" class="deduction-input" placeholder="Annual rent paid (₦)" oninput="updateFormattedValue(this)">
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 8px">
+                        <button class="btn-primary" onclick="calculateTax()">Calculate</button>
+                        <button class="btn-ghost" onclick="resetForm()">Reset</button>
+                    </div>
+                    <div id="output" class="result" style="display: none; margin-top: 8px">
+                        <h4>Estimated Tax</h4>
+                        <p id="taxSummary">—</p>
+                        <div style="margin-top: 8px; display: flex; gap: 10px; align-items: center">
+                            <input id="reportEmail" type="email" placeholder="Enter email" style="flex: 1; padding: 6px; border-radius: 8px; border: 1px solid #e6e6e6">
+                            <button class="btn-primary" id="payNow" onclick="startHostedPayment()">Pay ₦500</button>
+                        </div>
+                        <div id="msg" style="margin-top: 6px; color: var(--muted)"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="section how-it-works" id="how-it-works">
+            <h3>How it works</h3>
+            <div class="grid" style="margin-top: 10px">
+                <div class="box"><h4>1. Enter income</h4><p class="small">Choose your income type, select Annual or Monthly, enter the amount.</p></div>
+                <div class="box"><h4>2. See estimate</h4><p class="small">TaxC shows estimated tax payable with breakdowns.</p></div>
+                <div class="box"><h4>3. Get detailed report</h4><p class="small">Pay ₦500 to receive a full PDF report for future reference (optional).</p></div>
+            </div>
+        </section>
+        <section class="section why-choose" id="why-taxc">
+            <h3>Why choose TaxC</h3>
+            <div class="grid" style="margin-top: 10px">
+                <div class="box"><h4>🇳🇬 Built for Nigerians</h4><p class="small">Local rules, local language, local support.</p></div>
+                <div class="box"><h4>✅ FIRS-friendly estimates</h4><p class="small">Estimates follow 2026 NTA rules.</p></div>
+                <div class="box"><h4>🔒 Secure</h4><p class="small">We don't store card data. Payments handled by Paystack.</p></div>
+                <div class="box"><h4>💬 Chat with Tax Agent</h4><p class="small">Need an agent? We can connect you with help for filing your tax.</p></div>
+            </div>
+        </section>
+        <section class="section" id="faq">
+            <h3>FAQ</h3>
+            <div class="grid" style="margin-top: 10px">
+                <div class="box">
+                    <h4>What taxes does TaxC calculate?</h4>
+                    <p class="small">Personal Income Tax (PIT) based on 2025/2026 NTA rules for salary, business, rental, and investment income.</p>
+                </div>
+                <div class="box">
+                    <h4>Who pays income tax?</h4>
+                    <p class="small">Anyone earning over ₦800,000 annually after deductions must pay to their State IRS.</p>
+                </div>
+                <div class="box">
+                    <h4>Rent & Pension deductions?</h4>
+                    <p class="small">20% of rent (max ₦500,000) + pension contributions reduce your taxable income.</p>
+                </div>
+                <div class="box">
+                    <h4>What about WHT?</h4>
+                    <p class="small">10% for rental/investment, 5% for other income—credited against your final tax.</p>
+                </div>
+                <div class="box">
+                    <h4>PDF Report (₦500)</h4>
+                    <p class="small">Full breakdown + filing guide for your State IRS, delivered via email.</p>
+                </div>
+                <div class="box">
+                    <h4>Is my data safe?</h4>
+                    <p class="small">Yes! Paystack handles payments securely. We don't store card info.</p>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 20px">
+                <a href="faq.html" class="report-link">View Full FAQ →</a>
+            </div>
+        </section>
+        <section class="cta-banner">
+            <h3>Join thousands of Nigerians simplifying their taxes with TaxC</h3>
+            <div style="margin-top: 10px"><button class="btn-primary" onclick="document.getElementById('calc-section').scrollIntoView({behavior:'smooth'})">Try Calculator</button></div>
+        </section>
+        <footer>
+            &copy; 2025 TaxC — Made with care. | <span id="supportLink">support@taxc.com</span>
+        </footer>
+    </main>
+    <template id="income-template">
+        <div class="income-source-block" data-source-id="INDEX">
+            <button class="remove-btn" onclick="removeIncomeSource(this)">&times;</button>
+            <label>Income Source <span class="income-index">1</span></label>
+            <div class="row">
+                <div>
+                    <label for="type_INDEX">Income Type</label>
+                    <select id="type_INDEX" class="income-type" onchange="toggleWhtField(this)">
+                        <option value="salary">Salary / PAYE</option>
+                        <option value="self">Self-employed / Business</option>
+                        <option value="rental">Rental Income</option>
+                        <option value="investment">Investment Income</option>
+                        <option value="other">Other Income</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="freq_INDEX">Frequency</label>
+                    <select id="freq_INDEX" class="income-frequency" onchange="toggleMonthlyInputs(this)">
+                        <option value="annual">Annual</option>
+                        <option value="monthly">Monthly</option>
+                    </select>
+                </div>
+            </div>
+            <div class="gross-income-container" style="margin-top: 4px;">
+                <label for="income_INDEX">Gross Income Amount (₦) <span class="tooltip">!<span class="tooltiptext"></span></span></label>
+                <input id="income_INDEX" type="text" class="gross-income" placeholder="e.g. 3,600,000" min="0" oninput="updateFormattedValue(this)">
+            </div>
+            <div class="monthly-income-container" style="display: none; margin-top: 4px;">
+                <label>Monthly Income Breakdown (₦) <span class="tooltip">!<span class="tooltiptext"></span></span></label>
+                <div class="monthly-income-row" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;">
+                    <input type="text" placeholder="Jan" data-month="Jan" oninput="markManualEdit(this); updateMonthlyTotal(this); updateFormattedValue(this)">
+                    <input type="text" placeholder="Feb" data-month="Feb" oninput="markManualEdit(this); updateMonthlyTotal(this); updateFormattedValue(this)">
+                    <input type="text" placeholder="Mar" data-month="Mar" oninput="markManualEdit(this); updateMonthlyTotal(this); updateFormattedValue(this)">
+                    <input type="text" placeholder="Apr" data-month="Apr" oninput="markManualEdit(this); updateMonthlyTotal(this); updateFormattedValue(this)">
+                    <input type="text" placeholder="May" data-month="May" oninput="markManualEdit(this); updateMonthlyTotal(this); updateFormattedValue(this)">
+                    <input type="text" placeholder="Jun" data-month="Jun" oninput="markManualEdit(this); updateMonthlyTotal(this); updateFormattedValue(this)">
+                    <input type="text" placeholder="Jul" data-month="Jul" oninput="markManualEdit(this); updateMonthlyTotal(this); updateFormattedValue(this)">
+                    <input type="text" placeholder="Aug" data-month="Aug" oninput="markManualEdit(this); updateMonthlyTotal(this); updateFormattedValue(this)">
+                    <input type="text" placeholder="Sep" data-month="Sep" oninput="markManualEdit(this); updateMonthlyTotal(this); updateFormattedValue(this)">
+                    <input type="text" placeholder="Oct" data-month="Oct" oninput="markManualEdit(this); updateMonthlyTotal(this); updateFormattedValue(this)">
+                    <input type="text" placeholder="Nov" data-month="Nov" oninput="markManualEdit(this); updateMonthlyTotal(this); updateFormattedValue(this)">
+                    <input type="text" placeholder="Dec" data-month="Dec" oninput="markManualEdit(this); updateMonthlyTotal(this); updateFormattedValue(this)">
+                </div>
+                <div class="monthly-total">Total Annual Income: ₦0</div>
+            </div>
+            <div class="row col wht-row" style="display: none; margin-top: 4px;">
+                <label for="wht_INDEX">Withholding Tax Paid (₦)
+                    <span class="tooltip">!
+                        <span class="tooltiptext">Enter the amount of WHT deducted by payer, if known. Defaults to 10% for rental/investment, 5% for other income.</span>
+                    </span>
+                </label>
+                <input id="wht_INDEX" type="text" class="wht-input" placeholder="e.g. 360,000" min="0" oninput="updateFormattedValue(this)">
+                <small class="small wht-note">Leave blank for default WHT rate</small>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        const activeTooltips = new Map();
+        const TOOLTIP_DURATION = 5000;
+
+        function showTooltip(tooltip, text) {
+            if (text) {
+                tooltip.textContent = text;
+            }
+            const existingTimeout = activeTooltips.get(tooltip);
+            if (existingTimeout) {
+                clearTimeout(existingTimeout);
+            }
+            tooltip.classList.add('show');
+            const newTimeout = setTimeout(() => {
+                hideTooltip(tooltip);
+            }, TOOLTIP_DURATION);
+            activeTooltips.set(tooltip, newTimeout);
+        }
+
+        function hideTooltip(tooltip) {
+            const existingTimeout = activeTooltips.get(tooltip);
+            if (existingTimeout) {
+                clearTimeout(existingTimeout);
+                activeTooltips.delete(tooltip);
+            }
+            tooltip.classList.remove('show');
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const hamburger = document.querySelector('.hamburger');
+            const isOpen = menu.hasAttribute('open');
+            if (isOpen) {
+                menu.removeAttribute('open');
+                hamburger.classList.remove('is-active');
+                const dropdown = menu.querySelector('.nav-dropdown-menu');
+                if (dropdown.hasAttribute('open')) {
+                    dropdown.removeAttribute('open');
+                }
+            } else {
+                menu.setAttribute('open', '');
+                hamburger.classList.add('is-active');
+                const dropdown = menu.querySelector('.nav-dropdown-menu');
+                if (dropdown.hasAttribute('open')) {
+                    dropdown.removeAttribute('open');
+                }
+            }
+        }
+
+        function scrollToSection(event) {
+            event.preventDefault();
+            const href = event.target.getAttribute('href');
+            const targetId = href.substring(1); // Remove '#'
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({ behavior: 'smooth' });
+            }
+            toggleMobileMenu(); // Close mobile menu
+        }
+
+        function addIncomeSource() {
+            const template = document.getElementById('income-template');
+            const container = document.getElementById('income-sources-container');
+            const newIndex = container.children.length;
+
+            const clone = document.importNode(template.content, true);
+            const block = clone.querySelector('.income-source-block');
+
+            block.setAttribute('data-source-id', newIndex);
+            block.querySelector('.income-index').textContent = newIndex + 1;
+            block.innerHTML = block.innerHTML.replace(/_INDEX/g, `_${newIndex}`);
+
+            container.appendChild(clone);
+
+            const newBlock = container.lastElementChild;
+
+            const grossIncomeInput = newBlock.querySelector('.gross-income');
+            const monthlyInputs = newBlock.querySelectorAll('.monthly-income-row input');
+            const whtInput = newBlock.querySelector('.wht-input');
+            const typeSelect = newBlock.querySelector('.income-type');
+
+            const grossTooltip = newBlock.querySelector('.gross-income-container .tooltip .tooltiptext');
+            grossIncomeInput.addEventListener('focus', () => {
+                showTooltip(grossTooltip, "Total income earned in the year before taxes and deductions.");
+            });
+            grossIncomeInput.addEventListener('blur', () => {
+                hideTooltip(grossTooltip);
+            });
+
+            const monthlyTooltip = newBlock.querySelector('.monthly-income-container .tooltip .tooltiptext');
+            if (monthlyInputs.length > 0) {
+                monthlyInputs[0].addEventListener('focus', () => {
+                    showTooltip(monthlyTooltip, "Total income earned per month before taxes or deductions.");
+                });
+                monthlyInputs.forEach(input => {
+                    input.addEventListener('blur', () => {
+                        hideTooltip(monthlyTooltip);
+                    });
+                });
+            }
+
+            const whtRow = newBlock.querySelector('.wht-row');
+            const whtTooltip = whtRow.querySelector('.tooltip .tooltiptext');
+            whtInput.addEventListener('focus', () => {
+                showTooltip(whtTooltip);
+            });
+            whtInput.addEventListener('blur', () => {
+                hideTooltip(whtTooltip);
+            });
+
+            typeSelect.addEventListener('change', () => handleIncomeTypeChange(typeSelect));
+
+            const allBlocks = document.querySelectorAll('.income-source-block');
+            allBlocks.forEach(b => {
+                b.querySelector('.remove-btn').style.display = allBlocks.length > 1 ? 'flex' : 'none';
+            });
+        }
+
+        function removeIncomeSource(button) {
+            const blockToRemove = button.closest('.income-source-block');
+            blockToRemove.remove();
+
+            const remainingBlocks = document.querySelectorAll('.income-source-block');
+            remainingBlocks.forEach((block, index) => {
+                block.setAttribute('data-source-id', index);
+                block.querySelector('.income-index').textContent = index + 1;
+                block.querySelectorAll('[id*="_"]').forEach(el => {
+                    el.id = el.id.replace(/_\d+$/, `_${index}`);
+                });
+                block.querySelectorAll('[for*="_"]').forEach(label => {
+                    label.setAttribute('for', label.getAttribute('for').replace(/_\d+$/, `_${index}`));
+                });
+            });
+
+            if (remainingBlocks.length === 1) {
+                remainingBlocks[0].querySelector('.remove-btn').style.display = 'none';
+            }
+        }
+
+        function toggleWhtField(selectElement) {
+            const type = selectElement.value;
+            const block = selectElement.closest('.income-source-block');
+            const whtRow = block.querySelector('.wht-row');
+            const whtInput = block.querySelector('.wht-input');
+
+            if (['rental', 'investment', 'other'].includes(type)) {
+                whtRow.style.display = 'flex';
+                const tooltipText = block.querySelector('.wht-row .tooltiptext');
+                tooltipText.textContent = type === 'other' ?
+                    'Enter the amount of 5% WHT deducted by payer, if known. Defaults to 5% if blank.' :
+                    'Enter the amount of 10% WHT deducted by payer, if known. Defaults to 10% if blank.';
+                
+                whtInput.value = '';
+            } else {
+                whtRow.style.display = 'none';
+                if (whtInput) whtInput.value = '';
+            }
+        }
+
+        function updateFormattedValue(input) {
+            let value = input.value.replace(/[^0-9]/g, '');
+            if (value === '') {
+                input.value = '';
+                return;
+            }
+            const rawValue = Number(value);
+            input.value = rawValue.toLocaleString('en-NG');
+        }
+
+        function toggleMonthlyInputs(selectEl) {
+            const block = selectEl.closest('.income-source-block');
+            const monthlyContainer = block.querySelector('.monthly-income-container');
+            const grossIncomeContainer = block.querySelector('.gross-income-container');
+            const typeSelect = block.querySelector('.income-type');
+
+            if (selectEl.value === 'monthly') {
+                monthlyContainer.style.display = 'block';
+                grossIncomeContainer.style.display = 'none';
+                block.querySelector('.gross-income').value = '';
+                if (typeSelect.value === 'salary') {
+                    handleMonthlySalaryAutoFill(block); 
+                    const januaryInput = block.querySelector('.monthly-income-row input[data-month="Jan"]');
+                    if (januaryInput.value) {
+                        const event = new Event('input');
+                        januaryInput.dispatchEvent(event);
+                    }
+                }
+                updateMonthlyTotal(block.querySelector('.monthly-income-row input'));
+            } else {
+                monthlyContainer.style.display = 'none';
+                grossIncomeContainer.style.display = 'block';
+                block.querySelectorAll('.monthly-income-row input').forEach(input => {
+                    input.value = '';
+                    input.dataset.manual = 'false';
+                });
+                block.querySelector('.monthly-total').textContent = 'Total Annual Income: ₦0';
+            }
+        }
+
+        function markManualEdit(input) {
+            input.dataset.manual = 'true';
+        }
+
+        function handleMonthlySalaryAutoFill(block) {
+            const monthlyInputs = block.querySelectorAll('.monthly-income-row input');
+            const januaryInput = monthlyInputs[0];
+
+            if (januaryInput.autoFillHandler) {
+                januaryInput.removeEventListener('input', januaryInput.autoFillHandler);
+            }
+
+            const autoFillHandler = () => {
+                const janValue = januaryInput.value.replace(/[^0-9]/g, '');
+                if (janValue === '') return;
+
+                monthlyInputs.forEach((input, index) => {
+                    if (index !== 0 && input.dataset.manual !== 'true') {
+                        input.value = Number(janValue).toLocaleString('en-NG');
+                        input.dataset.manual = 'false';
+                    }
+                });
+                updateMonthlyTotal(januaryInput);
+            };
+
+            januaryInput.autoFillHandler = autoFillHandler;
+            januaryInput.addEventListener('input', autoFillHandler);
+        }
+
+        function handleIncomeTypeChange(selectEl) {
+            const block = selectEl.closest('.income-source-block');
+            const frequencySelect = block.querySelector('.income-frequency');
+            toggleWhtField(selectEl);
+            if (selectEl.value === 'salary' && frequencySelect.value === 'monthly') {
+                handleMonthlySalaryAutoFill(block);
+                const januaryInput = block.querySelector('.monthly-income-row input[data-month="Jan"]');
+                if (januaryInput.value) {
+                    const event = new Event('input');
+                    januaryInput.dispatchEvent(event);
+                }
+            }
+        }
+
+        function updateMonthlyTotal(input) {
+            const block = input.closest('.income-source-block');
+            const monthlyInputs = block.querySelectorAll('.monthly-income-row input');
+            let total = 0;
+            monthlyInputs.forEach(inp => {
+                const value = Number(inp.value.replace(/[^0-9]/g, '')) || 0;
+                total += value;
+            });
+            block.querySelector('.monthly-total').textContent = `Total Annual Income: ₦${total.toLocaleString('en-NG')}`;
+        }
+
+        function getRawValue(inputElement) {
+            if (!inputElement) return 0;
+            const value = inputElement.value.replace(/[^0-9]/g, '');
+            return Number(value) || 0;
+        }
+
+        function validateForm() {
+            const outputDiv = document.getElementById('output');
+            const msgDiv = document.getElementById('msg');
+            msgDiv.textContent = '';
+            outputDiv.style.display = 'none';
+
+            const incomeBlocks = document.querySelectorAll('.income-source-block');
+            if (incomeBlocks.length === 0) {
+                msgDiv.textContent = 'Please add at least one income source.';
+                outputDiv.style.display = 'block';
+                return false;
+            }
+
+            let validationPassed = true;
+
+            for (const block of incomeBlocks) {
+                const frequency = block.querySelector('.income-frequency').value;
+                let incomeInputs = [];
+
+                if (frequency === 'monthly') {
+                    incomeInputs = block.querySelectorAll('.monthly-income-row input');
+                } else {
+                    incomeInputs = [block.querySelector('.gross-income')];
+                }
+                
+                incomeInputs.forEach(input => {
+                    const rawValue = getRawValue(input);
+                    if (rawValue < 0) {
+                        msgDiv.textContent = 'Income amounts cannot be negative. Please check your inputs.';
+                        validationPassed = false;
+                    }
+                });
+                
+                const whtRow = block.querySelector('.wht-row');
+                if (whtRow.style.display !== 'none') {
+                    const whtInput = block.querySelector('.wht-input');
+                    const whtValue = getRawValue(whtInput);
+                    if (whtValue < 0) {
+                        msgDiv.textContent = 'WHT paid cannot be negative. Please correct the amount.';
+                        validationPassed = false;
+                    }
+                }
+            }
+
+            const pension = getRawValue(document.getElementById('pension'));
+            const rent = getRawValue(document.getElementById('rent'));
+            
+            if (pension < 0 || rent < 0) {
+                msgDiv.textContent = 'Deduction amounts (Pension/Rent) cannot be negative.';
+                validationPassed = false;
+            }
+            
+            let totalGrossIncome = 0;
+            for (const block of incomeBlocks) {
+                const frequency = block.querySelector('.income-frequency').value;
+                if (frequency === 'monthly') {
+                    block.querySelectorAll('.monthly-income-row input').forEach(input => {
+                        totalGrossIncome += getRawValue(input);
+                    });
+                } else {
+                    totalGrossIncome += getRawValue(block.querySelector('.gross-income'));
+                }
+            }
+
+            if (totalGrossIncome <= 0) {
+                msgDiv.textContent = 'Total annual income must be greater than zero to calculate.';
+                validationPassed = false;
+            }
+            
+            if (!validationPassed) {
+                outputDiv.style.display = 'block'; 
+                return false;
+            }
+            
+            return true;
+        }
+
+        function calculateTax() {
+            if (!validateForm()) {
+                return;
+            }
+
+            const outputDiv = document.getElementById('output');
+            const taxSummary = document.getElementById('taxSummary');
+            const msgDiv = document.getElementById('msg');
+            msgDiv.textContent = '';
+            
+            let totalGrossIncome = 0;
+            let totalWhtCredit = 0;
+            let hasSalaryOrSelfEmployment = false;
+
+            const incomeBlocks = document.querySelectorAll('.income-source-block');
+            for (const block of incomeBlocks) {
+                const blockIndex = block.getAttribute('data-source-id');
+                const type = document.getElementById(`type_${blockIndex}`).value;
+                const frequency = document.getElementById(`freq_${blockIndex}`).value;
+                let incomeValue = 0;
+
+                if (frequency === 'monthly') {
+                    const monthlyInputs = block.querySelectorAll('.monthly-income-row input');
+                    monthlyInputs.forEach(input => {
+                        incomeValue += getRawValue(input);
+                    });
+                } else {
+                    const incomeInput = document.getElementById(`income_${blockIndex}`);
+                    incomeValue = getRawValue(incomeInput);
+                }
+                totalGrossIncome += incomeValue;
+
+                if (type === 'salary' || type === 'self') {
+                    hasSalaryOrSelfEmployment = true;
+                }
+                if (['rental', 'investment', 'other'].includes(type)) {
+                    const whtInput = document.getElementById(`wht_${blockIndex}`);
+                    const whtValue = getRawValue(whtInput);
+                    const defaultWhtRate = type === 'other' ? 0.05 : 0.10;
+                    const whtAmount = whtValue > 0 ? whtValue : (incomeValue * defaultWhtRate);
+                    totalWhtCredit += whtAmount;
+                }
+            }
+
+            const state = document.getElementById('state').value;
+            const pension = getRawValue(document.getElementById('pension'));
+            const rent = getRawValue(document.getElementById('rent'));
+            
+            const rentRelief = hasSalaryOrSelfEmployment ? Math.min(500000, rent * 0.20) : 0; 
+            const totalDeductions = pension + rentRelief;
+            const incomeBeforeExemption = Math.max(0, totalGrossIncome - totalDeductions);
+            const chargeable = Math.max(0, incomeBeforeExemption - 800000); 
+
+            let tax = 0;
+            let remaining = chargeable;
+            
+            const bands = [
+                { limit: 2200000, rate: 0.15 },
+                { limit: 9000000, rate: 0.18 },
+                { limit: 13000000, rate: 0.21 },
+                { limit: 25000000, rate: 0.23 },
+                { limit: Infinity, rate: 0.25 }
+            ];
+            
+            for (const band of bands) {
+                if (remaining <= 0) break;
+                const taxableInBand = Math.min(remaining, band.limit);
+                tax += taxableInBand * band.rate;
+                remaining -= taxableInBand;
+            }
+
+            const netTax = Math.max(0, tax - totalWhtCredit);
+            const monthlyTax = (netTax / 12);
+            
+            let stateNote = '';
+            if (rentRelief > 0) {
+                stateNote = `<br><strong>Note:</strong> Your rent relief was calculated as 20% of ₦${rent.toLocaleString('en-NG')}, capped at ₦500,000.`;
+            }
+            
+            taxSummary.innerHTML = `
+            <strong>Annual tax estimate:</strong> ₦${Math.round(netTax).toLocaleString('en-NG')}<br>
+            <strong>Monthly (approx):</strong> ₦${Math.round(monthlyTax).toLocaleString('en-NG')}<br>
+            <strong>Taxable Income:</strong> ₦${Math.round(incomeBeforeExemption).toLocaleString('en-NG')} (Gross - Deductions)<br>
+            <strong>Chargeable Income:</strong> ₦${Math.round(chargeable).toLocaleString('en-NG')} (After ₦800,000 exemption)<br>
+            ${totalDeductions > 0 ? `<strong>Deductions:</strong> Pension: ₦${pension.toLocaleString('en-NG')}, Rent Relief: ₦${Math.round(rentRelief).toLocaleString('en-NG')}<br>` : ''}
+            ${totalWhtCredit > 0 ? `<strong>WHT Credit Applied:</strong> ₦${Math.round(totalWhtCredit).toLocaleString('en-NG')}` : ''}
+            ${stateNote}
+            `;
+            document.getElementById('msg').textContent = 'Enter email and pay ₦500 for a detailed PDF report.';
+            outputDiv.style.display = 'block';
+            window.lastCalc = { netTax, state };
+        }
+
+        function resetForm() {
+            const incomeBlocks = document.querySelectorAll('.income-source-block');
+            const outputDiv = document.getElementById('output');
+            const msgDiv = document.getElementById('msg');
+
+            incomeBlocks.forEach(block => {
+                const grossIncomeInput = block.querySelector('.gross-income');
+                if (grossIncomeInput) grossIncomeInput.value = '';
+
+                const monthlyInputs = block.querySelectorAll('.monthly-income-row input');
+                monthlyInputs.forEach(input => {
+                    input.value = '';
+                    input.dataset.manual = 'false';
+                });
+
+                const whtInput = block.querySelector('.wht-input');
+                if (whtInput) whtInput.value = '';
+
+                const monthlyTotal = block.querySelector('.monthly-total');
+                if (monthlyTotal) monthlyTotal.textContent = 'Total Annual Income: ₦0';
+
+                const frequencySelect = block.querySelector('.income-frequency');
+                const grossIncomeContainer = block.querySelector('.gross-income-container');
+                const monthlyContainer = block.querySelector('.monthly-income-container');
+                if (frequencySelect.value === 'monthly') {
+                    frequencySelect.value = 'annual';
+                    grossIncomeContainer.style.display = 'block';
+                    monthlyContainer.style.display = 'none';
+                }
+
+                const typeSelect = block.querySelector('.income-type');
+                toggleWhtField(typeSelect);
+            });
+
+            document.getElementById('pension').value = '';
+            document.getElementById('rent').value = '';
+            document.getElementById('reportEmail').value = '';
+
+            outputDiv.style.display = 'none';
+            msgDiv.textContent = '';
+
+            window.lastCalc = null;
+
+            const allBlocks = document.querySelectorAll('.income-source-block');
+            allBlocks.forEach(block => {
+                block.querySelector('.remove-btn').style.display = allBlocks.length > 1 ? 'flex' : 'none';
+            });
+
+            if (allBlocks.length === 0) {
+                addIncomeSource();
+            }
+        }
+
+        function startHostedPayment() {
+            const email = document.getElementById('reportEmail')?.value || '';
+            
+            if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+                document.getElementById('msg').textContent = 'Please enter a valid email to receive the report.';
+                return;
+            }
+            if (!window.lastCalc) {
+                document.getElementById('msg').textContent = 'Please calculate your tax first.';
+                return;
+            }
+            
+            const nextSteps = 'You are almost done with the application! Remember these next steps to complete the TaxC application:\n- Report Generation Logic: Refining the startHostedPayment flow and user messaging.';
+            console.log(nextSteps);
+            alert("Payment initiated! " + nextSteps); 
+            
+            const paystackHostedLink = "https://paystack.com/pay/TAX-C-REPORT-500-NGN"; 
+            
+            document.getElementById('msg').textContent = 'Redirecting to payment... (Placeholder)';
+            // window.location.href = paystackHostedLink; // Uncomment for actual redirection
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            addIncomeSource();
+            const navLinks = document.querySelectorAll('.mobile-menu .nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', scrollToSection);
+            });
+        });
+    </script>
+</body>
+</html>
