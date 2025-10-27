@@ -4,71 +4,166 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TaxC | FAQ - Nigerian Tax Calculator</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <link rel="manifest" href="site.webmanifest">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
     <style>
+        /* CSS from your main application's stylesheet is integrated here for consistency */
         :root {
-            --green: #008751;
-            --dark-green: #006400;
-            --soft: #f6fff6;
-            --muted: #666;
+            /* Mapped main app colors to FAQ colors for easier maintenance */
+            --green: #28A745; 
+            --dark-green: #218838;
+            --soft: #F8F9FA; /* Light background */
+            --muted: #6c757d;
             --card: #ffffff;
-            --main-color: #008751;
-            --dark-text: #111;
+            --main-color: #28A745;
+            --dark-text: #343A40;
         }
         * { box-sizing: border-box; margin: 0; padding: 0 }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--soft); color: #111; min-height: 100vh;
+            font-family: 'Inter', sans-serif; /* Using 'Inter' for consistency */
+            background: var(--soft); color: var(--dark-text); min-height: 100vh;
             display: flex; flex-direction: column;
+            line-height: 1.6;
         }
-        .nav {
-            position: fixed; top: 0; left: 0; right: 0; height: 56px;
-            background: var(--card); display: flex; align-items: center; justify-content: space-between;
-            padding: 0 6%; box-shadow: 0 1px 8px rgba(0,0,0,0.06); z-index: 50;
+        
+        /* -------------------- Header & Navigation (Slim Style) -------------------- */
+        .main-header {
+            background-color: var(--card);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 5px 20px; /* Slimmest vertical padding */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
         }
-        .nav .brand {
-            display: flex; align-items: center; text-decoration: none; color: var(--dark-text);
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--main-color);
+            text-decoration: none;
         }
-        .brand-logo {
-            height: 24px; width: 24px; margin-right: 8px;
+        .desktop-nav {
+            display: none; 
+            gap: 20px;
         }
-        .nav .brand strong {
-            color: var(--main-color); font-size: 1.25rem;
+        .desktop-nav a {
+            text-decoration: none;
+            color: var(--dark-text);
+            padding: 8px 15px;
+            transition: color 0.3s;
+            font-weight: 600;
         }
-        .nav-menu { display: flex; gap: 20px; align-items: center }
-        .nav-menu a { color: var(--dark-green); text-decoration: none; font-weight: 600; font-size: 0.95rem }
-        .cta-small { background: var(--green); color: #fff; padding: 8px 14px; border-radius: 8px; border: none; cursor: pointer }
-        .hamburger {
-            display: none; position: relative; transition: transform 0.2s ease-in-out; background: none;
-            border: none; cursor: pointer; color: var(--dark-green); padding: 5px; font-size: 1.5rem;
+        .desktop-nav a:hover {
+            color: var(--main-color);
         }
-        .hamburger::before {
-            content: '\2261'; display: inline-block; transition: content 0.2s ease-in-out, transform 0.2s ease-in-out; line-height: 1;
+
+        /* Hamburger Styles */
+        #hamburger {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: block; 
+            padding: 0;
+            width: 30px;
+            height: 20px;
+            position: relative;
+            top: 0;
         }
-        .hamburger.is-active::before {
-            content: '\00D7'; font-size: 1.7rem; transform: rotate(90deg);
+        .hamburger-box {
+            width: 100%;
+            height: 100%;
+            display: block;
+            position: relative;
         }
+        .hamburger-inner, .hamburger-inner::before, .hamburger-inner::after {
+            position: absolute;
+            height: 2px;
+            width: 100%;
+            background-color: var(--dark-text);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            left: 0;
+        }
+        .hamburger-inner {
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .hamburger-inner::before { 
+            content: '';
+            top: -8px;
+        }
+        .hamburger-inner::after { 
+            content: '';
+            bottom: -8px;
+        }
+
+        /* Active state for animation */
+        .hamburger.is-active .hamburger-inner { 
+            transform: translateY(-50%) rotate(45deg); 
+        }
+        .hamburger.is-active .hamburger-inner::before { 
+            opacity: 0;
+        }
+        .hamburger.is-active .hamburger-inner::after { 
+            transform: translateY(0) rotate(-90deg);
+            top: 0;
+        }
+
         .mobile-menu {
-            display: none; position: fixed; top: 56px; left: 0; right: 0; background: var(--card);
-            flex-direction: column; padding: 10px 6%; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 40;
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: var(--card);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+            flex-direction: column;
+            z-index: 45;
         }
-        .mobile-menu a, .mobile-menu details {
-            margin: 5px 0; color: var(--dark-green); text-decoration: none; font-weight: 600; font-size: 1rem;
+        .mobile-menu[open] {
+            display: flex;
         }
-        .container { max-width: 1200px; margin: 0 auto; padding: 90px 6% 40px; }
+        .mobile-menu a {
+            padding: 10px 20px;
+            border-bottom: 1px solid #eee;
+            text-decoration: none;
+            color: var(--dark-text);
+            font-weight: 600;
+        }
+        .mobile-menu a:hover {
+            color: var(--main-color);
+        }
+
+        .cta-small { 
+            background: var(--green); color: #fff; padding: 8px 14px; border-radius: 6px; border: none; cursor: pointer; 
+            font-weight: 600;
+        }
+        .cta-small:hover { background: var(--dark-green); }
+
+        /* -------------------- FAQ Content Styles -------------------- */
+        .container { 
+            max-width: 1100px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            padding-top: 90px; /* Space for fixed header */
+        }
         .faq-section {
-            background: var(--card); padding: 24px; border-radius: 12px;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.04); max-width: 800px; margin: 0 auto;
+            background: var(--card); padding: 30px; border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); max-width: 800px; margin: 0 auto;
         }
         .faq-section h2 {
-            color: var(--green); margin-bottom: 20px; font-size: 1.8rem; text-align: center;
+            color: var(--green); margin-bottom: 30px; font-size: 2rem; text-align: center; font-weight: 700;
         }
         .faq-item {
             margin-bottom: 10px; border-bottom: 1px solid #eee;
         }
         .faq-item summary {
-            cursor: pointer; padding: 12px; font-weight: 600; color: var(--dark-green);
+            cursor: pointer; padding: 12px; font-weight: 600; color: var(--dark-text);
             font-size: 1rem; display: flex; justify-content: space-between; align-items: center;
         }
         .faq-item summary::after {
@@ -76,66 +171,81 @@
             border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid var(--green);
             transition: transform 0.2s ease-in-out;
         }
+        .faq-item[open] summary { color: var(--main-color); }
         .faq-item[open] summary::after {
             transform: rotate(180deg);
         }
         .faq-content {
-            padding: 12px 12px 20px; font-size: 0.9rem; color: var(--muted); line-height: 1.5;
+            padding: 12px 12px 20px; font-size: 0.95rem; color: var(--muted); line-height: 1.5;
         }
         .faq-content p { margin-bottom: 10px; }
         .faq-content a {
             color: var(--green); text-decoration: underline; font-weight: 600;
         }
         .faq-content a:hover { color: var(--dark-green); }
+        
+        /* CTA Banner */
         .cta-banner {
-            margin-top: 24px; background: var(--dark-green); color: #fff; padding: 20px;
+            margin-top: 24px; background: #e6ffe6; /* Light Green */
+            color: var(--dark-text); padding: 25px;
             border-radius: 12px; text-align: center; max-width: 800px; margin: 24px auto;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        .cta-banner h3 {
+            color: var(--dark-green);
         }
         .btn-primary {
-            background: var(--green); color: #fff; padding: 10px 16px; border-radius: 10px;
-            border: none; cursor: pointer; font-weight: 600;
+            background: var(--green); color: #fff; padding: 10px 16px; border-radius: 6px;
+            border: none; cursor: pointer; font-weight: 600; transition: background-color 0.3s;
+        }
+        .btn-primary:hover {
+            background: var(--dark-green);
         }
         footer {
-            margin-top: 24px; padding: 12px; text-align: center; color: #666;
+            margin-top: 24px; padding: 20px; text-align: center; color: var(--muted);
+            border-top: 1px solid #eee;
         }
-        @media (max-width: 900px) {
-            .nav-menu { display: none }
-            .hamburger { display: block }
-            .mobile-menu[open] { display: flex }
-            .container { padding: 60px 4% 20px; }
-            .faq-section { padding: 16px; }
-            .faq-section h2 { font-size: 1.5rem; }
-            .faq-item summary { font-size: 0.95rem; padding: 10px; }
-            .faq-content { font-size: 0.85rem; padding: 10px 10px 16px; }
-            .cta-banner { padding: 16px; }
-            .btn-primary { padding: 8px 12px; font-size: 0.9rem; }
+
+        /* Media Queries */
+        @media (min-width: 768px) {
+            .desktop-nav { 
+                display: flex;
+            }
+            #hamburger {
+                display: none;
+            }
+            .container { padding-top: 100px; }
+        }
+        @media (max-width: 767px) {
+            .faq-section { padding: 20px; }
+            .faq-section h2 { font-size: 1.8rem; }
+            .cta-banner div { display: flex; flex-direction: column; gap: 10px; }
+            .btn-primary { margin: 5px 0 !important; width: 100%; }
         }
     </style>
 </head>
 <body>
-    <nav class="nav">
-        <a class="brand" href="index.html">
-            <img src="favicon.ico" alt="TaxC Logo" class="brand-logo">
-            <strong>TaxC</strong>
-        </a>
-        <button class="hamburger" onclick="toggleMobileMenu()"></button>
-        <div class="nav-menu" id="nav-menu">
-            <a href="index.html#calc-section">Calculate</a>
-            <a href="index.html#how-it-works">How It Works</a>
-            <a href="faq.html">FAQ</a>
-            <a href="index.html#ebooks">Ebooks</a>
-            <a href="index.html#chat-agent">Chat with Tax Agent</a>
-            <button class="cta-small" onclick="window.location.href='index.html#calc-section'">Calculate</button>
-        </div>
-    </nav>
-    <div class="mobile-menu" id="mobile-menu">
-        <a href="index.html#calc-section" class="nav-link">Calculate</a>
-        <a href="index.html#how-it-works" class="nav-link">How It Works</a>
-        <a href="faq.html" class="nav-link">FAQ</a>
-        <a href="index.html#ebooks" class="nav-link">Ebooks</a>
-        <a href="index.html#chat-agent" class="nav-link">Chat with Tax Agent</a>
-        <button class="cta-small" style="margin-top: 10px; width: 100%; padding: 8px;" onclick="window.location.href='index.html#calc-section'; toggleMobileMenu();">Calculate Now</button>
-    </div>
+    <header class="main-header">
+        <a class="logo" href="index.html">TaxC</a>
+        
+        <nav class="desktop-nav">
+            <a href="index.html">Back</a>
+            <a href="ebooks.html">Ebooks</a>
+            <button class="cta-small" onclick="window.location.href='index.html#calculator'">Calculate</button>
+        </nav>
+        
+        <button id="hamburger" class="hamburger" onclick="toggleMobileMenu()">
+            <span class="hamburger-box"><span class="hamburger-inner"></span></span>
+        </button>
+        
+        <nav id="mobile-menu" class="mobile-menu" role="menu">
+            <a href="faq.html" class="nav-link">Frequently Asked Questions</a>
+            <a href="ebooks.html" class="nav-link">Ebooks</a>
+            <a href="index.html#calculator" class="nav-link">Calculator</a>
+            <button class="cta-small" style="margin: 10px 20px; width: calc(100% - 40px); padding: 10px;" onclick="window.location.href='index.html#calculator'; toggleMobileMenu();">Calculate Now</button>
+        </nav>
+    </header>
+
     <main class="container">
         <section class="faq-section" id="faq" aria-labelledby="faq-heading">
             <h2 id="faq-heading">Frequently Asked Questions</h2>
@@ -173,7 +283,7 @@
                 <summary>What’s included in the ₦500 PDF report?</summary>
                 <div class="faq-content">
                     <p>The PDF report includes a step-by-step breakdown of your tax calculation, deduction summary (pension, rent relief), tax band details, and filing guidance tailored to your state’s IRS. It’s perfect for keeping records or sharing with a tax agent.</p>
-                    <p><a href="index.html#calc-section">Calculate now</a> to get your report!</p>
+                    <p><a href="index.html#calculator">Calculate now</a> to get your report!</p>
                 </div>
             </details>
             <details class="faq-item">
@@ -185,14 +295,14 @@
             <details class="faq-item">
                 <summary>Can TaxC help with business or corporate taxes?</summary>
                 <div class="faq-content">
-                    <p>Currently, TaxC focuses on Personal Income Tax for individuals. For business or corporate taxes, consult a tax professional or contact your State IRS. Our <a href="index.html#ebooks">eBooks</a> may offer additional resources for business owners.</p>
+                    <p>Currently, TaxC focuses on Personal Income Tax for individuals. For business or corporate taxes, consult a tax professional or contact your State IRS. Our <a href="ebooks.html">eBooks</a> may offer additional resources for business owners.</p>
                 </div>
             </details>
         </section>
         <section class="cta-banner">
             <h3>Got more questions? Try TaxC or chat with an agent!</h3>
-            <div style="margin-top: 10px">
-                <button class="btn-primary" onclick="window.location.href='index.html#calc-section'">Try Calculator</button>
+            <div style="margin-top: 15px">
+                <button class="btn-primary" onclick="window.location.href='index.html#calculator'">Try Calculator</button>
                 <button class="btn-primary" style="margin-left: 10px;" onclick="window.location.href='index.html#chat-agent'">Chat with Tax Agent</button>
             </div>
         </section>
@@ -203,7 +313,7 @@
     <script>
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
-            const hamburger = document.querySelector('.hamburger');
+            const hamburger = document.getElementById('hamburger');
             const isOpen = menu.hasAttribute('open');
             if (isOpen) {
                 menu.removeAttribute('open');
@@ -213,16 +323,22 @@
                 hamburger.classList.add('is-active');
             }
         }
-
+        // Listener to close menu when clicking outside (standard behavior)
         document.addEventListener('DOMContentLoaded', () => {
             const navLinks = document.querySelectorAll('.mobile-menu .nav-link');
             navLinks.forEach(link => {
                 link.addEventListener('click', () => {
-                    toggleMobileMenu();
-                    const targetUrl = link.getAttribute('href');
-                    window.location.href = targetUrl;
+                    toggleMobileMenu(); 
+                    // This allows the browser to navigate immediately after closing
+                    window.location.href = link.getAttribute('href'); 
                 });
             });
+            
+            // Re-bind click event for the hamburger button to ensure correct class toggling
+            const hamburger = document.getElementById('hamburger');
+            if (hamburger) {
+                hamburger.addEventListener('click', toggleMobileMenu);
+            }
         });
     </script>
 </body>
