@@ -226,10 +226,10 @@
 </head>
 <body>
     <header class="main-header">
-        <a class="logo" href="index.html">TaxC</a>
+        <a class="logo" href="index.html"><img src="/favicon.ico" alt="TaxC Logo" class="logo-icon" style="height: 25px; margin-right: 5px; vertical-align: middle;">TaxC</a>
         
         <nav class="desktop-nav">
-            <a href="index.html">Back</a>
+            <a href="index.html">Home</a>
             <a href="ebooks.html">Ebooks</a>
             <button class="cta-small" onclick="window.location.href='index.html#calculator'">Calculate</button>
         </nav>
@@ -239,9 +239,8 @@
         </button>
         
         <nav id="mobile-menu" class="mobile-menu" role="menu">
-            <a href="faq.html" class="nav-link">Frequently Asked Questions</a>
+            <a href="index.html" class="nav-link">Home</a>
             <a href="ebooks.html" class="nav-link">Ebooks</a>
-            <a href="index.html#calculator" class="nav-link">Calculator</a>
             <button class="cta-small" style="margin: 10px 20px; width: calc(100% - 40px); padding: 10px;" onclick="window.location.href='index.html#calculator'; toggleMobileMenu();">Calculate Now</button>
         </nav>
     </header>
@@ -310,7 +309,7 @@
     <footer>
         &copy; 2025 TaxC — Made with care. | <a href="mailto:support@taxc.com">support@taxc.com</a>
     </footer>
-    <script>
+<script>
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
             const hamburger = document.getElementById('hamburger');
@@ -323,22 +322,20 @@
                 hamburger.classList.add('is-active');
             }
         }
-        // Listener to close menu when clicking outside (standard behavior)
+        
         document.addEventListener('DOMContentLoaded', () => {
-            const navLinks = document.querySelectorAll('.mobile-menu .nav-link');
+            // This loop now only ensures the menu closes when a link is clicked,
+            // relying on the <a> tag's default behavior for navigation.
+            const navLinks = document.querySelectorAll('.mobile-menu a.nav-link');
             navLinks.forEach(link => {
                 link.addEventListener('click', () => {
-                    toggleMobileMenu(); 
-                    // This allows the browser to navigate immediately after closing
-                    window.location.href = link.getAttribute('href'); 
+                    // Close the menu immediately when an active link is clicked
+                    toggleMobileMenu();
                 });
             });
             
-            // Re-bind click event for the hamburger button to ensure correct class toggling
-            const hamburger = document.getElementById('hamburger');
-            if (hamburger) {
-                hamburger.addEventListener('click', toggleMobileMenu);
-            }
+            // NOTE: The click event for 'hamburger' is handled by the 
+            // inline 'onclick="toggleMobileMenu()"' in the HTML for simplicity.
         });
     </script>
 </body>

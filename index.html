@@ -39,14 +39,15 @@ h2.section-title {
 .hero-section {
     padding: 40px 20px; 
     text-align: center;
-    background-color: #FFFFFF; /* White background to remove green */
-    border-bottom: 5px solid #28A745; /* Primary Green */
+    background-color: #FFFFFF;
+    border-bottom: 5px solid #28A745;
     margin-bottom: 40px;
     border-radius: 10px;
 }
 .hero-section h1 {
     font-size: 3rem;
-    color: #343A40;
+    /* FIX HERE: Changed color from #343A40 (dark text) to #28A745 (Primary Green) */
+    color: #28A745; 
     margin-bottom: 10px; 
     font-weight: 700;
 }
@@ -56,6 +57,7 @@ h2.section-title {
     max-width: 800px;
     margin: 0 auto 20px; 
 }
+
 .cta-button {
     display: inline-block;
     padding: 12px 25px;
@@ -70,6 +72,87 @@ h2.section-title {
     background-color: #218838; /* Darker Green (Hover) */
     transform: translateY(-2px);
 }
+/* ==================== DROPDOWN MENU STYLES ==================== */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            color: #343A40;
+            padding: 8px 15px;
+            transition: color 0.3s;
+            font-weight: 600;
+        }
+        .desktop-nav .dropdown-toggle:hover,
+        .mobile-menu .dropdown-toggle:hover {
+            color: #28A745;
+        }
+        .dropdown-arrow {
+            font-size: 0.8em;
+            transition: transform 0.3s ease;
+            display: inline-block;
+        }
+        .dropdown[open] .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            min-width: 280px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            padding: 15px;
+            z-index: 1000;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 1px solid #eee;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        .dropdown[open] .dropdown-content {
+            display: block;
+        }
+        .dropdown-content ul {
+            margin: 0;
+            padding-left: 18px;
+            color: #444;
+        }
+        .dropdown-content strong {
+            color: #444;
+        }
+
+        /* Mobile dropdown adjustment */
+        .mobile-menu .dropdown {
+            width: 100%;
+        }
+        .mobile-menu .dropdown-toggle {
+            justify-content: space-between;
+            padding: 12px 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .mobile-menu .dropdown-content {
+            position: static;
+            box-shadow: none;
+            border: none;
+            border-top: 1px solid #eee;
+            border-radius: 0;
+            padding: 15px 20px;
+            background-color: #f9f9f9;
+            transform: none;
+            left: auto;
+        }
+
+        /* Prevent body scroll when mobile menu open */
+        body.menu-open {
+            overflow: hidden;
+        }
 
 /* -------------------- Header & Navigation (HEIGHT REDUCED) -------------------- */
 .main-header {
@@ -302,7 +385,7 @@ input:focus, select:focus {
 
 /* Reset Button Hover (Brighter Shade of Black / Dark Gray) */
 .reset-btn:hover {
-    background-color: #343A40; /* Darker Grey for Hover */
+    background-color: #a4a4a4; /* Darker Grey for Hover */
 }
 
 /* -------------------- How It Works Section -------------------- */
@@ -504,6 +587,33 @@ input:focus, select:focus {
     visibility: visible;
     opacity: 1;
 }
+.clickable-tooltip {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+.clickable-tooltip .tooltip-popup {
+    visibility: hidden;
+    opacity: 0;
+    width: 240px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px;
+    position: absolute;
+    z-index: 10;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -120px;
+    transition: opacity .2s, visibility .2s;
+    font-size: .85rem;
+    pointer-events: none;
+}
+.clickable-tooltip.active .tooltip-popup {
+    visibility: visible;
+    opacity: 1;
+}
 
 /* -------------------- Output & Report Section -------------------- */
 .message-area {
@@ -615,21 +725,64 @@ input:focus, select:focus {
 <body>
 
     <header class="main-header">
-    <a class="logo" href="index.html">
-        <img src="favicon.ico" alt="TaxC Logo" class="logo-icon">
-        TaxC
-    </a>
+        <a class="logo" href="index.html">
+            <img src="favicon.ico" alt="TaxC Logo" class="logo-icon">
+            TaxC
+        </a>
+
+        <!-- DESKTOP NAV -->
         <nav class="desktop-nav">
+            <div class="dropdown" id="desktop-dropdown">
+                <span class="dropdown-toggle" onclick="toggleDropdown(event, 'desktop-dropdown')">
+                    Why detailed Report
+                    <span class="dropdown-arrow">▼</span>
+                </span>
+                <div class="dropdown-content">
+                    <ul>
+                        <li><strong>Your full name & state</strong></li>
+                        <li>All your income sources listed clearly</li>
+                        <li>Pension + Rent relief (we do the math!)</li>
+                        <li>Step-by-step: How much tax you <em>really</em> owe</li>
+                        <li>Monthly breakdown (so you can plan)</li>
+                        <li>Any tax already paid (WHT credit)</li>
+                        <li><strong>Direct link to pay your state IRS</strong></li>
+                        <li>How & when to file (no guesswork)</li>
+                        <li>Print-ready PDF — keep it forever</li>
+                    </ul>
+                </div>
+            </div>
             <a href="faq.html">Frequently Asked Questions</a>
             <a href="ebooks.html">Ebooks</a>
             <a href="#calculator">Calculator</a>
         </nav>
+
         <button id="hamburger" class="hamburger" onclick="toggleMobileMenu()" type="button">
             <span class="hamburger-box"><span class="hamburger-inner"></span></span>
         </button>
+
+        <!-- MOBILE MENU -->
         <nav id="menu" class="mobile-menu nav-dropdown-menu">
-            <a href="faq.html" class="nav-link">Frequently Asked Questions</a>
-            <a href="ebooks.html" class="nav-link">Ebooks</a>
+            <div class="dropdown" id="mobile-dropdown">
+                <span class="dropdown-toggle" onclick="toggleDropdown(event, 'mobile-dropdown')">
+                    Why detailed Report
+                    <span class="dropdown-arrow">▼</span>
+                </span>
+                <div class="dropdown-content">
+                    <ul>
+                        <li><strong>Your full name & state</strong></li>
+                        <li>All your income sources listed clearly</li>
+                        <li>Pension + Rent relief (we do the math!)</li>
+                        <li>Step-by-step: How much tax you <em>really</em> owe</li>
+                        <li>Monthly breakdown (so you can plan)</li>
+                        <li>Any tax already paid (WHT credit)</li>
+                        <li><strong>Direct link to pay your state IRS</strong></li>
+                        <li>How & when to file (no guesswork)</li>
+                        <li>Print-ready PDF — keep it forever</li>
+                    </ul>
+                </div>
+            </div>
+            <a href="faq.html">Frequently Asked Questions</a>
+            <a href="ebooks.html">Ebooks</a>
             <a href="#calculator" class="nav-link">Calculator</a>
         </nav>
     </header>
@@ -745,7 +898,14 @@ input:focus, select:focus {
         </div>
         <div id="taxSummary"></div>
         <div class="report-section">
-            <p class="report-prompt">Get a detailed PDF report for only ₦500:</p>
+            <p class="report-prompt">
+    Get a detailed 
+    <a href="#" onclick="scrollToWhyReport(event); return false;" 
+       style="color: #28A745; font-weight: 600; text-decoration: underline; cursor: pointer;">
+        PDF report
+    </a> 
+    for only ₦500:
+</p>
             <div class="input-group-inline">
                 <input type="email" id="reportEmail" placeholder="Your Email Address" required>
                 <button onclick="startHostedPayment()" class="report-btn">Get PDF Report</button>
@@ -776,7 +936,7 @@ input:focus, select:focus {
                 <div class="input-group">
                     <label for="freq_INDEX">Frequency</label>
                     <select id="freq_INDEX" class="income-frequency" onchange="toggleMonthlyInputs(this); handleIncomeTypeChange(document.getElementById('type_INDEX'))">
-                        <option value="annual">Annual Gross</option>
+                        <option value="annual">Annual Gross Income</option>
                         <option value="monthly">Monthly Breakdown</option>
                     </select>
                 </div>
@@ -785,7 +945,9 @@ input:focus, select:focus {
             <div class="input-group gross-income-container">
                 <label for="income_INDEX">Gross Annual Income (₦)</label>
                 <div class="tooltip">
-                    <input type="text" id="income_INDEX" class="gross-income" oninput="updateFormattedValue(this)">
+<input type="text" id="income_INDEX" class="gross-income" 
+       oninput="updateFormattedValue(this)" 
+       placeholder="e.g., 1,500,000">
                     <span class="tooltiptext">Total income earned in the year before taxes and deductions.</span>
                 </div>
             </div>
@@ -794,10 +956,14 @@ input:focus, select:focus {
                 <div class="input-group">
                     <label>Gross Monthly Income Breakdown (₦)</label>
                     <div class="monthly-income-row">
-                        <div class="input-group">
-                            <label for="jan_INDEX">Jan</label>
-                            <input type="text" id="jan_INDEX" data-month="Jan" oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
-                        </div>
+                <div class="input-group">
+                    <label for="jan_INDEX">Jan</label>
+                    <div class="clickable-tooltip">
+                        <input type="text" id="jan_INDEX" data-month="Jan"
+                            oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
+                        <div class="tooltip-popup">Total income earned per month before taxes and deductions.</div>
+                    </div>
+                </div>
                         <div class="input-group">
                             <label for="feb_INDEX">Feb</label>
                             <input type="text" id="feb_INDEX" data-month="Feb" oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
@@ -1227,167 +1393,175 @@ input:focus, select:focus {
             return true;
         }
 
-        function calculateTax() {
-            const state = document.getElementById('state').value;
-            const outputDiv = document.getElementById('output');
-            const msgDiv = document.getElementById('msg');
-            const taxSummary = document.getElementById('taxSummary');
-            const defaultMessage = document.getElementById('default-report-message');
-            const reportSection = document.getElementById('report');
+function calculateTax() {
+    const state = document.getElementById('state').value;
+    const outputDiv = document.getElementById('output');
+    const msgDiv = document.getElementById('msg');
+    const taxSummary = document.getElementById('taxSummary');
+    const defaultMessage = document.getElementById('default-report-message');
+    const reportSection = document.getElementById('report');
 
-            // Reset output display and message on new calculation attempt
-            msgDiv.textContent = '';
-            taxSummary.innerHTML = ''; // Clear previous summary
-            defaultMessage.style.display = 'none'; // Hide placeholder initially
-            outputDiv.style.display = 'none'; // Hide output by default
+    // Reset output display and summary on new calculation attempt
+    msgDiv.textContent = '';
+    taxSummary.innerHTML = '';
+    defaultMessage.style.display = 'none';
+    outputDiv.style.display = 'block';
 
-            if (!state) {
-                msgDiv.textContent = '🛑 Please select your State of Residence to proceed with the tax calculation.';
-                outputDiv.style.display = 'block';
-                defaultMessage.style.display = 'block'; // Show placeholder below error
-                reportSection.scrollIntoView({ behavior: 'smooth' });
-                return;
-            }
+    // --- NEW REVERSED VALIDATION LOGIC FOR UX FLOW ---
 
-            if (!validateForm()) {
-                reportSection.scrollIntoView({ behavior: 'smooth' });
-                return;
-            }
+    // 1. Check for Income/Form validation first (triggers the generic 'fill above' message)
+    if (!validateForm()) {
+        msgDiv.textContent = 'Please fill the above';
+        outputDiv.style.display = 'block';
+        defaultMessage.style.display = 'block'; // Show placeholder below error
+        reportSection.scrollIntoView({ behavior: 'smooth' });
+        return;
+    }
 
-            // Successful validation: hide placeholder and show output
-            defaultMessage.style.display = 'none';
-            outputDiv.style.display = 'block';
+    // 2. Check for State second (triggers the specific 'select state' message)
+    if (!state) {
+        msgDiv.textContent = '🛑 Please select your State of Residence to proceed with the tax calculation.';
+        outputDiv.style.display = 'block';
+        defaultMessage.style.display = 'block'; // Show placeholder below error
+        reportSection.scrollIntoView({ behavior: 'smooth' });
+        return;
+    }
+    // --- END NEW LOGIC ---
 
-            console.log("Almost done with the application! Remember these next steps to complete the TaxC application:\n- Input Validation: Ensuring all mandatory fields are filled and values are numerical before calculating.\n- Report Generation Logic: Refining the startHostedPayment flow and user messaging.\n- Responsive Design Refinements: Making final tweaks to how the layout handles different screen sizes.");
+    // Successful validation: hide placeholder and proceed
+    defaultMessage.style.display = 'none';
+    
+    // Console reminder (kept for development context)
+    console.log("Almost done with the application! Remember these next steps to complete the TaxC application:\n- Input Validation: Ensuring all mandatory fields are filled and values are numerical before calculating.\n- Report Generation Logic: Refining the startHostedPayment flow and user messaging.\n- Responsive Design Refinements: Making final tweaks to how the layout handles different screen sizes.");
 
-            // --- Core Calculation Logic ---
-            let totalGrossIncome = 0;
-            let totalWhtCredit = 0;
-            let hasSalaryOrSelfEmployment = false;
+    // --- Core Calculation Logic ---
+    let totalGrossIncome = 0;
+    let totalWhtCredit = 0;
+    let hasSalaryOrSelfEmployment = false;
 
-            const incomeBlocks = document.querySelectorAll('.income-source-block');
-            for (const block of incomeBlocks) {
-                const blockIndex = block.getAttribute('data-source-id');
-                const type = document.getElementById(`type_${blockIndex}`).value;
-                const frequency = document.getElementById(`freq_${blockIndex}`).value;
-                let incomeValue = 0;
+    const incomeBlocks = document.querySelectorAll('.income-source-block');
+    for (const block of incomeBlocks) {
+        const blockIndex = block.getAttribute('data-source-id');
+        const type = document.getElementById(`type_${blockIndex}`).value;
+        const frequency = document.getElementById(`freq_${blockIndex}`).value;
+        let incomeValue = 0;
 
-                if (frequency === 'monthly') {
-                    const monthlyInputs = block.querySelectorAll('.monthly-income-row input');
-                    monthlyInputs.forEach(input => {
-                        incomeValue += getRawValue(input);
-                    });
-                } else {
-                    const incomeInput = document.getElementById(`income_${blockIndex}`);
-                    incomeValue = getRawValue(incomeInput);
-                }
-                totalGrossIncome += incomeValue;
-
-                if (type === 'salary' || type === 'self') {
-                    hasSalaryOrSelfEmployment = true;
-                }
-                
-                if (['rental', 'investment', 'other'].includes(type)) {
-                    const whtInput = document.getElementById(`wht_${blockIndex}`);
-                    const whtValue = getRawValue(whtInput);
-                    
-                    let defaultWhtRate = 0;
-                    if (type === 'rental' || type === 'investment') {
-                        defaultWhtRate = 0.10; 
-                    } else if (type === 'other') {
-                        defaultWhtRate = 0.05; 
-                    }
-
-                    const whtAmount = whtValue > 0 ? whtValue : (incomeValue * defaultWhtRate);
-                    totalWhtCredit += whtAmount;
-                }
-            }
-
-            const pension = getRawValue(document.getElementById('pension'));
-            const rent = getRawValue(document.getElementById('rent'));
-            
-            // Rent relief calculation
-            const rentRelief = hasSalaryOrSelfEmployment ? Math.min(500000, rent * 0.20) : 0; 
-            
-            const totalDeductions = pension + rentRelief; 
-            const incomeBeforeExemption = Math.max(0, totalGrossIncome - totalDeductions); 
-            const chargeable = Math.max(0, incomeBeforeExemption - 800000); 
-
-            let tax = 0;
-            let remaining = chargeable;
-            
-            const bands = [
-                { limit: 2200000, rate: 0.15 },
-                { limit: 9000000, rate: 0.18 },
-                { limit: 13000000, rate: 0.21 },
-                { limit: 25000000, rate: 0.23 },
-                { limit: Infinity, rate: 0.25 }
-            ];
-            
-            for (const band of bands) {
-                if (remaining <= 0) break;
-                const taxableInBand = Math.min(remaining, band.limit);
-                tax += taxableInBand * band.rate;
-                remaining -= taxableInBand;
-            }
-
-            const netTax = Math.max(0, tax - totalWhtCredit);
-            const monthlyTax = (netTax / 12);
-            
-            let stateNote = '';
-            if (rentRelief > 0) {
-                stateNote = `<br><strong>Note:</strong> Your rent relief was calculated as 20% of ₦${rent.toLocaleString('en-NG')}, capped at ₦${Math.round(rentRelief).toLocaleString('en-NG')}.`;
-            }
-            
-            // --- Output Display ---
-            taxSummary.innerHTML = `
-            <strong>Annual Tax Estimate:</strong> ₦${Math.round(netTax).toLocaleString('en-NG')}<br>
-            <strong>Monthly (approx):</strong> ₦${Math.round(monthlyTax).toLocaleString('en-NG')}<br><br>
-            <strong>Gross Income:</strong> ₦${totalGrossIncome.toLocaleString('en-NG')}<br>
-            <strong>Total Allowable Deductions:</strong> ₦${Math.round(totalDeductions).toLocaleString('en-NG')} (Pension + Rent Relief)<br>
-            <strong>Income Before Exemption:</strong> ₦${Math.round(incomeBeforeExemption).toLocaleString('en-NG')}<br>
-            <strong>Chargeable Income:</strong> ₦${Math.round(chargeable).toLocaleString('en-NG')} (After ₦800,000 exemption)<br>
-            ${totalWhtCredit > 0 ? `<strong>WHT Credit Applied:</strong> ₦${Math.round(totalWhtCredit).toLocaleString('en-NG')}` : ''}
-            ${stateNote}
-            `;
-            
-            msgDiv.textContent = 'Calculation complete. Enter your email and pay ₦500 for a detailed PDF report.';
-            outputDiv.style.display = 'block';
-
-            // Auto-scroll to Report section
-            reportSection.scrollIntoView({ behavior: 'smooth' });
-            window.lastCalc = { netTax, state };
+        if (frequency === 'monthly') {
+            const monthlyInputs = block.querySelectorAll('.monthly-income-row input');
+            monthlyInputs.forEach(input => {
+                incomeValue += getRawValue(input);
+            });
+        } else {
+            const incomeInput = document.getElementById(`income_${blockIndex}`);
+            incomeValue = getRawValue(incomeInput);
         }
+        totalGrossIncome += incomeValue;
+
+        if (type === 'salary' || type === 'self') {
+            hasSalaryOrSelfEmployment = true;
+        }
+        
+        if (['rental', 'investment', 'other'].includes(type)) {
+            const whtInput = document.getElementById(`wht_${blockIndex}`);
+            const whtValue = getRawValue(whtInput);
+            
+            let defaultWhtRate = 0;
+            if (type === 'rental' || type === 'investment') {
+                defaultWhtRate = 0.10; 
+            } else if (type === 'other') {
+                defaultWhtRate = 0.05; 
+            }
+
+            const whtAmount = whtValue > 0 ? whtValue : (incomeValue * defaultWhtRate);
+            totalWhtCredit += whtAmount;
+        }
+    }
+
+    const pension = getRawValue(document.getElementById('pension'));
+    const rent = getRawValue(document.getElementById('rent'));
+    
+    // Rent relief calculation
+    const rentRelief = hasSalaryOrSelfEmployment ? Math.min(500000, rent * 0.20) : 0; 
+    
+    const totalDeductions = pension + rentRelief; 
+    const incomeBeforeExemption = Math.max(0, totalGrossIncome - totalDeductions); 
+    const chargeable = Math.max(0, incomeBeforeExemption - 800000); 
+
+    let tax = 0;
+    let remaining = chargeable;
+    
+    const bands = [
+        { limit: 2200000, rate: 0.15 },
+        { limit: 9000000, rate: 0.18 },
+        { limit: 13000000, rate: 0.21 },
+        { limit: 25000000, rate: 0.23 },
+        { limit: Infinity, rate: 0.25 }
+    ];
+    
+    for (const band of bands) {
+        if (remaining <= 0) break;
+        const taxableInBand = Math.min(remaining, band.limit);
+        tax += taxableInBand * band.rate;
+        remaining -= taxableInBand;
+    }
+
+    const netTax = Math.max(0, tax - totalWhtCredit);
+    const monthlyTax = (netTax / 12);
+    
+    let stateNote = '';
+    if (rentRelief > 0) {
+        stateNote = `<br><strong>Note:</strong> Your rent relief was calculated as 20% of ₦${rent.toLocaleString('en-NG')}, capped at ₦${Math.round(rentRelief).toLocaleString('en-NG')}.`;
+    }
+    
+    // --- Output Display ---
+    taxSummary.innerHTML = `
+    <strong>Annual Tax Estimate:</strong> ₦${Math.round(netTax).toLocaleString('en-NG')}<br>
+    <strong>Monthly (approx):</strong> ₦${Math.round(monthlyTax).toLocaleString('en-NG')}<br><br>
+    <strong>Gross Income:</strong> ₦${totalGrossIncome.toLocaleString('en-NG')}<br>
+    <strong>Total Allowable Deductions:</strong> ₦${Math.round(totalDeductions).toLocaleString('en-NG')} (Pension + Rent Relief)<br>
+    <strong>Income Before Exemption:</strong> ₦${Math.round(incomeBeforeExemption).toLocaleString('en-NG')}<br>
+    <strong>Chargeable Income:</strong> ₦${Math.round(chargeable).toLocaleString('en-NG')} (After ₦800,000 exemption)<br>
+    ${totalWhtCredit > 0 ? `<strong>WHT Credit Applied:</strong> ₦${Math.round(totalWhtCredit).toLocaleString('en-NG')}` : ''}
+    ${stateNote}
+    `;
+    
+    msgDiv.textContent = 'Calculation complete. Enter your email and pay ₦500 for a detailed PDF report.';
+    outputDiv.style.display = 'block';
+
+    // Auto-scroll to Report section
+    reportSection.scrollIntoView({ behavior: 'smooth' });
+    window.lastCalc = { netTax, state };
+}
 
         function resetForm() {
-            const incomeBlocks = document.querySelectorAll('.income-source-block');
-            const outputDiv = document.getElementById('output');
-            const msgDiv = document.getElementById('msg');
-            const taxSummary = document.getElementById('taxSummary');
-            const defaultMessage = document.getElementById('default-report-message');
-            const stateSelect = document.getElementById('state');
+    const incomeBlocks = document.querySelectorAll('.income-source-block');
+    const outputDiv = document.getElementById('output');
+    const msgDiv = document.getElementById('msg'); // Reference the message div
+    const taxSummary = document.getElementById('taxSummary');
+    const defaultMessage = document.getElementById('default-report-message');
+    const stateSelect = document.getElementById('state');
 
-            document.getElementById('pension').value = '';
-            document.getElementById('rent').value = '';
-            document.getElementById('reportEmail').value = '';
-            
-            if (stateSelect) {
-                stateSelect.value = ''; 
-            }
-            
-            // Remove all existing income blocks
-            incomeBlocks.forEach(block => block.remove());
+    document.getElementById('pension').value = '';
+    document.getElementById('rent').value = '';
+    document.getElementById('reportEmail').value = '';
+    
+    if (stateSelect) {
+        stateSelect.value = ''; 
+    }
+    
+    // Remove all existing income blocks
+    incomeBlocks.forEach(block => block.remove());
 
-            // Add back the default first income source
-            addIncomeSource();
+    // Add back the default first income source
+    addIncomeSource();
 
-            // Reset output section
-            outputDiv.style.display = 'block';
-            msgDiv.textContent = '';
-            taxSummary.innerHTML = '';
-            defaultMessage.style.display = 'block'; // Show placeholder on reset
-            window.lastCalc = null;
-        }
+    // Reset output section
+    outputDiv.style.display = 'block';
+    msgDiv.textContent = 'Please fill the above'; // <--- THIS IS THE FIX
+    taxSummary.innerHTML = '';
+    defaultMessage.style.display = 'block'; // Show placeholder on reset
+    window.lastCalc = null;
+}
 
         function startHostedPayment() {
             const email = document.getElementById('reportEmail')?.value || '';
@@ -1413,19 +1587,111 @@ input:focus, select:focus {
             // window.location.href = paystackHostedLink;
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            addIncomeSource();
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Add first income source
+    addIncomeSource();
 
-            const navLinks = document.querySelectorAll('.nav-link');
-            navLinks.forEach(link => {
-                link.addEventListener('click', scrollToSection);
-            });
-            
-            const pensionInput = document.getElementById('pension');
-            const rentInput = document.getElementById('rent');
-            if (pensionInput) pensionInput.addEventListener('input', () => updateFormattedValue(pensionInput));
-            if (rentInput) rentInput.addEventListener('input', () => updateFormattedValue(rentInput));
+    // 2. Nav links (smooth scroll)
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', scrollToSection);
+    });
+
+    // 3. Format pension & rent
+    ['pension', 'rent'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', () => updateFormattedValue(el));
+    });
+
+    // 4. SHOW TAX SUMMARY + PLACEHOLDER ON LOAD
+    const output = document.getElementById('output');
+    const msg = document.getElementById('msg');
+    const defaultMsg = document.getElementById('default-report-message');
+
+    output.style.display = 'block';
+    msg.textContent = 'Please fill the above';
+    defaultMsg.style.display = 'block';
+
+    // 5. === DROPDOWN LOGIC (YOU ADDED THIS) ===
+    function toggleDropdown(event, dropdownId) {
+        event.stopPropagation();
+        const dropdown = document.getElementById(dropdownId);
+        const isOpen = dropdown.hasAttribute('open');
+
+        // Close all other dropdowns
+        document.querySelectorAll('.dropdown[open]').forEach(d => {
+            if (d.id !== dropdownId) d.removeAttribute('open');
         });
-    </script>
-</body>
+
+        // Toggle current
+        if (isOpen) {
+            dropdown.removeAttribute('open');
+        } else {
+            dropdown.setAttribute('open', '');
+        }
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdown')) {
+            document.querySelectorAll('.dropdown[open]').forEach(d => {
+                d.removeAttribute('open');
+            });
+        }
+    });
+
+    // Attach toggle to dropdown buttons
+    document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+        const dropdownId = toggle.closest('.dropdown').id;
+        toggle.onclick = (e) => toggleDropdown(e, dropdownId);
+    });
+    // === END DROPDOWN LOGIC ===
+});
+        // Toggle tooltip on click (click-away closes it)
+document.addEventListener('click', function (e) {
+    const container = e.target.closest('.clickable-tooltip');
+    // close any open tooltips
+    document.querySelectorAll('.clickable-tooltip.active').forEach(el => {
+        if (el !== container) el.classList.remove('active');
+    });
+    // open the clicked one
+    if (container) {
+        container.classList.toggle('active');
+    }
+});
+function scrollToWhyReport(event) {
+    if (event) {
+        event.stopPropagation(); // <-- ADD THIS LINE
+    }
+    // 1. Close any open mobile menu first
+    const menu = document.getElementById('menu');
+    const hamburger = document.getElementById('hamburger');
+    if (menu.hasAttribute('open')) {
+        menu.removeAttribute('open');
+        hamburger.classList.remove('is-active');
+    }
+
+    // 2. Get dropdowns
+    const desktopDropdown = document.getElementById('desktop-dropdown');
+    const mobileDropdown = document.getElementById('mobile-dropdown');
+
+    // 3. Open BOTH dropdowns
+    if (desktopDropdown) desktopDropdown.setAttribute('open', '');
+    if (mobileDropdown) mobileDropdown.setAttribute('open', '');
+
+    // 4. Re-open mobile menu if on mobile
+    if (window.innerWidth < 768 && menu && hamburger) {
+        setTimeout(() => {
+            menu.setAttribute('open', '');
+            hamburger.classList.add('is-active');
+        }, 100); // Tiny delay so it opens AFTER scroll
+    }
+
+    // 5. Scroll to the dropdown (desktop or mobile)
+    const target = window.innerWidth >= 768 ? desktopDropdown : menu;
+    if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+        </script>
+    </body>
 </html>
