@@ -4,10 +4,19 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TaxC | FAQ - Nigerian Tax Calculator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <!-- Preconnect to Google Fonts for speed -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<!-- Load Inter font with display=swap (recommended) -->
+<link 
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" 
+  rel="stylesheet">
+    <!-- FAVICONS (Fixed for GitHub Pages) -->
+    <link rel="icon" href="/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="manifest" href="/site.webmanifest">
     <style>
         /* CSS from your main application's stylesheet is integrated here for consistency */
@@ -47,6 +56,15 @@
             color: var(--main-color);
             text-decoration: none;
         }
+        .logo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.logo-icon {
+    height: 24px;
+    width: 24px;
+}
         .desktop-nav {
             display: none; 
             gap: 20px;
@@ -222,6 +240,7 @@
             .cta-banner div { display: flex; flex-direction: column; gap: 10px; }
             .btn-primary { margin: 5px 0 !important; width: 100%; }
         }
+        
     </style>
 </head>
 <body>
