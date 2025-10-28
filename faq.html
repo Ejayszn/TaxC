@@ -4,15 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TaxC | FAQ - Nigerian Tax Calculator</title>
-    <!-- Preconnect to Google Fonts for speed -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- FONTS (keep & optimize) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
-<!-- Load Inter font with display=swap (recommended) -->
-<link 
-  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" 
-  rel="stylesheet">
-    <!-- FAVICONS (Fixed for GitHub Pages) -->
+    <!-- FAVICONS (GitHub-Pages safe) -->
     <link rel="icon" href="/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -39,46 +36,60 @@
         }
         
         /* -------------------- Header & Navigation (Slim Style) -------------------- */
-        .main-header {
-            background-color: var(--card);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            padding: 5px 20px; /* Slimmest vertical padding */
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--main-color);
-            text-decoration: none;
-        }
-        .logo {
+.main-header {
+    background-color: var(--card);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 5px 20px; /* Slimmest vertical padding */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.logo {
     display: flex;
     align-items: center;
     gap: 6px;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--main-color);
+    text-decoration: none;
 }
+
 .logo-icon {
     height: 24px;
     width: 24px;
+    object-fit: contain; /* Ensures favicon isn't stretched */
 }
-        .desktop-nav {
-            display: none; 
-            gap: 20px;
-        }
-        .desktop-nav a {
-            text-decoration: none;
-            color: var(--dark-text);
-            padding: 8px 15px;
-            transition: color 0.3s;
-            font-weight: 600;
-        }
-        .desktop-nav a:hover {
-            color: var(--main-color);
-        }
+
+.desktop-nav {
+    display: none;
+    gap: 20px;
+}
+
+.desktop-nav a {
+    text-decoration: none;
+    color: var(--dark-text);
+    padding: 8px 15px;
+    transition: color 0.3s;
+    font-weight: 600;
+}
+
+.desktop-nav a:hover {
+    color: var(--main-color);
+}
+
+/* Show desktop nav on larger screens */
+@media (min-width: 768px) {
+    .desktop-nav {
+        display: flex;
+    }
+    #hamburger {
+        display: none;
+    }
+}
 
         /* Hamburger Styles */
         #hamburger {
