@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login - TaxC Nigeria</title>
+  <title id="pageTitle">Login - TaxC Nigeria</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="icon" href="./favicon.ico">
   <style>
@@ -33,16 +33,9 @@
       padding: 24px;
       text-align: center;
     }
-    .login-header h1 {
-      font-size: 1.8rem;
-      font-weight: 700;
-    }
-    .login-body {
-      padding: 32px;
-    }
-    .form-group {
-      margin-bottom: 20px;
-    }
+    .login-header h1 { font-size: 1.8rem; font-weight: 700; }
+    .login-body { padding: 32px; }
+    .form-group { margin-bottom: 20px; position:relative; }
     label {
       display: block;
       margin-bottom: 8px;
@@ -60,7 +53,7 @@
     input:focus {
       outline: none;
       border-color: #28A745;
-      box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2);
+      box-shadow: 0 0 0 2px rgba(40,167,69,.2);
     }
     .btn-primary {
       width: 100%;
@@ -71,37 +64,45 @@
       border-radius: 50px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s;
+      transition: all .3s;
     }
-    .btn-primary:hover {
-      background: #218838;
-      transform: translateY(-2px);
+    .btn-primary:hover { background:#218838; transform:translateY(-2px); }
+    .switch-form { text-align:center; margin-top:24px; font-size:.95rem; }
+    .switch-form a { color:#28A745; font-weight:600; text-decoration:none; }
+    .switch-form a:hover { text-decoration:underline; }
+    .error-msg { 
+      color:#dc3545; 
+      font-size:.85rem; 
+      margin-top:8px; 
+      text-align:center; 
+      line-height:1.5;
     }
-    .switch-form {
-      text-align: center;
-      margin-top: 24px;
-      font-size: 0.95rem;
-    }
-    .switch-form a {
-      color: #28A745;
-      font-weight: 600;
-    }
-    .error-msg {
-      color: #dc3545;
-      font-size: 0.85rem;
+    .password-rules {
       margin-top: 8px;
-      text-align: center;
-    }
-    .back-link {
-      display: block;
-      text-align: center;
-      margin-top: 24px;
+      font-size: 0.85rem;
       color: #666;
-      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      overflow: hidden;
     }
-    .back-link a {
+    .rule {
+      display: flex;
+      align-items: center;
+      margin-bottom: 4px;
+      opacity: 0.7;
+    }
+    .rule.met {
       color: #28A745;
-      font-weight: 600;
+      opacity: 1;
+    }
+    .rule::before {
+      content: "×";
+      margin-right: 8px;
+      font-weight: bold;
+      color: #dc3545;
+    }
+    .rule.met::before {
+      content: "✓";
+      color: #28A745;
     }
   </style>
 </head>
@@ -111,70 +112,205 @@
     <div class="login-header">
       <h1 id="formTitle">Login</h1>
     </div>
+
     <div class="login-body">
-      <form id="authForm">
+      <form id="authForm" novalidate>
         <div class="form-group" id="nameGroup" style="display:none;">
-          <label for="name">Full Name</label>
-          <input type="text" id="name" placeholder="John Doe">
+          <label for="name">First Name</label>
+          <input type="text" id="name" placeholder="John" autocomplete="given-name">
         </div>
+
         <div class="form-group">
           <label for="email">Email</label>
-          <input type="email" id="email" placeholder="you@example.com" required>
+          <input type="email" id="email" placeholder="you@example.com" required autocomplete="email">
         </div>
+
         <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" id="password" placeholder="••••••••" required>
+          <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
+          <div class="password-rules" id="passwordRules" style="display:none;">
+            <div class="rule" id="rule-length">Password must be at least 6 characters</div>
+            <div class="rule" id="rule-upper">1 uppercase letter</div>
+            <div class="rule" id="rule-lower">1 lowercase letter</div>
+            <div class="rule" id="rule-number">1 number</div>
+            <div class="rule" id="rule-symbol">1 symbol (!@#$%^&* etc.)</div>
+          </div>
+          <a href="#" id="forgotLink" style="font-size:0.85rem; color:#28A745; float:right; margin-top:8px; text-decoration:none;">
+            Forgot Password?
+          </a>
         </div>
+
         <button type="submit" class="btn-primary" id="submitBtn">Login</button>
       </form>
-      <p class="error-msg" id="errorMsg"></p>
+
+      <p class="error-msg" id="errorMsg" role="alert"></p>
+
       <p class="switch-form">
-        <span id="switchText">Don't have an account?</span> <a href="#" id="switchLink">Sign Up</a>
+        <span id="switchText">Don't have an account?</span>
+        <a href="#" id="switchLink">Sign Up</a>
+      </p>
     </div>
   </div>
 
-  <!-- 1. Load Firebase -->
-<script type="module" src="./firebase.js"></script>
+  <!-- FORGOT PASSWORD MODAL -->
+  <div id="forgotModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; align-items:center; justify-content:center;">
+    <div style="background:white; padding:32px; border-radius:16px; width:90%; max-width:400px; text-align:center;">
+      <h3 style="margin-bottom:16px; color:#28A745;">Reset Password</h3>
+      <p style="margin-bottom:20px; color:#555;">Enter your email and we'll send you a reset link.</p>
+      <input type="email" id="resetEmail" placeholder="you@example.com" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:50px; margin-bottom:16px;">
+      <button id="sendResetBtn" style="background:#28A745; color:white; border:none; padding:12px 24px; border-radius:50px; cursor:pointer; width:100%;">
+        Send Reset Link
+      </button>
+      <button id="closeModal" style="margin-top:12px; background:none; border:none; color:#666; cursor:pointer; font-size:0.9rem;">
+        Cancel
+      </button>
+    </div>
+  </div>
 
-<!-- 2. Your Login Code (SEPARATE) -->
-<script type="module">
-  import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from './firebase.js';
+<script>
+  const urlParams = new URLSearchParams(location.search);
+  const isSignup = urlParams.get('mode') === 'signup';
+  const redirectParam = urlParams.get('redirect');
+  const redirectTo = redirectParam ? decodeURIComponent(redirectParam) : 'index.html';
 
-  const form = document.getElementById('authForm');
-  const errorMsg = document.getElementById('errorMsg');
-  const isSignup = window.location.search.includes('mode=signup');
+  const $ = id => document.getElementById(id);
 
-  // Toggle Sign Up / Login
   if (isSignup) {
-    document.getElementById('formTitle').textContent = 'Sign Up';
-    document.getElementById('nameGroup').style.display = 'block';
-    document.getElementById('submitBtn').textContent = 'Create Account';
-    document.getElementById('switchText').textContent = 'Already have an account?';
-    document.getElementById('switchLink').textContent = 'Login';
-    document.getElementById('switchLink').href = 'login.html';
+    $('formTitle').textContent = 'Sign Up';
+    $('pageTitle').textContent = 'Sign Up - TaxC Nigeria';
+    $('nameGroup').style.display = 'block';
+    $('name').required = true;
+    $('submitBtn').textContent = 'Create Account';
+    $('switchText').textContent = 'Already have an account?';
+    $('switchLink').textContent = 'Login';
+    $('switchLink').href = redirectParam ? `?redirect=${encodeURIComponent(redirectTo)}` : 'login.html';
+    $('passwordRules').style.display = 'block';
   } else {
-    document.getElementById('switchLink').href = 'login.html?mode=signup';
+    $('nameGroup').style.display = 'none';
+    $('name').required = false;
+    const signupUrl = new URL(location.href);
+    signupUrl.searchParams.set('mode', 'signup');
+    if (redirectParam) signupUrl.searchParams.set('redirect', redirectParam);
+    $('switchLink').href = signupUrl.pathname + signupUrl.search;
+    $('passwordRules').style.display = 'none';
   }
 
-  // Submit
-  form.addEventListener('submit', async (e) => {
+  const passwordInput = $('password');
+  const rules = {
+    length: $('rule-length'),
+    upper: $('rule-upper'),
+    lower: $('rule-lower'),
+    number: $('rule-number'),
+    symbol: $('rule-symbol')
+  };
+
+  function checkPassword(pwd) {
+    if (!isSignup) return;
+    const checks = {
+      length: pwd.length >= 6,
+      upper: /[A-Z]/.test(pwd),
+      lower: /[a-z]/.test(pwd),
+      number: /\d/.test(pwd),
+      symbol: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd)
+    };
+    let allMet = true;
+    for (const [key, met] of Object.entries(checks)) {
+      if (met) rules[key].classList.add('met');
+      else { rules[key].classList.remove('met'); allMet = false; }
+    }
+    const rulesEl = $('passwordRules');
+    if (allMet) {
+      rulesEl.style.opacity = '0';
+      rulesEl.style.height = '0';
+      rulesEl.style.marginTop = '0';
+    } else {
+      rulesEl.style.opacity = '1';
+      rulesEl.style.height = 'auto';
+      rulesEl.style.marginTop = '8px';
+    }
+  }
+
+  passwordInput.addEventListener('input', () => checkPassword(passwordInput.value));
+  if (isSignup) checkPassword('');
+
+  const form = $('authForm');
+  const errorMsg = $('errorMsg');
+  const submitBtn = $('submitBtn');
+
+  form.addEventListener('submit', e => {
     e.preventDefault();
     errorMsg.textContent = '';
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
+    submitBtn.disabled = true;
+    submitBtn.textContent = isSignup ? 'Creating...' : 'Logging In...';
 
-    try {
-      if (isSignup) {
-        await createUserWithEmailAndPassword(auth, email, password);
-      } else {
-        await signInWithEmailAndPassword(auth, email, password);
-      }
-      const redirect = new URLSearchParams(window.location.search).get('redirect');
-      window.location.href = redirect ? decodeURIComponent(redirect) : 'ebooks.html';
-    } catch (err) {
-      errorMsg.textContent = err.code === 'auth/email-already-in-use'
-        ? 'Email already used. Try logging in.'
-        : err.message;
+    const email = $('email').value.trim();
+    const password = $('password').value;
+    const firstName = $('name').value.trim();
+
+    if (!email || email.length < 5 || !email.includes('@')) {
+      showError('Please enter a valid email address.');
+      return;
+    }
+
+    const checks = {
+      length: password.length >= 6,
+      upper: /[A-Z]/.test(password),
+      lower: /[a-z]/.test(password),
+      number: /\d/.test(password),
+      symbol: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+    };
+
+    if (Object.values(checks).some(v => !v)) {
+      showError('Password must be <strong>at least 6 characters</strong> and contain:<br>• 1 uppercase letter<br>• 1 lowercase letter<br>• 1 number<br>• 1 symbol (!@#$%^&* etc.)');
+      return;
+    }
+
+    if (isSignup && firstName.length < 2) {
+      showError('First name is required for sign-up.');
+      return;
+    }
+
+    setTimeout(() => {
+      const displayName = isSignup ? firstName : (email.split('@')[0] || 'User');
+      localStorage.setItem('userName', displayName);
+      location.href = redirectTo;
+    }, 1000);
+  });
+
+  function showError(msg) {
+    errorMsg.innerHTML = msg;
+    submitBtn.disabled = false;
+    submitBtn.textContent = isSignup ? 'Create Account' : 'Login';
+  }
+
+  $('switchLink').addEventListener('click', e => {
+    e.preventDefault();
+    window.location = $('switchLink').href;
+  });
+
+  // FORGOT PASSWORD
+  const forgotLink = $('forgotLink');
+  const modal = $('forgotModal');
+  const closeModal = $('closeModal');
+  const sendBtn = $('sendResetBtn');
+  const resetEmail = $('resetEmail');
+
+  forgotLink.addEventListener('click', e => {
+    e.preventDefault();
+    modal.style.display = 'flex';
+  });
+
+  closeModal.addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+
+  sendBtn.addEventListener('click', () => {
+    const email = resetEmail.value.trim();
+    if (email && email.includes('@')) {
+      alert(`Reset link sent to ${email}! (Check spam)`);
+      modal.style.display = 'none';
+    } else {
+      alert('Please enter a valid email.');
     }
   });
 </script>

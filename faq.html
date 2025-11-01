@@ -305,7 +305,7 @@
             <a href="index.html">Home</a>
             <a href="ebooks.html">Ebooks</a>
             <a href="#calculator">Calculator</a>
-            <button class="cta-small" onclick="window.location.href='index.html#calculator'">Login</button>
+            <button class="cta-small" onclick="window.location.href='login.html'">Login</button>
         </nav>
         
         <button id="hamburger" class="hamburger" onclick="toggleMobileMenu()">
@@ -316,7 +316,7 @@
             <a href="index.html" class="nav-link">Home</a>
             <a href="ebooks.html" class="nav-link">Ebooks</a>
             <a href="#calculator">Calculator</a>
-            <button class="cta-small" onclick="window.location.href='index.html#calculator'">Login</button>
+            <button class="cta-small" onclick="window.location.href='login.html'">Login</button>
         </nav>
     </header>
 
@@ -382,10 +382,18 @@
             </div>
         </section>
     </main>
+
     <footer>
         &copy; 2025 TaxC — Made with care. | <a href="mailto:support@taxc.com">support@taxc.com</a>
     </footer>
+
 <script>
+
+    const name = localStorage.getItem('userName');
+  if (name) {
+    document.getElementById('userGreeting').textContent = `Hi, ${name}!`;
+  }
+
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
             const hamburger = document.getElementById('hamburger');

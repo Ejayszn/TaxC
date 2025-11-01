@@ -1294,6 +1294,12 @@ input:focus, select:focus {
 </footer>
 
     <script>
+
+const name = localStorage.getItem('userName');
+  if (name) {
+    document.getElementById('userGreeting').textContent = `Hi, ${name}!`;
+  }
+
         // === MOCK AI ===
         const taxcAI = {
             incomes: [], pension: 0, rent: 0, state: null,

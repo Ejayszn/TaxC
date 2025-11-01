@@ -918,12 +918,18 @@ footer {
       </div>
     </div>
   </div>
-  
+
   <footer>
         &copy; 2025 TaxC — Made with care. | <a href="mailto:support@taxc.com">support@taxc.com</a>
     </footer>
 
   <script>
+
+const name = localStorage.getItem('userName');
+  if (name) {
+    document.getElementById('userGreeting').textContent = `Hi, ${name}!`;
+  }
+
   // === FULL EBOOK DATA WITH INTRIGUING BULLETS ===
   const ebooks = [
   // FREE — NO MODAL
@@ -1132,35 +1138,35 @@ footer {
 ];
 
   // === LIBRARY, FILTER, MODALS, CHAT ===
-  let library = JSON.parse(localStorage.getItem('taxc_library')) || [];
-  let currentEbook = null;
+  let library = JSON.parse(localStorage.getItem('taxc_library')) || [];
+  let currentEbook = null;
 
-  function updateLibraryCount() {
-    document.querySelector('.library-title').textContent = `My Library (${library.length})`;
-  }
+  function updateLibraryCount() {
+    document.querySelector('.library-title').textContent = `My Library (${library.length})`;
+  }
 
-  function renderLibrary() {
-    const grid = document.getElementById('libraryGrid');
-    grid.innerHTML = '';
+  function renderLibrary() {
+    const grid = document.getElementById('libraryGrid');
+    grid.innerHTML = '';
 
-    library = library.filter(item => item && item.cover && item.file && item.title);
-    localStorage.setItem('taxc_library', JSON.stringify(library));
-    updateLibraryCount();
+    library = library.filter(item => item && item.cover && item.file && item.title);
+    localStorage.setItem('taxc_library', JSON.stringify(library));
+    updateLibraryCount();
 
-    library.forEach(item => {
-      const div = document.createElement('div');
-      div.className = 'library-item';
-      div.innerHTML = `
-        <img src="${item.cover}" class="library-cover" alt="${item.title}" onerror="this.src='https://via.placeholder.com/50x70/e6ffe6/28A745?text=Cover'">
-        <div class="library-info">
-          <div class="library-name">${item.title}</div>
-          <div class="library-type">${item.price === 0 ? 'Free' : 'Purchased'}</div>
-        </div>
-        <button class="library-btn" onclick="window.open('${item.file}', '_blank')">Open</button>
-      `;
-      grid.appendChild(div);
-    });
-  }
+    library.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'library-item';
+      div.innerHTML = `
+        <img src="${item.cover}" class="library-cover" alt="${item.title}" onerror="this.src='https://via.placeholder.com/50x70/e6ffe6/28A745?text=Cover'">
+        <div class="library-info">
+          <div class="library-name">${item.title}</div>
+          <div class="library-type">${item.price === 0 ? 'Free' : 'Purchased'}</div>
+        </div>
+        <button class="library-btn" onclick="window.open('${item.file}', '_blank')">Open</button>
+      `;
+      grid.appendChild(div);
+    });
+  }
 
   // === FREE DOWNLOAD: NO MODAL ===
   function downloadFree(title) {
@@ -1210,21 +1216,39 @@ footer {
     return true;
   }
 
-  function startPayment() {
-    let email = localStorage.getItem('taxc_user_email') || '';
-    email = prompt("Enter your email to receive the ebook:", email);
+  // === REVISED startPayment() FUNCTION ===
+  function startPayment() {
+    if (!currentEbook) {
+      alert("Error: No ebook selected for payment.");
+      return;
+    }
 
-    if (!email || !isValidEmail(email)) {
-      alert("Please enter a valid email (e.g., name@gmail.com)");
-      return;
-    }
+    // --- SIMULATE PAYMENT SUCCESS INSTANTLY ---
+    // NOTE: In a real app, this is where you would call the Paystack initialization
+    // function (e.g., PaystackPop.setup) and the success callback would execute 
+    // the following steps.
+    
+    alert(`Payment for ${currentEbook.title} successful! Download starting...`);
+    
+    // Add the purchased ebook to the user's local library
+    addToLibrary(currentEbook);
+    
+    // Open the PDF file in a new tab/window
+    window.open(currentEbook.file, '_blank');
+    
+    // Close the modal
+    closeModal('paidModal');
+  }
+  // =========================================
 
-    localStorage.setItem('taxc_user_email', email);
-    alert("Payment successful! Download starting...");
-    addToLibrary(currentEbook);
-    window.open(currentEbook.file, '_blank');
-    closeModal('paidModal');
-  }
+  function addToLibrary(ebook) {
+    if (!library.find(i => i.file === ebook.file)) {
+      library.push(ebook);
+      localStorage.setItem('taxc_library', JSON.stringify(library));
+      updateLibraryCount();
+      renderLibrary();
+    }
+  }
 
   function addToLibrary(ebook) {
     if (!library.find(i => i.file === ebook.file)) {
