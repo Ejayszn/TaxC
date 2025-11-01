@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaxC - Nigeria's P.I.T Calculator</title>
+    <title>TaxC - Nigerian Tax Calculator</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
@@ -13,7 +13,16 @@
     
     <style>
 /* -------------------- Color Palette: Vibrant Primary Green #28A745 -------------------- */
-
+:root {
+    /* Mapped main app colors to colors for easier maintenance */
+    --green: #28A745; 
+    --dark-green: #218838;
+    --soft: #F8F9FA; /* Light background */
+    --muted: #6c757d;
+    --card: #ffffff;
+    --main-color: #28A745;
+    --dark-text: #343A40;
+}
 /* -------------------- Global Reset & Typography -------------------- */
 body {
     font-family: 'Inter', sans-serif;
@@ -72,6 +81,19 @@ h2.section-title {
 .cta-button:hover {
     background-color: #218838; /* Darker Green (Hover) */
     transform: translateY(-2px);
+}
+
+.cta-small { 
+    background: var(--green); 
+    color: #fff; 
+    padding: 8px 14px; 
+    border-radius: 6px; 
+    border: none; 
+    cursor: pointer; 
+    font-weight: 600;
+} 
+.cta-small:hover { 
+    background: var(--dark-green); 
 }
 /* ==================== DROPDOWN MENU STYLES ==================== */
         .dropdown {
@@ -193,6 +215,7 @@ h2.section-title {
 .desktop-nav {
     display: none; 
 }
+
 /* Hamburger Styles (Fixed) */
 #hamburger {
     background: none;
@@ -938,6 +961,11 @@ input:focus, select:focus {
             .chat-window { width: 300px; height: 480px; }
             .chat-launcher { width: 55px; height: 55px; font-size: 1rem; }
         }
+
+   footer {
+            margin-top: 24px; padding: 20px; text-align: center; color: var(--muted);
+            border-top: 1px solid #eee;
+        }
 </style>
 </head>
 <body>
@@ -969,9 +997,10 @@ input:focus, select:focus {
                     </ul>
                 </div>
             </div>
-            <a href="faq.html">Frequently Asked Questions</a>
+            <a href="faq.html">FAQ</a>
             <a href="ebooks.html">Ebooks</a>
             <a href="#calculator">Calculator</a>
+            <button class="cta-small" onclick="window.location.href='login.html'">Login</button>
         </nav>
 
         <button id="hamburger" class="hamburger" onclick="toggleMobileMenu()" type="button">
@@ -1002,6 +1031,7 @@ input:focus, select:focus {
             <a href="faq.html">Frequently Asked Questions</a>
             <a href="ebooks.html">Ebooks</a>
             <a href="#calculator" class="nav-link">Calculator</a>
+            <button class="cta-small" onclick="window.location.href='login.html'">Login</button>
         </nav>
     </header>
     <main class="container">
@@ -1147,14 +1177,14 @@ input:focus, select:focus {
                         <option value="salary">Salary/Employment</option>
                         <option value="self">Self-Employment/Business</option>
                         <option value="rental">Rental Income</option>
-                        <option value="investment">Non-Investment Income</option>
+                        <option value="investment">Investment Income</option>
                         <option value="other">Other Income</option>
                     </select>
                 </div>
                 <div class="input-group">
                     <label for="freq_INDEX">Frequency</label>
                     <select id="freq_INDEX" class="income-frequency" onchange="toggleMonthlyInputs(this); handleIncomeTypeChange(document.getElementById('type_INDEX'))">
-                        <option value="annual">Annual Gross Income</option>
+                        <option value="annual">Annual Income (Gross)</option>
                         <option value="monthly">Monthly Breakdown</option>
                     </select>
                 </div>
@@ -1231,13 +1261,17 @@ input:focus, select:focus {
                 </div>
             </div>
 
-            <div class="input-group wht-row" style="display: none;">
-                <label for="wht_INDEX">Withholding Tax (WHT) Paid (₦)</label>
-                <div class="tooltip">
-                    <input type="text" id="wht_INDEX" class="wht-input" oninput="updateFormattedValue(this)" placeholder="Optional: Leave blank for default WHT calculation">
-                    <span class="tooltiptext">Enter the amount of WHT deducted by payer. Defaults to statutory rate if blank.</span>
-                </div>
-            </div>
+            <div class="input-group wht-row" style="display:none;">
+    <label for="wht_INDEX">Withholding Tax (WHT) Paid (₦)</label>
+    <div class="tooltip">
+        <input type="text" id="wht_INDEX" class="wht-input"
+               oninput="updateFormattedValue(this)" placeholder="e.g. 50,000">
+        <span class="tooltiptext">
+            WHT = 10% tax your tenant/bank pays to govt BEFORE giving you the rest.
+            Leave blank in Unsure → we use standard 10%.
+        </span>
+    </div>
+</div>
         </div>
     </template>
 <!-- AI CHATBOT -->
@@ -1254,6 +1288,11 @@ input:focus, select:focus {
             </div>
         </div>
     </div>
+
+    <footer>
+    &copy; 2025 TaxC — Made with care. | <a href="mailto:support@taxc.com">support@taxc.com</a>
+</footer>
+
     <script>
         // === MOCK AI ===
         const taxcAI = {
@@ -1383,48 +1422,56 @@ input:focus, select:focus {
         }
 
         function handleMonthlySalaryAutoFill(block) {
-            const monthlyInputs = block.querySelectorAll('.monthly-income-row input');
-            const januaryInput = monthlyInputs[0];
+    const monthlyInputs = block.querySelectorAll('.monthly-income-row input');
+    const januaryInput = monthlyInputs[0];
 
-            if (januaryInput.autoFillHandler) {
-                januaryInput.removeEventListener('input', januaryInput.autoFillHandler);
-                januaryInput.autoFillHandler = null;
-            }
-            
-            if (block.querySelector('.income-type').value === 'salary' && block.querySelector('.income-frequency').value === 'monthly') {
-                const autoFillHandler = (e) => {
-                    if (e.isTrusted === false && e.type === 'input') return; 
+    // 1. Remove existing handler to prevent duplicates
+    if (januaryInput.autoFillHandler) {
+        januaryInput.removeEventListener('input', januaryInput.autoFillHandler);
+        januaryInput.autoFillHandler = null;
+    }
 
-                    const janValue = januaryInput.value.replace(/[^0-9]/g, '');
-                    if (janValue === '') {
-                        monthlyInputs.forEach((input, index) => {
-                             if (index !== 0 && input.dataset.manual !== 'true') {
-                                input.value = '';
-                            }
-                        });
-                        updateMonthlyTotal(januaryInput);
-                        return;
+    if (block.querySelector('.income-type').value === 'salary' && block.querySelector('.income-frequency').value === 'monthly') {
+        const autoFillHandler = (e) => {
+            // Prevent recursive calls when dispatching the event below
+            if (e.isTrusted === false && e.type === 'input') return;
+
+            const janValueRaw = getRawValue(januaryInput); // Get the raw number value
+            const janFormattedValue = januaryInput.value; // Get the formatted string
+
+            monthlyInputs.forEach((input, index) => {
+                // Skip January (index 0)
+                // Skip any month that has been manually edited by the user
+                if (index !== 0 && input.dataset.manual !== 'true') {
+                    
+                    if (janValueRaw === 0) {
+                        // FIX: Clear the input if January is empty/zero
+                        input.value = '';
+                    } else {
+                        // FIX: Use the formatted string from Jan
+                        input.value = janFormattedValue;
                     }
-
-                    monthlyInputs.forEach((input, index) => {
-                        if (index !== 0 && input.dataset.manual !== 'true') {
-                            input.value = Number(janValue).toLocaleString('en-NG');
-                            const event = new Event('input', { bubbles: true });
-                            event.isTrusted = false;
-                            input.dispatchEvent(event);
-                        }
-                    });
-                    updateMonthlyTotal(januaryInput);
-                };
-
-                januaryInput.autoFillHandler = autoFillHandler;
-                januaryInput.addEventListener('input', autoFillHandler);
-
-                if (januaryInput.value) {
-                    januaryInput.dispatchEvent(new Event('input'));
+                    
+                    // Manually trigger total update on these fields. 
+                    // We don't dispatch an 'input' event because it can cause infinite loops
+                    // due to the updateFormattedValue(this) and updateMonthlyTotal(this) calls.
+                    // Instead, we just call updateMonthlyTotal once after the loop.
                 }
-            }
+            });
+            
+            // Recalculate the total annual income once after the loop finishes
+            updateMonthlyTotal(januaryInput);
+        };
+
+        januaryInput.autoFillHandler = autoFillHandler;
+        januaryInput.addEventListener('input', autoFillHandler);
+
+        // If January already has a value when the function runs, trigger a fill
+        if (januaryInput.value) {
+            januaryInput.dispatchEvent(new Event('input'));
         }
+    }
+}
 
         function handleIncomeTypeChange(selectEl) {
             const block = selectEl.closest('.income-source-block');
@@ -1478,27 +1525,26 @@ input:focus, select:focus {
         }
 
         function toggleWhtField(selectElement) {
-            const type = selectElement.value;
-            const block = selectElement.closest('.income-source-block');
-            const whtRow = block.querySelector('.wht-row');
-            const whtInput = block.querySelector('.wht-input');
+    const type = selectElement.value;
+    const block = selectElement.closest('.income-source-block');
+    const whtRow = block.querySelector('.wht-row');
+    const tooltip = block.querySelector('.wht-row .tooltiptext');
 
-            if (whtRow && whtInput) {
-                if (['rental', 'investment', 'other'].includes(type)) {
-                    whtRow.style.display = 'flex';
-                    const tooltipText = block.querySelector('.wht-row .tooltiptext');
-                    
-                    if (type === 'rental' || type === 'investment') {
-                        tooltipText.textContent = 'Enter the amount of 10% WHT deducted by payer, if known. Defaults to 10% of gross income if blank.';
-                    } else if (type === 'other') {
-                        tooltipText.textContent = 'Enter the amount of 5% WHT deducted by payer, if known. Defaults to 5% of gross income if blank.';
-                    }
-                } else {
-                    whtRow.style.display = 'none';
-                    whtInput.value = '';
-                }
-            }
-        }
+    if (!whtRow) return;
+
+    if (type === 'rental' || type === 'investment') {
+        whtRow.style.display = 'flex';
+        tooltip.innerHTML = `
+            WHT = 10% tax your tenant/bank pays to govt BEFORE giving you the rest.
+            sLeave blank → we use standard 10%.
+        `;
+    } else {
+        whtRow.style.display = 'none';
+        // Clear input when hidden
+        const input = block.querySelector('.wht-input');
+        if (input) input.value = '';
+    }
+}
 
         function addIncomeSource() {
             const template = document.getElementById('income-template');
@@ -1890,26 +1936,48 @@ document.addEventListener('DOMContentLoaded', () => {
     msg.textContent = 'Please fill the above';
     defaultMsg.style.display = 'block';
 
-    // 5. === DROPDOWN LOGIC (YOU ADDED THIS) ===
-    function toggleDropdown(event, dropdownId) {
-        event.stopPropagation();
+    // 5. === DROPDOWN LOGIC (MERGED CLICK & HOVER) ===
+    
+    // Helper function to open a dropdown
+    function openDropdown(dropdownId) {
         const dropdown = document.getElementById(dropdownId);
-        const isOpen = dropdown.hasAttribute('open');
-
+        if (!dropdown) return;
+        
         // Close all other dropdowns
         document.querySelectorAll('.dropdown[open]').forEach(d => {
             if (d.id !== dropdownId) d.removeAttribute('open');
         });
+        dropdown.setAttribute('open', '');
+    }
 
-        // Toggle current
+    // Helper function to close a dropdown
+    function closeDropdown(dropdownId) {
+        const dropdown = document.getElementById(dropdownId);
+        if (dropdown) dropdown.removeAttribute('open');
+    }
+
+    // --- A. Click-to-Toggle Logic (Original) ---
+    function toggleDropdown(event, dropdownId) {
+        event.stopPropagation();
+        const dropdown = document.getElementById(dropdownId);
+        const isOpen = dropdown.hasAttribute('open');
+        
+        // Use helper functions to ensure closure logic is centralized
         if (isOpen) {
-            dropdown.removeAttribute('open');
+            closeDropdown(dropdownId);
         } else {
-            dropdown.setAttribute('open', '');
+            openDropdown(dropdownId);
         }
     }
 
-    // Close dropdown when clicking outside
+    // Attach click listener to dropdown buttons
+    document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+        const dropdownId = toggle.closest('.dropdown').id;
+        // Keep the original click logic for touch/accessibility
+        toggle.onclick = (e) => toggleDropdown(e, dropdownId);
+    });
+
+    // Close dropdown when clicking outside (Original)
     document.addEventListener('click', function(e) {
         if (!e.target.closest('.dropdown')) {
             document.querySelectorAll('.dropdown[open]').forEach(d => {
@@ -1917,11 +1985,29 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
+    
+    // --- B. Hover Logic (Added for Desktop) ---
+    document.querySelectorAll('.dropdown').forEach(dropdown => {
+        const dropdownId = dropdown.id;
+        
+        // Attach mouseover to open only on desktop screens
+        dropdown.addEventListener('mouseover', function(e) {
+            if (window.innerWidth >= 768) { // Check for desktop screens (adjust breakpoint as needed)
+                openDropdown(dropdownId);
+            }
+        });
 
-    // Attach toggle to dropdown buttons
-    document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
-        const dropdownId = toggle.closest('.dropdown').id;
-        toggle.onclick = (e) => toggleDropdown(e, dropdownId);
+        // Attach mouseout to close only on desktop screens
+        dropdown.addEventListener('mouseout', function(e) {
+            if (window.innerWidth >= 768) {
+                 setTimeout(() => {
+                     // Check if the mouse is truly outside the dropdown area
+                     if (!dropdown.contains(e.relatedTarget)) {
+                        closeDropdown(dropdownId);
+                     }
+                 }, 100); 
+            }
+        });
     });
     // === END DROPDOWN LOGIC ===
 });

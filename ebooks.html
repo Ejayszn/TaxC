@@ -3,10 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ebooks - TaxC Nigeria</title>
+  <title>TaxC | Ebooks</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="icon" href="./favicon.ico">
+
   <style>
+    :root {
+  --green: #28A745;
+  --dark-green: #218838;
+  --soft: #F8F9FA;
+  --muted: #6c757d;
+  --card: #ffffff;
+  --main-color: #28A745;
+  --dark-text: #343A40;
+}
     /* === GLOBAL & REUSED FROM INDEX.HTML === */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -30,16 +40,81 @@
     .desktop-nav { display: none; }
     .desktop-nav a { color: #343A40; padding: 8px 15px; font-weight: 600; transition: color 0.3s; }
     .desktop-nav a:hover { color: #28A745; }
-    #hamburger { background: none; border: none; cursor: pointer; width: 30px; height: 20px; position: relative; }
-    .hamburger-inner, .hamburger-inner::before, .hamburger-inner::after {
-      position: absolute; height: 2px; width: 100%; background: #343A40; transition: all 0.3s;
+
+    .cta-small {
+  background: var(--green);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+.cta-small:hover {
+  background: var(--dark-green);
+}
+        /* === HAMBURGER MENU (FIXED & ANIMATED) === */
+    #hamburger {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      z-index: 101;
     }
-    .hamburger-inner { top: 50%; transform: translateY(-50%); }
-    .hamburger-inner::before { content: ''; top: -8px; }
-    .hamburger-inner::after { content: ''; bottom: -8px; }
-    .hamburger.is-active .hamburger-inner { transform: translateY(-50%) rotate(45deg); }
-    .hamburger.is-active .hamburger-inner::before { opacity: 0; }
-    .hamburger.is-active .hamburger-inner::after { transform: translateY(0) rotate(-90deg); top: 0; }
+
+    .hamburger-box {
+      width: 28px;
+      height: 20px;
+      display: inline-block;
+      position: relative;
+    }
+
+    .hamburger-inner {
+      display: block;
+      top: 50%;
+      margin-top: -1px;
+    }
+
+    .hamburger-inner,
+    .hamburger-inner::before,
+    .hamburger-inner::after {
+      width: 28px;
+      height: 2px;
+      background-color: #343A40;
+      border-radius: 2px;
+      position: absolute;
+      transition: transform 0.15s ease;
+    }
+
+    .hamburger-inner::before,
+    .hamburger-inner::after {
+      content: "";
+      display: block;
+    }
+
+    .hamburger-inner::before { top: -8px; }
+    .hamburger-inner::after { bottom: -8px; }
+
+    /* === ACTIVE STATE → X === */
+    .hamburger.is-active .hamburger-inner {
+      transform: rotate(45deg);
+      background-color: #28A745;
+    }
+
+    .hamburger.is-active .hamburger-inner::before {
+      transform: translate3d(0, 8px, 0) rotate(-90deg);
+      background-color: #28A745;
+    }
+
+    .hamburger.is-active .hamburger-inner::after {
+      transform: translate3d(0, -8px, 0) rotate(-90deg);
+      background-color: #28A745;
+    }
     .mobile-menu { display: none; position: absolute; top: 100%; left: 0; right: 0;
       background: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); flex-direction: column; z-index: 99; }
     .mobile-menu[open] { display: flex; }
@@ -76,11 +151,76 @@
       font-size: 0.95rem;
     }
 
+    .search-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+  max-width: 100%;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 40px 10px 16px; /* Extra right padding for X */
+  border: 1px solid #ddd;
+  border-radius: 50px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border 0.3s;
+}
+
+.search-input:focus {
+  border-color: #28A745;
+  box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2);
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  color: #999;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.clear-search-btn:hover {
+  background: #f1f1f1;
+  color: #333;
+}
+
+.clear-search-btn:focus {
+  outline: 2px solid #28A745;
+}
+
     /* === EBOOK GRID === */
     .ebooks-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;
-      margin-bottom: 40px;
-    }
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+  width: 100%;
+  min-width: 0;
+}
+
+.ebook-card {
+  background: white; border-radius: 12px; overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  width: 100%;
+  min-width: 0;
+}
+.ebook-card:hover {
+  transform: translateY(-6px); box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
     .ebook-card {
       background: white; border-radius: 12px; overflow: hidden;
       box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: transform 0.3s, box-shadow 0.3s;
@@ -103,7 +243,7 @@
     }
     .ebook-desc {
       font-size: 0.95rem; color: #444; margin-bottom: 16px; display: -webkit-box;
-      -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+      -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
     }
     .ebook-badge {
       display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem;
@@ -179,23 +319,185 @@
       font-size: 1.5rem; color: #999; cursor: pointer;
     }
 
-    /* === FLOATING CHAT === */
-    #taxc-chat-widget { position: fixed; bottom: 20px; right: 20px; z-index: 10000; }
-    .chat-launcher { width: 60px; height: 60px; background: #28A745; color: white; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem;
-      cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: all 0.3s; }
-    .chat-launcher:hover { transform: scale(1.1); }
-    .chat-window { display: none; width: 340px; height: 520px; background: white; border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.15); flex-direction: column; overflow: hidden; border: 1px solid #eee; }
-    .chat-header { background: #28A745; color: white; padding: 14px; font-weight: 700; text-align: center; position: relative; }
-    .chat-close { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: white; font-size: 1.4rem; cursor: pointer; }
-    .chat-body { flex: 1; padding: 15px; overflow-y: auto; background: #f8f9fa; }
-    .message { margin: 10px 0; padding: 10px 14px; border-radius: 18px; max-width: 80%; line-height: 1.5; font-size: 0.95rem; }
-    .user { background: #28A745; color: white; margin-left: auto; border-bottom-right-radius: 4px; }
-    .ai { background: white; color: #333; border: 1px solid #eee; margin-right: auto; border-bottom-left-radius: 4px; }
-    .chat-input { display: flex; padding: 10px; border-top: 1px solid #eee; background: white; }
-    .chat-input input { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 25px; font-size: 0.95rem; }
-    .chat-input button { margin-left: 8px; background: #28A745; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
+    /* === FLOATING CHAT (MESSAGE ICON + TOOLTIP) === */
+#taxc-chat-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 10000;
+}
+
+.chat-launcher {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  background: #28A745;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: all 0.3s;
+  z-index: 10001;
+}
+
+.chat-launcher:hover {
+  transform: scale(1.1);
+  background: #218838;
+}
+
+.chat-launcher svg {
+  width: 28px;
+  height: 28px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chat-tooltip {
+  position: absolute;
+  right: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #333;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.chat-tooltip::after {
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-left-color: #333;
+}
+
+.chat-launcher:hover .chat-tooltip {
+  opacity: 1;
+  visibility: visible;
+  right: 68px;
+}
+
+.chat-window {
+  display: none;
+  width: 340px;
+  height: 520px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #eee;
+}
+
+.chat-header {
+  background: #28A745;
+  color: white;
+  padding: 14px;
+  font-weight: 700;
+  text-align: center;
+  position: relative;
+}
+
+.chat-header::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #fff;
+  border-radius: 50%;
+  margin-right: 8px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.chat-close {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.chat-body {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  background: #f8f9fa;
+}
+
+.message {
+  margin: 10px 0;
+  padding: 10px 14px;
+  border-radius: 18px;
+  max-width: 80%;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.user {
+  background: #28A745;
+  color: white;
+  margin-left: auto;
+  border-bottom-right-radius: 4px;
+}
+
+.ai {
+  background: white;
+  color: #333;
+  border: 1px solid #eee;
+  margin-right: auto;
+  border-bottom-left-radius: 4px;
+}
+
+.chat-input {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #eee;
+  background: white;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 25px;
+  font-size: 0.95rem;
+}
+
+.chat-input button {
+  margin-left: 8px;
+  background: #28A745;
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+}
 
     /* === RESPONSIVE === */
     @media (min-width: 768px) {
@@ -209,6 +511,60 @@
       .chat-window { width: 300px; height: 480px; }
       .chat-launcher { width: 55px; height: 55px; font-size: 1rem; }
     }
+
+    @media (max-width: 480px) {
+  .search-wrapper {
+    min-width: auto;
+    width: 100%;
+  }
+  .search-input {
+    padding: 12px 44px 12px 16px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .chat-tooltip {
+    display: none;
+  }
+  .chat-launcher {
+    width: 55px;
+    height: 55px;
+  }
+  .chat-launcher svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* Fix sticky header blocking content on anchor jump */
+html {
+  scroll-padding-top: 80px; /* Height of your header */
+}
+
+@media (max-width: 768px) {
+  html {
+    scroll-padding-top: 70px;
+  }
+}
+
+.reset-library-btn {
+  padding: 6px 12px;
+  background: #a72828;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+.reset-library-btn:hover {
+  background: #c82333;
+}
+footer {
+            margin-top: 24px; padding: 20px; text-align: center; color: var(--muted);
+            border-top: 1px solid #eee;
+        }
   </style>
 </head>
 <body>
@@ -222,17 +578,19 @@
       <a href="index.html">Home</a>
       <a href="faq.html">FAQ</a>
       <a href="index.html#calculator">Calculator</a>
-
+      <button class="cta-small" onclick="window.location.href='login.html'">Login</button>
       
-
     </nav>
-    <button id="hamburger" class="hamburger" onclick="toggleMobileMenu()">
-      <span class="hamburger-box"><span class="hamburger-inner"></span></span>
-    </button>
+    <button id="hamburger" class="hamburger" aria-label="Menu" onclick="toggleMobileMenu()">
+  <span class="hamburger-box">
+    <span class="hamburger-inner"></span>
+  </span>
+</button>
     <nav id="menu" class="mobile-menu">
       <a href="index.html">Home</a>
       <a href="faq.html">FAQ</a>
       <a href="index.html#calculator">Calculator</a>
+      <button class="cta-small" onclick="window.location.href='login.html'">Login</button>
 
     </nav>
   </header>
@@ -240,246 +598,251 @@
   <div class="container">
 
     <!-- HERO -->
-    <section class="hero-section">
-      <h1>TaxC Ebooks</h1>
-      <p>Get free and premium guides to help you understand, file, and save on taxes in Nigeria.</p>
-      <a href="#ebooks" class="cta-button">Browse All 20 Ebooks</a>
-    </section>
+    <section class="hero-section" id="heroSection">
+  <h1>TaxC Ebooks</h1>
+  <p id="heroText">Get free and premium guides to help you understand, file, and save on taxes in Nigeria.</p>
+  <a href="#ebooks" class="cta-button" onclick="activateAllFilter(event)">
+  Browse All 20 Ebooks
+</a>
+</section>
 
     <!-- FILTER BAR -->
     <div class="filter-bar">
       <button class="filter-btn active" data-filter="all">All</button>
       <button class="filter-btn" data-filter="free">Free (5)</button>
       <button class="filter-btn" data-filter="paid">Paid (15)</button>
-      <input type="text" class="search-input" placeholder="Search ebooks..." id="searchInput">
+      <div class="search-wrapper">
+  <input type="text" class="search-input" placeholder="Search ebooks by title, or topic..." id="searchInput">
+  <button id="clearSearch" class="clear-search-btn" aria-label="Clear search">×</button>
+</div>
     </div>
 
     <!-- EBOOK GRID -->
 <section id="ebooks" class="ebooks-grid">
 
   <!-- === 5 FREE EBOOKS === -->
-  <div class="ebook-card" data-type="free" data-title="Who Pays Tax">
-    <img src="./covers/who-pays-tax.png" alt="Who Pays Tax in Nigeria?" class="ebook-cover">
-    <div class="ebook-body">
-      <div class="ebook-badge badge-free">FREE</div>
-      <h3 class="ebook-title">Who Pays Tax in Nigeria?</h3>
-      <p class="ebook-author">TaxC Team</p>
-      <p class="ebook-desc">Is it only salary earners? What about traders, landlords, and freelancers? Get the facts.</p>
-      <button class="ebook-btn btn-free" onclick="openFreeModal('Who Pays Tax in Nigeria?', 'who-pays-tax.pdf')">Download Free</button>
-    </div>
-  </div>
+      <div class="ebook-card" data-type="free" data-title="Who Pays Tax in Nigeria?">
+        <img src="./covers/who-pays-tax.png" alt="Who Pays Tax in Nigeria?" class="ebook-cover">
+        <div class="ebook-body">
+          <div class="ebook-badge badge-free">FREE</div>
+          <h3 class="ebook-title">Who Pays Tax in Nigeria?</h3>
+          <p class="ebook-author">TaxC Team</p>
+          <p class="ebook-desc">Is it only salary earners? What about traders, landlords, and freelancers? Get the facts.</p>
+          <button class="ebook-btn btn-free" onclick="downloadFree('Who Pays Tax in Nigeria?', 'who-pays-tax.pdf')">Download Free</button>
+        </div>
+      </div>
 
-  <div class="ebook-card" data-type="free" data-title="What is PIT">
-    <img src="./covers/what-is-pit.png" alt="What is Personal Income Tax (P.I.T.)?" class="ebook-cover">
-    <div class="ebook-body">
-      <div class="ebook-badge badge-free">FREE</div>
-      <h3 class="ebook-title">What is Personal Income Tax (P.I.T.)?</h3>
-      <p class="ebook-author">TaxC Team</p>
-      <p class="ebook-desc">The complete beginner’s guide to Nigeria’s income tax system.</p>
-      <button class="ebook-btn btn-free" onclick="openFreeModal('What is Personal Income Tax (P.I.T.)?', 'what-is-pit.pdf')">Download Free</button>
-    </div>
-  </div>
+      <div class="ebook-card" data-type="free" data-title="What is Personal Income Tax (P.I.T.)?">
+        <img src="./covers/what-is-pit.png" alt="What is Personal Income Tax (P.I.T.)?" class="ebook-cover">
+        <div class="ebook-body">
+          <div class="ebook-badge badge-free">FREE</div>
+          <h3 class="ebook-title">What is Personal Income Tax (P.I.T.)?</h3>
+          <p class="ebook-author">TaxC Team</p>
+          <p class="ebook-desc">The complete beginner’s guide to Nigeria’s income tax system.</p>
+          <button class="ebook-btn btn-free" onclick="downloadFree('What is Personal Income Tax (P.I.T.)?', 'what-is-pit.pdf')">Download Free</button>
+        </div>
+      </div>
 
-  <div class="ebook-card" data-type="free" data-title="Am I Tax Eligible">
-    <img src="./covers/am-i-tax-eligible.png" alt="Am I Tax Eligible? (Quick Quiz)" class="ebook-cover">
-    <div class="ebook-body">
-      <div class="ebook-badge badge-free">FREE</div>
-      <h3 class="ebook-title">Am I Tax Eligible? (Quick Quiz)</h3>
-      <p class="ebook-author">TaxC Team</p>
-      <p class="ebook-desc">Answer 5 questions and know instantly if you should be paying tax.</p>
-      <button class="ebook-btn btn-free" onclick="openFreeModal('Am I Tax Eligible? (Quick Quiz)', 'tax-eligible-quiz.pdf')">Download Free</button>
-    </div>
-  </div>
+      <div class="ebook-card" data-type="free" data-title="Am I Tax Eligible? (Quick Quiz)">
+        <img src="./covers/am-i-tax-eligible.png" alt="Am I Tax Eligible? (Quick Quiz)" class="ebook-cover">
+        <div class="ebook-body">
+          <div class="ebook-badge badge-free">FREE</div>
+          <h3 class="ebook-title">Am I Tax Eligible? (Quick Quiz)</h3>
+          <p class="ebook-author">TaxC Team</p>
+          <p class="ebook-desc">Answer 5 questions and know instantly if you should be paying tax.</p>
+          <button class="ebook-btn btn-free" onclick="downloadFree('Am I Tax Eligible? (Quick Quiz)', 'tax-eligible-quiz.pdf')">Download Free</button>
+        </div>
+      </div>
 
-  <div class="ebook-card" data-type="free" data-title="Top 5 Myths">
-    <img src="./covers/tax-myths.png" alt="Top 5 Tax Myths Nigerians Believe" class="ebook-cover">
-    <div class="ebook-body">
-      <div class="ebook-badge badge-free">FREE</div>
-      <h3 class="ebook-title">Top 5 Tax Myths Nigerians Believe</h3>
-      <p class="ebook-author">TaxC Team</p>
-      <p class="ebook-desc">“Tax is only for rich people”...and 4 other lies exposed.</p>
-      <button class="ebook-btn btn-free" onclick="openFreeModal('Top 5 Tax Myths Nigerians Believe', 'tax-myths.pdf')">Download Free</button>
-    </div>
-  </div>
+      <div class="ebook-card" data-type="free" data-title="Top 5 Tax Myths Nigerians Believe">
+        <img src="./covers/tax-myths.png" alt="Top 5 Tax Myths Nigerians Believe" class="ebook-cover">
+        <div class="ebook-body">
+          <div class="ebook-badge badge-free">FREE</div>
+          <h3 class="ebook-title">Top 5 Tax Myths Nigerians Believe</h3>
+          <p class="ebook-author">TaxC Team</p>
+          <p class="ebook-desc">“Tax is only for rich people”...and 4 other lies exposed.</p>
+          <button class="ebook-btn btn-free" onclick="downloadFree('Top 5 Tax Myths Nigerians Believe', 'tax-myths.pdf')">Download Free</button>
+        </div>
+      </div>
 
-  <div class="ebook-card" data-type="free" data-title="Mini Calculator">
-    <img src="./covers/tax-pay.png" alt="How Much Tax Should I Pay? (Mini Guide)" class="ebook-cover">
-    <div class="ebook-body">
-      <div class="ebook-badge badge-free">FREE</div>
-      <h3 class="ebook-title">How Much Tax Should I Pay? (Mini Guide)</h3>
-      <p class="ebook-author">TaxC Team</p>
-      <p class="ebook-desc">Manual formula to estimate your tax in 5 minutes.</p>
-      <button class="ebook-btn btn-free" onclick="openFreeModal('How Much Tax Should I Pay? (Mini Guide)', 'mini-tax-calculator.pdf')">Download Free</button>
-    </div>
-  </div>
+      <div class="ebook-card" data-type="free" data-title="How Much Tax Should I Pay? (Mini Guide)">
+        <img src="./covers/tax-pay.png" alt="How Much Tax Should I Pay? (Mini Guide)" class="ebook-cover">
+        <div class="ebook-body">
+          <div class="ebook-badge badge-free">FREE</div>
+          <h3 class="ebook-title">How Much Tax Should I Pay? (Mini Guide)</h3>
+          <p class="ebook-author">TaxC Team</p>
+          <p class="ebook-desc">Manual formula to estimate your tax in 5 minutes.</p>
+          <button class="ebook-btn btn-free" onclick="downloadFree('How Much Tax Should I Pay? (Mini Guide)', 'mini-tax-calculator.pdf')">Download Free</button>
+        </div>
+      </div>
 
-  <!-- === 15 PAID EBOOKS === -->
-  <div class="ebook-card" data-type="paid" data-title="Minimize Tax">
-     <img src="./covers/minimize-tax.png" alt="How to Legally Minimize Your Tax" class="ebook-cover">
-    <div class="ebook-body">
-      <div class="ebook-badge badge-paid">₦2,000</div>
-      <h3 class="ebook-title">How to Legally Minimize Your Tax</h3>
-      <p class="ebook-author">TaxC Team</p>
-      <p class="ebook-desc">Proven strategies to reduce your tax bill — legally.</p>
-      <button class="ebook-btn btn-paid" onclick="openPaidModal('How to Legally Minimize Your Tax', 2000, 'minimize-tax.pdf')">Buy for ₦2,000</button>
-    </div>
-  </div>
+      <!-- === 15 PAID EBOOKS === -->
+      <div class="ebook-card" data-type="paid" data-title="How to Legally Minimize Your Tax">
+        <img src="./covers/minimize-tax.png" alt="How to Legally Minimize Your Tax" class="ebook-cover">
+        <div class="ebook-body">
+          <div class="ebook-badge badge-paid">₦2,000</div>
+          <h3 class="ebook-title">How to Legally Minimize Your Tax</h3>
+          <p class="ebook-author">TaxC Team</p>
+          <p class="ebook-desc">Proven strategies to reduce your tax bill — legally.</p>
+          <button class="ebook-btn btn-paid" onclick="openPaidModal('How to Legally Minimize Your Tax', 2000, 'minimize-tax.pdf')">Buy for ₦2,000</button>
+        </div>
+      </div>
 
-  <div class="ebook-card" data-type="paid" data-title="File by State">
-    <img src="./covers/file-tax.png" alt="How Do I File My Tax by State IRS?" class="ebook-cover">
-    <div class="ebook-body">
-      <div class="ebook-badge badge-paid">₦1,500</div>
-      <h3 class="ebook-title">How Do I File My Tax by State IRS?</h3>
-      <p class="ebook-author">TaxC Team</p>
-      <p class="ebook-desc">37 states + FCT: portals, forms, deadlines, penalties.</p>
-      <button class="ebook-btn btn-paid" onclick="openPaidModal('How Do I File My Tax by State IRS?', 1500, 'file-tax-by-state.pdf')">Buy for ₦1,500</button>
-    </div>
-  </div>
+      <div class="ebook-card" data-type="paid" data-title="How Do I File My Tax by State IRS?">
+        <img src="./covers/file-tax.png" alt="How Do I File My Tax by State IRS?" class="ebook-cover">
+        <div class="ebook-body">
+          <div class="ebook-badge badge-paid">₦1,500</div>
+          <h3 class="ebook-title">How Do I File My Tax by State IRS?</h3>
+          <p class="ebook-author">TaxC Team</p>
+          <p class="ebook-desc">37 states + FCT: portals, forms, deadlines, penalties.</p>
+          <button class="ebook-btn btn-paid" onclick="openPaidModal('How Do I File My Tax by State IRS?', 1500, 'file-tax-by-state.pdf')">Buy for ₦1,500</button>
+        </div>
+      </div>
 
-  <div class="ebook-card" data-type="paid" data-title="Tax Evasion">
-    <img src="./covers/tax-evasion.png" alt="What is Tax Evasion? (Avoid Jail)" class="ebook-cover">
-    <div class="ebook-body">
-      <div class="ebook-badge badge-paid">₦1,200</div>
-      <h3 class="ebook-title">What is Tax Evasion? (Avoid Jail)</h3>
-      <p class="ebook-author">TaxC Team</p>
-      <p class="ebook-desc">Real cases, fines, jail time, and how to stay safe.</p>
-      <button class="ebook-btn btn-paid" onclick="openPaidModal('What is Tax Evasion? (Avoid Jail)', 1200, 'tax-evasion.pdf')">Buy for ₦1,200</button>
-    </div>
-  </div>
+      <div class="ebook-card" data-type="paid" data-title="What is Tax Evasion? (Avoid Jail)">
+        <img src="./covers/tax-evasion.png" alt="What is Tax Evasion? (Avoid Jail)" class="ebook-cover">
+        <div class="ebook-body">
+          <div class="ebook-badge badge-paid">₦1,200</div>
+          <h3 class="ebook-title">What is Tax Evasion? (Avoid Jail)</h3>
+          <p class="ebook-author">TaxC Team</p>
+          <p class="ebook-desc">Real cases, fines, jail time, and how to stay safe.</p>
+          <button class="ebook-btn btn-paid" onclick="openPaidModal('What is Tax Evasion? (Avoid Jail)', 1200, 'tax-evasion.pdf')">Buy for ₦1,200</button>
+        </div>
+      </div>
 
-  <div class="ebook-card" data-type="paid" data-title="Self-Employed Tax Guide">
-    <img src="./covers/tax-guide.png" alt="Self-Employed Tax Guide" class="ebook-cover">
-    <div class="ebook-body">
-      <div class="ebook-badge badge-paid">₦2,500</div>
-      <h3 class="ebook-title">Self-Employed Tax Guide</h3>
-      <p class="ebook-author">TaxC Team</p>
-      <p class="ebook-desc">Register, file, and pay tax as a freelancer or gig worker.</p>
-      <button class="ebook-btn btn-paid" onclick="openPaidModal('Self-Employed Tax Guide', 2500, 'self-employed-tax.pdf')">Buy for ₦2,500</button>
-    </div>
-  </div>
+      <div class="ebook-card" data-type="paid" data-title="Self-Employed Tax Guide">
+        <img src="./covers/tax-guide.png" alt="Self-Employed Tax Guide" class="ebook-cover">
+        <div class="ebook-body">
+          <div class="ebook-badge badge-paid">₦2,500</div>
+          <h3 class="ebook-title">Self-Employed Tax Guide</h3>
+          <p class="ebook-author">TaxC Team</p>
+          <p class="ebook-desc">Register, file, and pay tax as a freelancer or gig worker.</p>
+          <button class="ebook-btn btn-paid" onclick="openPaidModal('Self-Employed Tax Guide', 2500, 'self-employed-tax.pdf')">Buy for ₦2,500</button>
+        </div>
+      </div>
 
-  <div class="ebook-card" data-type="paid" data-title="Rental Income Tax">
-    <img src="./covers/rental-income.png" alt="Rental Income Tax for Landlords" class="ebook-cover">
-    <div class="ebook-body">
-      <div class="ebook-badge badge-paid">₦1,800</div>
-      <h3 class="ebook-title">Rental Income Tax for Landlords</h3>
-      <p class="ebook-author">TaxC Team</p>
-      <p class="ebook-desc">10% WHT, filing, deductions. Everything landlords need.</p>
-      <button class="ebook-btn btn-paid" onclick="openPaidModal('Rental Income Tax for Landlords', 1800, 'rental-tax.pdf')">Buy for ₦1,800</button>
-    </div>
-  </div>
+      <div class="ebook-card" data-type="paid" data-title="Rental Income Tax for Landlords">
+        <img src="./covers/rental-income.png" alt="Rental Income Tax for Landlords" class="ebook-cover">
+        <div class="ebook-body">
+          <div class="ebook-badge badge-paid">₦1,800</div>
+          <h3 class="ebook-title">Rental Income Tax for Landlords</h3>
+          <p class="ebook-author">TaxC Team</p>
+          <p class="ebook-desc">10% WHT, filing, deductions. Everything landlords need.</p>
+          <button class="ebook-btn btn-paid" onclick="openPaidModal('Rental Income Tax for Landlords', 1800, 'rental-tax.pdf')">Buy for ₦1,800</button>
+        </div>
+      </div>
 
-  <div class="ebook-card" data-type="paid" data-title="Salary Earner’s Handbook">
-    <img src="./covers/handbook.png" alt="Salary Earner’s Tax Handbook 2026" class="ebook-cover">
-    <div class="ebook-body">
-      <div class="ebook-badge badge-paid">₦1,500</div>
-      <h3 class="ebook-title">Salary Earner’s Tax Handbook 2025</h3>
-      <p class="ebook-author">TaxC Team</p>
-      <p class="ebook-desc">PAYE, reliefs, refunds. Updated for 2025.</p>
-      <button class="ebook-btn btn-paid" onclick="openPaidModal('Salary Earner’s Tax Handbook 2025', 1500, 'salary-tax-2025.pdf')">Buy for ₦1,500</button>
-    </div>
-  </div>
+      <div class="ebook-card" data-type="paid" data-title="Salary Earner’s Tax Handbook 2025">
+        <img src="./covers/handbook.png" alt="Salary Earner’s Tax Handbook 2025" class="ebook-cover">
+        <div class="ebook-body">
+          <div class="ebook-badge badge-paid">₦1,500</div>
+          <h3 class="ebook-title">Salary Earner’s Tax Handbook 2025</h3>
+          <p class="ebook-author">TaxC Team</p>
+          <p class="ebook-desc">PAYE, reliefs, refunds. Updated for 2025.</p>
+          <button class="ebook-btn btn-paid" onclick="openPaidModal('Salary Earner’s Tax Handbook 2025', 1500, 'salary-tax-2025.pdf')">Buy for ₦1,500</button>
+        </div>
+      </div>
 
-  <div class="ebook-card" data-type="paid" data-title="Claim Tax Refunds">
-    <img src="https://images.pexels.com/photos/394371/pexels-photo-394371.jpeg?auto=compress&cs=tinysrgb&w=300&h=420&fit=crop" alt="How to Claim Tax Refunds" class="ebook-cover">
-    <div class="ebook-body">
-      <div class="ebook-badge badge-paid">₦1,800</div>
-      <h3 class="ebook-title">How to Claim Tax Refunds</h3>
-      <p class="ebook-author">TaxC Team</p>
-      <p class="ebook-desc">Overpaid? Get your money back from FIRS/SIRS.</p>
-      <button class="ebook-btn btn-paid" onclick="openPaidModal('How to Claim Tax Refunds', 1800, 'claim-refund.pdf')">Buy for ₦1,800</button>
-    </div>
-  </div>
+      <div class="ebook-card" data-type="paid" data-title="How to Claim Tax Refunds">
+        <img src="./covers/tax-refunds.png" alt="How to Claim Tax Refunds" class="ebook-cover">
+        <div class="ebook-body">
+          <div class="ebook-badge badge-paid">₦1,800</div>
+          <h3 class="ebook-title">How to Claim Tax Refunds</h3>
+          <p class="ebook-author">TaxC Team</p>
+          <p class="ebook-desc">Overpaid? Get your money back from FIRS/SIRS.</p>
+          <button class="ebook-btn btn-paid" onclick="openPaidModal('How to Claim Tax Refunds', 1800, 'claim-refund.pdf')">Buy for ₦1,800</button>
+        </div>
+      </div>
 
-  <div class="ebook-card" data-type="paid" data-title="PIT vs CIT">
-    <img src="https://images.pexels.com/photos/3184183/pexels-photo-3184183.jpeg?auto=compress&cs=tinysrgb&w=300&h=420&fit=crop" alt="PIT vs CIT for Business Owners" class="ebook-cover">
-    <div class="ebook-body">
-      <div class="ebook-badge badge-paid">₦2,800</div>
-      <h3 class="ebook-title">PIT vs CIT for Business Owners</h3>
-      <p class="ebook-author">TaxC Team</p>
-      <p class="ebook-desc">Sole prop vs company. Which saves more tax?</p>
-      <button class="ebook-btn btn-paid" onclick="openPaidModal('PIT vs CIT for Business Owners', 2800, 'pit-vs-cit.pdf')">Buy for ₦2,800</button>
-    </div>
-  </div>
+      <div class="ebook-card" data-type="paid" data-title="PIT vs CIT for Business Owners">
+        <img src="./covers/pit-cit.png" alt="PIT vs CIT for Business Owners" class="ebook-cover">
+        <div class="ebook-body">
+          <div class="ebook-badge badge-paid">₦2,800</div>
+          <h3 class="ebook-title">PIT vs CIT for Business Owners</h3>
+          <p class="ebook-author">TaxC Team</p>
+          <p class="ebook-desc">Sole prop vs company. Which saves more tax?</p>
+          <button class="ebook-btn btn-paid" onclick="openPaidModal('PIT vs CIT for Business Owners', 2800, 'pit-vs-cit.pdf')">Buy for ₦2,800</button>
+        </div>
+      </div>
 
-  <div class="ebook-card" data-type="paid" data-title="Pension & NHF">
-    <img src="https://images.pexels.com/photos/394372/pexels-photo-394372.jpeg?auto=compress&cs=tinysrgb&w=300&h=420&fit=crop" alt="Pension & NHF Tax Reliefs" class="ebook-cover">
-    <div class="ebook-body">
-      <div class="ebook-badge badge-paid">₦1,200</div>
-      <h3 class="ebook-title">Pension & NHF Tax Reliefs</h3>
-      <p class="ebook-author">TaxC Team</p>
-      <p class="ebook-desc">8% + 2.5% = huge tax savings. How to claim.</p>
-      <button class="ebook-btn btn-paid" onclick="openPaidModal('Pension & NHF Tax Reliefs', 1200, 'pension-nhf.pdf')">Buy for ₦1,200</button>
-    </div>
-  </div>
+      <div class="ebook-card" data-type="paid" data-title="Pension & NHF Tax Reliefs">
+        <img src="./covers/nhf-tax.png" alt="Pension & NHF Tax Reliefs" class="ebook-cover">
+        <div class="ebook-body">
+          <div class="ebook-badge badge-paid">₦1,200</div>
+          <h3 class="ebook-title">Pension & NHF Tax Reliefs</h3>
+          <p class="ebook-author">TaxC Team</p>
+          <p class="ebook-desc">8% + 2.5% = huge tax savings. How to claim.</p>
+          <button class="ebook-btn btn-paid" onclick="openPaidModal('Pension & NHF Tax Reliefs', 1200, 'pension-nhf.pdf')">Buy for ₦1,200</button>
+        </div>
+      </div>
 
-  <div class="ebook-card" data-type="paid" data-title="Form A Guide">
-    <img src="https://images.pexels.com/photos/669615/pexels-photo-669615.jpeg?auto=compress&cs=tinysrgb&w=300&h=420&fit=crop" alt="How to Fill Form A (Annual Return)" class="ebook-cover">
-    <div class="ebook-body">
-      <div class="ebook-badge badge-paid">₦1,500</div>
-      <h3 class="ebook-title">How to Fill Form A (Annual Return)</h3>
-      <p class="ebook-author">TaxC Team</p>
-      <p class="ebook-desc">Step-by-step with screenshots. No more confusion.</p>
-      <button class="ebook-btn btn-paid" onclick="openPaidModal('How to Fill Form A (Annual Return)', 1500, 'form-a-guide.pdf')">Buy for ₦1,500</button>
-    </div>
-  </div>
+      <div class="ebook-card" data-type="paid" data-title="How to Fill Form A (Annual Return)">
+        <img src="./covers/form-a.png" alt="How to Fill Form A (Annual Return)" class="ebook-cover">
+        <div class="ebook-body">
+          <div class="ebook-badge badge-paid">₦1,500</div>
+          <h3 class="ebook-title">How to Fill Form A (Annual Return)</h3>
+          <p class="ebook-author">TaxC Team</p>
+          <p class="ebook-desc">Step-by-step with screenshots. No more confusion.</p>
+          <button class="ebook-btn btn-paid" onclick="openPaidModal('How to Fill Form A (Annual Return)', 1500, 'form-a-guide.pdf')">Buy for ₦1,500</button>
+        </div>
+      </div>
 
-  <div class="ebook-card" data-type="paid" data-title="Tax Audit">
-    <img src="https://via.placeholder.com/300x420/ffebee/c62828?text=Tax+Audit" alt="" class="ebook-cover">
-    <div class="ebook-body">
-      <div class="ebook-badge badge-paid">₦2,200</div>
-      <h3 class="ebook-title">Tax Audit Survival Guide</h3>
-      <p class="ebook-author">TaxC Team</p>
-      <p class="ebook-desc">What FIRS/SIRS looks for, and how to pass.</p>
-      <button class="ebook-btn btn-paid" onclick="openPaidModal('Tax Audit Survival Guide', 2200, 'tax-audit.pdf')">Buy for ₦2,200</button>
-    </div>
-  </div>
+      <div class="ebook-card" data-type="paid" data-title="Tax Audit Survival Guide">
+        <img src="./covers/tax-audit.png" alt="Tax Audit Survival Guide" class="ebook-cover">
+        <div class="ebook-body">
+          <div class="ebook-badge badge-paid">₦2,200</div>
+          <h3 class="ebook-title">Tax Audit Survival Guide</h3>
+          <p class="ebook-author">TaxC Team</p>
+          <p class="ebook-desc">What FIRS/SIRS looks for, and how to pass.</p>
+          <button class="ebook-btn btn-paid" onclick="openPaidModal('Tax Audit Survival Guide', 2200, 'tax-audit.pdf')">Buy for ₦2,200</button>
+        </div>
+      </div>
 
-  <div class="ebook-card" data-type="paid" data-title="WHT Credit">
-    <img src="https://via.placeholder.com/300x420/e0f7fa/006064?text=WHT+Credit" alt="" class="ebook-cover">
-    <div class="ebook-body">
-      <div class="ebook-badge badge-paid">₦1,300</div>
-      <h3 class="ebook-title">WHT Credit Mastery</h3>
-      <p class="ebook-author">TaxC Team</p>
-      <p class="ebook-desc">Turn 5%/10% withholding into tax savings.</p>
-      <button class="ebook-btn btn-paid" onclick="openPaidModal('WHT Credit Mastery', 1300, 'wht-credit.pdf')">Buy for ₦1,300</button>
-    </div>
-  </div>
+      <div class="ebook-card" data-type="paid" data-title="WHT Credit Mastery">
+        <img src="./covers/wht-credit.png" alt="WHT Credit Mastery" class="ebook-cover">
+        <div class="ebook-body">
+          <div class="ebook-badge badge-paid">₦1,300</div>
+          <h3 class="ebook-title">WHT Credit Mastery</h3>
+          <p class="ebook-author">TaxC Team</p>
+          <p class="ebook-desc">Turn 5%/10% withholding into tax savings.</p>
+          <button class="ebook-btn btn-paid" onclick="openPaidModal('WHT Credit Mastery', 1300, 'wht-credit.pdf')">Buy for ₦1,300</button>
+        </div>
+      </div>
 
-  <div class="ebook-card" data-type="paid" data-title="Digital Nomad Tax">
-    <img src="https://via.placeholder.com/300x420/f1f8e9/33691e?text=Digital+Nomad" alt="" class="ebook-cover">
-    <div class="ebook-body">
-      <div class="ebook-badge badge-paid">₦2,000</div>
-      <h3 class="ebook-title">Tax for Digital Nomads</h3>
-      <p class="ebook-author">TaxC Team</p>
-      <p class="ebook-desc">Work for US/UK company? Here’s your tax rule.</p>
-      <button class="ebook-btn btn-paid" onclick="openPaidModal('Tax for Digital Nomads', 2000, 'digital-nomad-tax.pdf')">Buy for ₦2,000</button>
-    </div>
-  </div>
+      <div class="ebook-card" data-type="paid" data-title="Tax for Digital Nomads">
+        <img src="./covers/digital-nomads.png" alt="Tax for Digital Nomads" class="ebook-cover">
+        <div class="ebook-body">
+          <div class="ebook-badge badge-paid">₦2,000</div>
+          <h3 class="ebook-title">Tax for Digital Nomads</h3>
+          <p class="ebook-author">TaxC Team</p>
+          <p class="ebook-desc">Work for US/UK company? Here’s your tax rule.</p>
+          <button class="ebook-btn btn-paid" onclick="openPaidModal('Tax for Digital Nomads', 2000, 'digital-nomad-tax.pdf')">Buy for ₦2,000</button>
+        </div>
+      </div>
 
-  <div class="ebook-card" data-type="paid" data-title="Family Tax">
-    <img src="https://via.placeholder.com/300x420/f3e5f5/7b1fa2?text=Family+Tax" alt="" class="ebook-cover">
-    <div class="ebook-body">
-      <div class="ebook-badge badge-paid">₦1,400</div>
-      <h3 class="ebook-title">Marriage, Kids & Tax Reliefs</h3>
-      <p class="ebook-author">TaxC Team</p>
-      <p class="ebook-desc">Child relief, spouse allowance. Save thousands.</p>
-      <button class="ebook-btn btn-paid" onclick="openPaidModal('Marriage, Kids & Tax Reliefs', 1400, 'family-tax.pdf')">Buy for ₦1,400</button>
-    </div>
-  </div>
+      <div class="ebook-card" data-type="paid" data-title="Marriage, Kids & Tax Reliefs">
+        <img src="./covers/tax-reliefs.png" alt="Marriage, Kids & Tax Reliefs" class="ebook-cover">
+        <div class="ebook-body">
+          <div class="ebook-badge badge-paid">₦1,400</div>
+          <h3 class="ebook-title">Marriage, Kids & Tax Reliefs</h3>
+          <p class="ebook-author">TaxC Team</p>
+          <p class="ebook-desc">Child relief, spouse allowance. Save thousands.</p>
+          <button class="ebook-btn btn-paid" onclick="openPaidModal('Marriage, Kids & Tax Reliefs', 1400, 'family-tax.pdf')">Buy for ₦1,400</button>
+        </div>
+      </div>
 
-  <div class="ebook-card" data-type="paid" data-title="Zero Tax">
-    <img src="https://via.placeholder.com/300x420/e8f5e8/1b5e20?text=Zero+Tax" alt="" class="ebook-cover">
-    <div class="ebook-body">
-      <div class="ebook-badge badge-paid">₦1,800</div>
-      <h3 class="ebook-title">Pay Zero Tax Legally (₦800K Exemption)</h3>
-      <p class="ebook-author">TaxC Team</p>
-      <p class="ebook-desc">Earn up to ₦800K/year? Pay ₦0 tax. Here’s how.</p>
-      <button class="ebook-btn btn-paid" onclick="openPaidModal('Pay Zero Tax Legally (₦800K Exemption)', 1800, 'zero-tax.pdf')">Buy for ₦1,800</button>
-    </div>
-  </div>
+      <div class="ebook-card" data-type="paid" data-title="Pay Zero Tax Legally (₦800K Exemption)">
+        <img src="./covers/zero-tax.png" alt="Pay Zero Tax Legally (₦800K Exemption)" class="ebook-cover">
+        <div class="ebook-body">
+          <div class="ebook-badge badge-paid">₦1,800</div>
+          <h3 class="ebook-title">Pay Zero Tax Legally (₦800K Exemption)</h3>
+          <p class="ebook-author">TaxC Team</p>
+          <p class="ebook-desc">Earn up to ₦800K/year? Pay ₦0 tax. Here’s how.</p>
+          <button class="ebook-btn btn-paid" onclick="openPaidModal('Pay Zero Tax Legally (₦800K Exemption)', 1800, 'zero-tax.pdf')">Buy for ₦1,800</button>
+        </div>
+      </div>
 
-</section>
+    </section>
 
     <!-- MY LIBRARY -->
     <section class="library-section">
@@ -487,24 +850,29 @@
         <h3 class="library-title">My Library (0)</h3>
         <span class="library-toggle">Show</span>
       </div>
+      <button class="reset-library-btn" onclick="showResetWarning(event)">Reset</button>
       <div class="library-grid" id="libraryGrid"></div>
     </section>
 
-  </div>
-
-  <!-- MODALS -->
-  <div id="freeModal" class="modal">
-    <div class="modal-content">
-      <button class="modal-close" onclick="closeModal('freeModal')">×</button>
-      <div class="modal-header">
-        <h3 id="freeTitle"></h3>
-      </div>
-      <div class="modal-body" style="text-align:center;">
-        <p>Your free ebook is ready!</p>
-        <button class="modal-btn btn-download" id="downloadBtn">Download PDF</button>
-      </div>
+<!-- ADD AFTER </div> of paidModal -->
+<div id="resetModal" class="modal">
+  <div class="modal-content" style="max-width:400px; text-align:center;">
+    <button class="modal-close" onclick="closeModal('resetModal')">×</button>
+    <div class="modal-header">
+      <h3>Reset Library?</h3>
+    </div>
+    <div class="modal-body">
+      <p style="margin-bottom:16px; color:#d00;">
+        This will <strong>remove all ebooks</strong> from your library.
+      </p>
+      <p style="font-size:0.9rem; color:#666; margin-bottom:20px;">
+        Only removes from this browser. Files stay in your Downloads.
+      </p>
+      <button class="modal-btn" style="background:#dc3545; margin-right:8px;" onclick="resetLibraryConfirm()">Yes, Clear All</button>
+      <button class="modal-btn btn-download" onclick="closeModal('resetModal')">Cancel</button>
     </div>
   </div>
+</div>
 
   <div id="paidModal" class="modal">
     <div class="modal-content">
@@ -528,11 +896,21 @@
 
   <!-- FLOATING CHAT -->
   <div id="taxc-chat-widget">
-    <div class="chat-launcher" onclick="toggleChat()">AI</div>
+    <div class="chat-launcher" onclick="toggleChat()" aria-label="Chat with TaxC AI">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+  </svg>
+  <div class="chat-tooltip">Chat with Ada</div>
+</div>
     <div class="chat-window" id="chat-window">
-      <div class="chat-header">TaxC AI <button class="chat-close" onclick="toggleChat()">×</button></div>
+      <div class="chat-header">
+  Ada — TaxC AI
+  <button class="chat-close" onclick="toggleChat()">×</button>
+</div>
       <div class="chat-body" id="chat-body">
-        <div class="message ai">Hi! Ask me about taxes or ebooks.</div>
+        <div class="message ai">
+  Hi! I'm <strong>Ada</strong>, your personal tax assistant. Ask me anything about taxes, filing, or ebooks!
+</div>
       </div>
       <div class="chat-input">
         <input type="text" id="chat-input" placeholder="Type here..." onkeypress="if(event.key==='Enter') sendMessage()">
@@ -540,169 +918,480 @@
       </div>
     </div>
   </div>
+  
+  <footer>
+        &copy; 2025 TaxC — Made with care. | <a href="mailto:support@taxc.com">support@taxc.com</a>
+    </footer>
 
   <script>
-    // === FULL EBOOK DATA (5 Free + 15 Paid) ===
-    const ebooks = [
-      // FREE
-      { title: "Who Pays Tax in Nigeria?", price: 0, file: "who-pays-tax.pdf", cover: "./covers/who-pays-tax.png" },
-      { title: "What is Personal Income Tax (P.I.T.)?", price: 0, file: "what-is-pit.pdf", cover: "./covers/what-is-pit.png" },
-      { title: "Am I Tax Eligible? (Quick Quiz)", price: 0, file: "tax-eligible-quiz.pdf", cover: "./covers/am-i-tax-eligible.png" },
-      { title: "Top 5 Tax Myths Nigerians Believe", price: 0, file: "tax-myths.pdf", cover: "./covers/tax-myths.png" },
-      { title: "How Much Tax Should I Pay? (Mini Guide)", price: 0, file: "mini-tax-calculator.pdf", cover: "./covers/tax-pay.png" },
+  // === FULL EBOOK DATA WITH INTRIGUING BULLETS ===
+  const ebooks = [
+  // FREE — NO MODAL
+  { title: "Who Pays Tax in Nigeria?", price: 0, file: "who-pays-tax.pdf", cover: "./covers/who-pays-tax.png" },
+  { title: "What is Personal Income Tax (P.I.T.)?", price: 0, file: "what-is-pit.pdf", cover: "./covers/what-is-pit.png" },
+  { title: "Am I Tax Eligible? (Quick Quiz)", price: 0, file: "tax-eligible-quiz.pdf", cover: "./covers/am-i-tax-eligible.png" },
+  { title: "Top 5 Tax Myths Nigerians Believe", price: 0, file: "tax-myths.pdf", cover: "./covers/tax-myths.png" },
+  { title: "How Much Tax Should I Pay? (Mini Guide)", price: 0, file: "mini-tax-calculator.pdf", cover: "./covers/tax-pay.png" },
 
-      // PAID
-      { title: "How to Legally Minimize Your Tax", price: 2000, file: "minimize-tax.pdf", cover: "./covers/minimize-tax.png" },
-      { title: "How Do I File My Tax by State IRS?", price: 1500, file: "file-tax-by-state.pdf", cover: "./covers/file-tax.png" },
-      { title: "What is Tax Evasion? (Avoid Jail)", price: 1200, file: "tax-evasion.pdf", cover: "./covers/tax-evasion.png" },
-      { title: "Self-Employed Tax Guide", price: 2500, file: "self-employed-tax.pdf", cover: "./covers/tax-guide.png" },
-      { title: "Rental Income Tax for Landlords", price: 1800, file: "rental-tax.pdf", cover: "./covers/rental-income.png" },
-      { title: "Salary Earner’s Tax Handbook 2025", price: 1500, file: "salary-tax-2025.pdf", cover: "./covers/handbook.png" },
-      { title: "How to Claim Tax Refunds", price: 1800, file: "claim-refund.pdf", cover: "https://via.placeholder.com/300x420/e8f5e9/2e7d32?text=Claim+Refund" },
-      { title: "PIT vs CIT for Business Owners", price: 2800, file: "pit-vs-cit.pdf", cover: "https://via.placeholder.com/300x420/f3e5f5/6a1b9a?text=PIT+vs+CIT" },
-      { title: "Pension & NHF Tax Reliefs", price: 1200, file: "pension-nhf.pdf", cover: "https://via.placeholder.com/300x420/fff3e0/ff6f00?text=Pension+NHF" },
-      { title: "How to Fill Form A (Annual Return)", price: 1500, file: "form-a-guide.pdf", cover: "https://via.placeholder.com/300x420/e1f5fe/01579b?text=Form+A" },
-      { title: "Tax Audit Survival Guide", price: 2200, file: "tax-audit.pdf", cover: "https://via.placeholder.com/300x420/ffebee/c62828?text=Tax+Audit" },
-      { title: "WHT Credit Mastery", price: 1300, file: "wht-credit.pdf", cover: "https://via.placeholder.com/300x420/e0f7fa/006064?text=WHT+Credit" },
-      { title: "Tax for Digital Nomads", price: 2000, file: "digital-nomad-tax.pdf", cover: "https://via.placeholder.com/300x420/f1f8e9/33691e?text=Digital+Nomad" },
-      { title: "Marriage, Kids & Tax Reliefs", price: 1400, file: "family-tax.pdf", cover: "https://via.placeholder.com/300x420/f3e5f5/7b1fa2?text=Family+Tax" },
-      { title: "Pay Zero Tax Legally (₦800K Exemption)", price: 1800, file: "zero-tax.pdf", cover: "https://via.placeholder.com/300x420/e8f5e8/1b5e20?text=Zero+Tax" }
-    ];
+  // PAID — SAFE BULLETS
+  {
+    title: "How to Legally Minimize Your Tax",
+    price: 2000,
+    file: "minimize-tax.pdf",
+    cover: "./covers/minimize-tax.png",
+    desc: "Proven strategies to reduce your tax bill — legally.",
+    bullets: [
+      "8 legal strategies to reduce your taxable income",
+      "Claim business expenses: rent, data, equipment",
+      "Use gift and donation reliefs to save more",
+      "Printable checklist to track all deductions"
+    ]
+  },
+  {
+    title: "How Do I File My Tax by State IRS?",
+    price: 1500,
+    file: "file-tax-by-state.pdf",
+    cover: "./covers/file-tax.png",
+    desc: "37 states + FCT: portals, forms, deadlines, penalties.",
+    bullets: [
+      "Step-by-step guide for Lagos, Ogun, Kano, and more",
+      "Official portal links and filing deadlines",
+      "How to avoid late filing penalties",
+      "Printable 2025 State Tax Calendar"
+    ]
+  },
+  {
+    title: "What is Tax Evasion? (Avoid Jail)",
+    price: 1200,
+    file: "tax-evasion.pdf",
+    cover: "./covers/tax-evasion.png",
+    desc: "Real cases, fines, jail time, and how to stay safe.",
+    bullets: [
+      "Difference between tax evasion and avoidance",
+      "Common mistakes that trigger FIRS audit",
+      "How to keep proper records for 6 years",
+      "Printable compliance guide to stay safe"
+    ]
+  },
+  {
+    title: "Self-Employed Tax Guide",
+    price: 2500,
+    file: "self-employed-tax.pdf",
+    cover: "./covers/tax-guide.png",
+    desc: "Register, file, and pay tax as a freelancer or gig worker.",
+    bullets: [
+      "Register for TIN online in 48 hours",
+      "File quarterly returns to avoid lump sum",
+      "Track expenses: phone, data, laptop, rent",
+      "Printable 12-month expense log"
+    ]
+  },
+  {
+    title: "Rental Income Tax for Landlords",
+    price: 1800,
+    file: "rental-tax.pdf",
+    cover: "./covers/rental-income.png",
+    desc: "10% WHT, filing, deductions. Everything landlords need.",
+    bullets: [
+      "10% Withholding Tax paid by tenant",
+      "Deduct repairs, agent fees, insurance",
+      "File annual return even if WHT is paid",
+      "Printable landlord tax checklist"
+    ]
+  },
+  {
+    title: "Salary Earner’s Tax Handbook 2025",
+    price: 1500,
+    file: "salary-tax-2025.pdf",
+    cover: "./covers/handbook.png",
+    desc: "PAYE, reliefs, refunds. Updated for 2025.",
+    bullets: [
+      "2025 PAYE rates and reliefs explained",
+      "Claim pension, NHF, and life insurance",
+      "How to apply for tax refund",
+      "Printable salary tax summary"
+    ]
+  },
+  {
+    title: "How to Claim Tax Refunds",
+    price: 1800,
+    file: "claim-refund.pdf",
+    cover: "./covers/tax-refunds.png",
+    desc: "Overpaid? Get your money back from FIRS/SIRS.",
+    bullets: [
+      "Step-by-step refund application process",
+      "Required documents: payslips, Form H1",
+      "Timeline: 30–90 days processing",
+      "Printable refund tracker"
+    ]
+  },
+  {
+    title: "PIT vs CIT for Business Owners",
+    price: 2800,
+    file: "pit-vs-cit.pdf",
+    cover: "./covers/pit-cit.png",
+    desc: "Sole prop vs company. Which saves more tax?",
+    bullets: [
+      "PIT (sole prop) vs CIT (company) explained",
+      "Tax rates, filing, and compliance costs",
+      "When to register a limited company",
+      "Printable business structure quiz"
+    ]
+  },
+  {
+    title: "Pension & NHF Tax Reliefs",
+    price: 1200,
+    file: "pension-nhf.pdf",
+    cover: "./covers/nhf-tax.png",
+    desc: "8% + 2.5% = huge tax savings. How to claim.",
+    bullets: [
+      "8% pension + 2.5% NHF = 10.5% relief",
+      "How to open RSA and contribute",
+      "Claim even if employer doesn’t pay",
+      "Printable contribution tracker"
+    ]
+  },
+  {
+    title: "How to Fill Form A (Annual Return)",
+    price: 1500,
+    file: "form-a-guide.pdf",
+    cover: "./covers/form-a.png",
+    desc: "Step-by-step with screenshots. No more confusion.",
+    bullets: [
+      "Line-by-line guide with screenshots",
+      "Fix common errors in minutes",
+      "Submit online in 15 minutes",
+      "Printable Form A checklist"
+    ]
+  },
+  {
+    title: "Tax Audit Survival Guide",
+    price: 2200,
+    file: "tax-audit.pdf",
+    cover: "./covers/tax-audit.png",
+    desc: "What FIRS/SIRS looks for, and how to pass.",
+    bullets: [
+      "What triggers a tax audit",
+      "Documents to prepare in advance",
+      "How to respond to FIRS query letter",
+      "Printable audit prep checklist"
+    ]
+  },
+  {
+    title: "WHT Credit Mastery",
+    price: 1300,
+    file: "wht-credit.pdf",
+    cover: "./covers/wht-credit.png",
+    desc: "Turn 5%/10% withholding into tax savings.",
+    bullets: [
+      "Claim 5–10% WHT as tax credit",
+      "How to get WHT receipt from client",
+      "Use credit to reduce final tax",
+      "Printable WHT credit log"
+    ]
+  },
+  {
+    title: "Tax for Digital Nomads",
+    price: 2000,
+    file: "digital-nomad-tax.pdf",
+    cover: "./covers/digital-nomads.png",
+    desc: "Work for US/UK company? Here’s your tax rule.",
+    bullets: [
+      "Tax rules for remote workers",
+      "Avoid double taxation with DTAs",
+      "File in Nigeria even if paid abroad",
+      "Printable remote worker tax guide"
+    ]
+  },
+  {
+    title: "Marriage, Kids & Tax Reliefs",
+    price: 1400,
+    file: "family-tax.pdf",
+    cover: "./covers/tax-reliefs.png",
+    desc: "Child relief, spouse allowance. Save thousands.",
+    bullets: [
+      "₦2,500 per child relief (max 4 kids)",
+      "Spouse allowance if not working",
+      "Claim on PAYE or self-assessment",
+      "Printable family relief worksheet"
+    ]
+  },
+  {
+    title: "Pay Zero Tax Legally (₦800K Exemption)",
+    price: 1800,
+    file: "zero-tax.pdf",
+    cover: "./covers/zero-tax.png",
+    desc: "Earn up to ₦800K/year? Pay ₦0 tax. Here’s how.",
+    bullets: [
+      "₦800,000 income exemption (2025 law)",
+      "File Form A to claim exemption",
+      "Submit payslip, ID, bank statement",
+      "Printable zero-tax checklist"
+    ]
+  }
+];
 
-    // Render only first 8 in HTML for brevity — rest loaded via JS
-    // But all 20 are in the array above
+  // === LIBRARY, FILTER, MODALS, CHAT ===
+  let library = JSON.parse(localStorage.getItem('taxc_library')) || [];
+  let currentEbook = null;
 
-    // === LIBRARY, FILTER, MODALS, CHAT === (Same as before)
-    let library = JSON.parse(localStorage.getItem('taxc_library')) || [];
-    function updateLibraryCount() {
-      document.querySelector('.library-title').textContent = `My Library (${library.length})`;
-    }
-    function renderLibrary() {
-      const grid = document.getElementById('libraryGrid');
-      grid.innerHTML = '';
-      library.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'library-item';
-        div.innerHTML = `
-          <img src="${item.cover}" class="library-cover" alt="">
-          <div class="library-info">
-            <div class="library-name">${item.title}</div>
-            <div class="library-type">${item.price === 0 ? 'Free' : 'Purchased'}</div>
-          </div>
-          <button class="library-btn" onclick="window.open('${item.file}', '_blank')">Open</button>
-        `;
-        grid.appendChild(div);
-      });
-    }
+  function updateLibraryCount() {
+    document.querySelector('.library-title').textContent = `My Library (${library.length})`;
+  }
 
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        filterEbooks();
-      });
-    });
-    document.getElementById('searchInput').addEventListener('input', filterEbooks);
+  function renderLibrary() {
+    const grid = document.getElementById('libraryGrid');
+    grid.innerHTML = '';
 
-    function filterEbooks() {
-      const filter = document.querySelector('.filter-btn.active').dataset.filter;
-      const search = document.getElementById('searchInput').value.toLowerCase();
-      document.querySelectorAll('.ebook-card').forEach(card => {
-        const type = card.dataset.type;
-        const title = card.dataset.title.toLowerCase();
-        const matchesFilter = filter === 'all' || type === filter;
-        const matchesSearch = title.includes(search);
-        card.style.display = matchesFilter && matchesSearch ? 'block' : 'none';
-      });
-    }
+    library = library.filter(item => item && item.cover && item.file && item.title);
+    localStorage.setItem('taxc_library', JSON.stringify(library));
+    updateLibraryCount();
 
-    let currentEbook = null;
-    function openFreeModal(title, file) {
-      currentEbook = ebooks.find(e => e.title === title);
-      document.getElementById('freeTitle').textContent = title;
-      document.getElementById('downloadBtn').onclick = () => {
-        addToLibrary(currentEbook);
-        window.open(file, '_blank');
-        closeModal('freeModal');
-      };
-      document.getElementById('freeModal').classList.add('open');
-    }
-    function openPaidModal(title, price, file) {
-      currentEbook = ebooks.find(e => e.title === title);
-      document.getElementById('paidTitle').textContent = title;
-      document.getElementById('paidCover').src = currentEbook.cover;
-      document.getElementById('paidPrice').textContent = `₦${price.toLocaleString()}`;
-      document.getElementById('paidModal').classList.add('open');
-    }
-    function closeModal(id) {
-      document.getElementById(id).classList.remove('open');
-    }
-
-    function startPayment() {
-      const email = prompt("Enter your email to receive the ebook:");
-      if (!email || !/^\S+@\S+\.\S+$/.test(email)) return alert("Valid email required.");
-      alert("Payment successful! Download starting...");
-      addToLibrary(currentEbook);
-      window.open(currentEbook.file, '_blank');
-      closeModal('paidModal');
-    }
-
-    function addToLibrary(ebook) {
-      if (!library.find(i => i.file === ebook.file)) {
-        library.push(ebook);
-        localStorage.setItem('taxc_library', JSON.stringify(library));
-        updateLibraryCount();
-        renderLibrary();
-      }
-    }
-
-    function toggleLibrary() {
-      const grid = document.getElementById('libraryGrid');
-      const toggle = document.querySelector('.library-toggle');
-      if (grid.classList.contains('open')) {
-        grid.classList.remove('open');
-        toggle.textContent = 'Show';
-      } else {
-        grid.classList.add('open');
-        toggle.textContent = 'Close';
-      }
-    }
-
-    function toggleChat() {
-      const win = document.getElementById('chat-window');
-      win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
-    }
-    function sendMessage() {
-      const input = document.getElementById('chat-input');
-      if (!input.value.trim()) return;
-      addMessage(input.value, 'user');
-      input.value = '';
-      setTimeout(() => addMessage("Try: 'What is tax?' or 'How to file?'", 'ai'), 800);
-    }
-    function addMessage(text, type) {
-      const body = document.getElementById('chat-body');
+    library.forEach(item => {
       const div = document.createElement('div');
-      div.className = `message ${type}`;
-      div.textContent = text;
-      body.appendChild(div);
-      body.scrollTop = body.scrollHeight;
+      div.className = 'library-item';
+      div.innerHTML = `
+        <img src="${item.cover}" class="library-cover" alt="${item.title}" onerror="this.src='https://via.placeholder.com/50x70/e6ffe6/28A745?text=Cover'">
+        <div class="library-info">
+          <div class="library-name">${item.title}</div>
+          <div class="library-type">${item.price === 0 ? 'Free' : 'Purchased'}</div>
+        </div>
+        <button class="library-btn" onclick="window.open('${item.file}', '_blank')">Open</button>
+      `;
+      grid.appendChild(div);
+    });
+  }
+
+  // === FREE DOWNLOAD: NO MODAL ===
+  function downloadFree(title) {
+    const ebook = ebooks.find(e => e.title === title);
+    if (ebook) {
+      addToLibrary(ebook);
+      window.open(ebook.file, '_blank');
+    }
+  }
+
+  // === PAID MODAL: DYNAMIC BULLETS ===
+  function openPaidModal(title, price, file) {
+    currentEbook = ebooks.find(e => e.title === title);
+    document.getElementById('paidTitle').textContent = title;
+    document.getElementById('paidCover').src = currentEbook.cover;
+    document.getElementById('paidPrice').textContent = `₦${price.toLocaleString()}`;
+
+    const bulletsList = document.querySelector('#paidModal .modal-bullets');
+    bulletsList.innerHTML = '';
+    currentEbook.bullets.forEach(bullet => {
+      const li = document.createElement('li');
+      li.textContent = bullet;
+      bulletsList.appendChild(li);
+    });
+
+    document.getElementById('paidModal').classList.add('open');
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+  }
+
+  function isValidEmail(email) {
+    email = email.trim().toLowerCase();
+    const basicRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!basicRegex.test(email)) return false;
+    const [local, domain] = email.split('@');
+    if (!local || !domain) return false;
+    if (local.startsWith('.') || local.endsWith('.') || local.includes('..')) return false;
+    const domainParts = domain.split('.');
+    if (domainParts.length < 2) return false;
+    for (let part of domainParts) {
+      if (!part || part.length > 63 || !/^[a-z0-9-]+$/i.test(part)) return false;
+    }
+    const tld = domainParts[domainParts.length - 1];
+    if (!/^[a-z]{2,}$/i.test(tld)) return false;
+    return true;
+  }
+
+  function startPayment() {
+    let email = localStorage.getItem('taxc_user_email') || '';
+    email = prompt("Enter your email to receive the ebook:", email);
+
+    if (!email || !isValidEmail(email)) {
+      alert("Please enter a valid email (e.g., name@gmail.com)");
+      return;
     }
 
-    function toggleMobileMenu() {
-      const menu = document.getElementById('menu');
-      const hamburger = document.getElementById('hamburger');
-      menu.hasAttribute('open') ? (menu.removeAttribute('open'), hamburger.classList.remove('is-active')) 
-                                 : (menu.setAttribute('open', ''), hamburger.classList.add('is-active'));
-    }
+    localStorage.setItem('taxc_user_email', email);
+    alert("Payment successful! Download starting...");
+    addToLibrary(currentEbook);
+    window.open(currentEbook.file, '_blank');
+    closeModal('paidModal');
+  }
 
-    document.addEventListener('DOMContentLoaded', () => {
+  function addToLibrary(ebook) {
+    if (!library.find(i => i.file === ebook.file)) {
+      library.push(ebook);
+      localStorage.setItem('taxc_library', JSON.stringify(library));
       updateLibraryCount();
       renderLibrary();
-      if (library.length > 0) {
-        document.querySelector('.library-grid').classList.add('open');
-        document.querySelector('.library-toggle').textContent = 'Close';
-      }
+    }
+  }
+
+  function toggleLibrary() {
+    const grid = document.getElementById('libraryGrid');
+    const toggle = document.querySelector('.library-toggle');
+    if (grid.classList.contains('open')) {
+      grid.classList.remove('open');
+      toggle.textContent = 'Show';
+    } else {
+      grid.classList.add('open');
+      toggle.textContent = 'Close';
+    }
+  }
+
+  function toggleChat() {
+    const win = document.getElementById('chat-window');
+    win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
+  }
+
+  function sendMessage() {
+    const input = document.getElementById('chat-input');
+    if (!input.value.trim()) return;
+    addMessage(input.value, 'user');
+    input.value = '';
+    setTimeout(() => {
+      addMessage("This is Ada! Here's what I found...", 'ai');
+    }, 800);
+  }
+
+  function addMessage(text, type) {
+    const body = document.getElementById('chat-body');
+    const div = document.createElement('div');
+    div.className = `message ${type}`;
+    div.textContent = text;
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function toggleMobileMenu() {
+    const menu = document.getElementById('menu');
+    const hamburger = document.getElementById('hamburger');
+    if (menu.hasAttribute('open')) {
+      menu.removeAttribute('open');
+      hamburger.classList.remove('is-active');
+    } else {
+      menu.setAttribute('open', '');
+      hamburger.classList.add('is-active');
+    }
+  }
+
+  // === FILTER + SEARCH ===
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      filterEbooks();
+      updateHeroText();
     });
-  </script>
+  });
+
+  document.getElementById('searchInput').addEventListener('input', () => {
+    const hasValue = document.getElementById('searchInput').value.trim();
+    document.getElementById('clearSearch').style.display = hasValue ? 'block' : 'none';
+    filterEbooks();
+    updateHeroText();
+  });
+
+  document.getElementById('clearSearch').addEventListener('click', () => {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('clearSearch').style.display = 'none';
+    filterEbooks();
+    updateHeroText();
+  });
+
+  function filterEbooks() {
+    const filter = document.querySelector('.filter-btn.active').dataset.filter;
+    const search = document.getElementById('searchInput').value.toLowerCase().trim();
+
+    document.querySelectorAll('.ebook-card').forEach(card => {
+      const type = card.dataset.type;
+      const title = card.querySelector('.ebook-title').textContent.toLowerCase();
+      const desc = card.querySelector('.ebook-desc').textContent.toLowerCase();
+      const author = card.querySelector('.ebook-author').textContent.toLowerCase();
+      const badge = card.querySelector('.ebook-badge').textContent.toLowerCase();
+
+      const matchesFilter = filter === 'all' || type === filter;
+      const matchesSearch = !search || title.includes(search) || desc.includes(search) || author.includes(search) || badge.includes(search);
+
+      card.style.display = matchesFilter && matchesSearch ? 'block' : 'none';
+    });
+  }
+
+  // === HERO TEXT UPDATE ===
+  function updateHeroText() {
+    const activeBtn = document.querySelector('.filter-btn.active');
+    const filter = activeBtn.dataset.filter;
+    const heroText = document.getElementById('heroText');
+
+    if (filter === 'free') {
+      heroText.textContent = "Download 5 free guides instantly — no email, no cost.";
+    } else if (filter === 'paid') {
+      heroText.textContent = "Premium tax guides: save thousands, avoid fines, file like a pro.";
+    } else {
+      heroText.textContent = "Get free and premium guides to understand, file, and save on taxes in Nigeria.";
+    }
+  }
+
+  function activateAllFilter(event) {
+    event.preventDefault();
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
+    allBtn.classList.add('active');
+    updateHeroText();
+    filterEbooks();
+    document.getElementById('ebooks').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // === IMAGE FALLBACK ===
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.ebook-cover').forEach(img => {
+      img.onerror = function() {
+        const card = this.closest('.ebook-card');
+        const title = card.querySelector('.ebook-title').textContent;
+        const clean = encodeURIComponent(title.replace(/[^a-zA-Z0-9]/g, ' ').trim().substring(0, 30));
+        this.src = `https://via.placeholder.com/300x420/e6ffe6/28A745?text=${clean}`;
+        this.style.objectFit = 'contain';
+        this.style.background = '#fff';
+      };
+    });
+  });
+
+  // === RESET LIBRARY ===
+  function showResetWarning() {
+    if (library.length === 0) {
+      alert("Your library is already empty!");
+      return;
+    }
+    document.getElementById('resetModal').classList.add('open');
+  }
+
+  function resetLibraryConfirm() {
+    localStorage.removeItem('taxc_library');
+    library = [];
+    updateLibraryCount();
+    renderLibrary();
+    closeModal('resetModal');
+    alert("Library cleared! All ebooks removed.");
+  }
+
+  // === INIT ===
+  document.addEventListener('DOMContentLoaded', () => {
+    updateLibraryCount();
+    renderLibrary();
+    if (library.length > 0) {
+      document.querySelector('.library-grid').classList.add('open');
+      document.querySelector('.library-toggle').textContent = 'Close';
+    }
+    updateHeroText();
+  });
+</script>
 </body>
 </html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - TaxC Nigeria</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="./favicon.ico">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #F8F9FA;
+      color: #343A40;
+      line-height: 1.6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .login-container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+      overflow: hidden;
+    }
+    .login-header {
+      background: #28A745;
+      color: white;
+      padding: 24px;
+      text-align: center;
+    }
+    .login-header h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+    .login-body {
+      padding: 32px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #343A40;
+    }
+    input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #ddd;
+      border-radius: 50px;
+      font-size: 1rem;
+      transition: border 0.3s;
+    }
+    input:focus {
+      outline: none;
+      border-color: #28A745;
+      box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2);
+    }
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background: #28A745;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-primary:hover {
+      background: #218838;
+      transform: translateY(-2px);
+    }
+    .switch-form {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 0.95rem;
+    }
+    .switch-form a {
+      color: #28A745;
+      font-weight: 600;
+    }
+    .error-msg {
+      color: #dc3545;
+      font-size: 0.85rem;
+      margin-top: 8px;
+      text-align: center;
+    }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 24px;
+      color: #666;
+      font-size: 0.9rem;
+    }
+    .back-link a {
+      color: #28A745;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <div class="login-header">
+      <h1 id="formTitle">Login</h1>
+    </div>
+    <div class="login-body">
+      <form id="authForm">
+        <div class="form-group" id="nameGroup" style="display:none;">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" placeholder="John Doe">
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="you@example.com" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-primary" id="submitBtn">Login</button>
+      </form>
+      <p class="error-msg" id="errorMsg"></p>
+      <p class="switch-form">
+        <span id="switchText">Don't have an account?</span> <a href="#" id="switchLink">Sign Up</a>
+    </div>
+  </div>
+
+  <!-- 1. Load Firebase -->
+<script type="module" src="./firebase.js"></script>
+
+<!-- 2. Your Login Code (SEPARATE) -->
+<script type="module">
+  import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from './firebase.js';
+
+  const form = document.getElementById('authForm');
+  const errorMsg = document.getElementById('errorMsg');
+  const isSignup = window.location.search.includes('mode=signup');
+
+  // Toggle Sign Up / Login
+  if (isSignup) {
+    document.getElementById('formTitle').textContent = 'Sign Up';
+    document.getElementById('nameGroup').style.display = 'block';
+    document.getElementById('submitBtn').textContent = 'Create Account';
+    document.getElementById('switchText').textContent = 'Already have an account?';
+    document.getElementById('switchLink').textContent = 'Login';
+    document.getElementById('switchLink').href = 'login.html';
+  } else {
+    document.getElementById('switchLink').href = 'login.html?mode=signup';
+  }
+
+  // Submit
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorMsg.textContent = '';
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    try {
+      if (isSignup) {
+        await createUserWithEmailAndPassword(auth, email, password);
+      } else {
+        await signInWithEmailAndPassword(auth, email, password);
+      }
+      const redirect = new URLSearchParams(window.location.search).get('redirect');
+      window.location.href = redirect ? decodeURIComponent(redirect) : 'ebooks.html';
+    } catch (err) {
+      errorMsg.textContent = err.code === 'auth/email-already-in-use'
+        ? 'Email already used. Try logging in.'
+        : err.message;
+    }
+  });
+</script>
+</body>
+</html>

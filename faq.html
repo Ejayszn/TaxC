@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TaxC | FAQ - Nigerian Tax Calculator</title>
+    <title>TaxC | FAQ</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
@@ -61,13 +61,13 @@
 
 .desktop-nav {
     display: none;
-    gap: 20px;
+    gap: 12px;
 }
 
 .desktop-nav a {
     text-decoration: none;
     color: var(--dark-text);
-    padding: 8px 15px;
+    padding: 8px 12px;
     transition: color 0.3s;
     font-weight: 600;
 }
@@ -170,43 +170,92 @@
         .cta-small:hover { background: var(--dark-green); }
 
         /* -------------------- FAQ Content Styles -------------------- */
-        .container { 
-            max-width: 1100px; 
-            margin: 0 auto; 
-            padding: 20px; 
-            padding-top: 90px; /* Space for fixed header */
-        }
-        .faq-section {
-            background: var(--card); padding: 30px; border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); max-width: 800px; margin: 0 auto;
-        }
-        .faq-section h2 {
-            color: var(--green); margin-bottom: 30px; font-size: 2rem; text-align: center; font-weight: 700;
-        }
-        .faq-item {
-            margin-bottom: 10px; border-bottom: 1px solid #eee;
-        }
-        .faq-item summary {
-            cursor: pointer; padding: 12px; font-weight: 600; color: var(--dark-text);
-            font-size: 1rem; display: flex; justify-content: space-between; align-items: center;
-        }
-        .faq-item summary::after {
-            content: ''; display: inline-block; width: 0; height: 0;
-            border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid var(--green);
-            transition: transform 0.2s ease-in-out;
-        }
-        .faq-item[open] summary { color: var(--main-color); }
-        .faq-item[open] summary::after {
-            transform: rotate(180deg);
-        }
-        .faq-content {
-            padding: 12px 12px 20px; font-size: 0.95rem; color: var(--muted); line-height: 1.5;
-        }
-        .faq-content p { margin-bottom: 10px; }
-        .faq-content a {
-            color: var(--green); text-decoration: underline; font-weight: 600;
-        }
-        .faq-content a:hover { color: var(--dark-green); }
+.faq-section {
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    max-width: 800px;
+    margin: 0 auto;
+    overflow: hidden;
+    box-sizing: border-box;
+    width: 100%;               /* <-- NEW */
+}
+
+.faq-section h2 {
+    color: var(--green);
+    margin-bottom: 30px;
+    font-size: 2rem;
+    text-align: center;
+    font-weight: 700;
+    padding: 0 30px;
+}
+
+/* Inner wrapper for consistent padding */
+.faq-inner {
+    padding: 0 30px 30px; 
+    overflow: hidden;          /* <-- NEW */
+}
+
+/* Each FAQ item */
+.faq-item {
+    margin-bottom: 0; 
+    border-bottom: 1px solid #eee;
+    padding: 0;
+    overflow: hidden;
+}
+
+.faq-item summary {
+    cursor: pointer;
+    padding: 12px 0;
+    font-weight: 600;
+    color: var(--dark-text);
+    font-size: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    list-style: none;
+    user-select: none;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+
+.faq-item summary::after {
+    content: '';
+    width: 0; height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid var(--green);
+    transition: transform .2s ease-in-out;
+    margin-left: 10px;
+    flex-shrink: 0;
+}
+
+.faq-item[open] summary { 
+    color: var(--main-color); 
+}
+.faq-item[open] summary::after { 
+    transform: rotate(180deg); 
+}
+
+.faq-content {
+    padding: 0 0 20px;
+    font-size: .95rem;
+    color: var(--muted);
+    line-height: 1.5;
+    overflow-wrap: break-word;   /* <-- NEW */
+    word-break: normal;          /* <-- NEW */
+}
+.faq-content p { 
+    margin-bottom: 10px; 
+}
+.faq-content a {
+    color: var(--green);
+    text-decoration: underline;
+    font-weight: 600;
+    word-break: break-word;      /* <-- NEW */
+}
+.faq-content a:hover { 
+    color: var(--dark-green); 
+}/* -------------------- End of FAQ Content Styles -------------------- */
         
         /* CTA Banner */
         .cta-banner {
@@ -255,7 +304,8 @@
         <nav class="desktop-nav">
             <a href="index.html">Home</a>
             <a href="ebooks.html">Ebooks</a>
-            <button class="cta-small" onclick="window.location.href='index.html#calculator'">Calculate</button>
+            <a href="#calculator">Calculator</a>
+            <button class="cta-small" onclick="window.location.href='index.html#calculator'">Login</button>
         </nav>
         
         <button id="hamburger" class="hamburger" onclick="toggleMobileMenu()">
@@ -265,13 +315,15 @@
         <nav id="mobile-menu" class="mobile-menu" role="menu">
             <a href="index.html" class="nav-link">Home</a>
             <a href="ebooks.html" class="nav-link">Ebooks</a>
-            <button class="cta-small" style="margin: 10px 20px; width: calc(100% - 40px); padding: 10px;" onclick="window.location.href='index.html#calculator'; toggleMobileMenu();">Calculate Now</button>
+            <a href="#calculator">Calculator</a>
+            <button class="cta-small" onclick="window.location.href='index.html#calculator'">Login</button>
         </nav>
     </header>
 
     <main class="container">
         <section class="faq-section" id="faq" aria-labelledby="faq-heading">
-            <h2 id="faq-heading">Frequently Asked Questions</h2>
+    <h2 id="faq-heading">Frequently Asked Questions</h2>
+    <div class="faq-inner">
             <details class="faq-item">
                 <summary>What taxes does TaxC calculate?</summary>
                 <div class="faq-content">
@@ -325,7 +377,7 @@
         <section class="cta-banner">
             <h3>Got more questions? Check ebooks or chat with AI!</h3>
             <div style="margin-top: 15px">
-                <button class="btn-primary" onclick="window.location.href='index.html#calculator'">Ebooks</button>
+                <button class="btn-primary" onclick="window.location.href='ebooks.html'">Ebooks</button>
                 <button class="btn-primary" style="margin-left: 10px;" onclick="window.location.href='index.html#chat-agent'">Chat with AI</button>
             </div>
         </section>
