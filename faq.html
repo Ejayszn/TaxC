@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,6 +12,66 @@
     <link rel="icon" href="./favicon.ico">
     <link rel="manifest" href="./site.webmanifest">
     <style>
+        /* ——— CHAT WIDGET (same as index.html) ——— */
+#taxc-chat-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 10000;
+}
+.chat-launcher {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  background: #28A745;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: all .3s;
+}
+.chat-launcher:hover { transform: scale(1.1); background:#218838; }
+.chat-launcher svg { width:28px; height:28px; }
+.chat-tooltip {
+  position:absolute; right:70px; top:50%; transform:translateY(-50%);
+  background:#333; color:#fff; padding:8px 12px; border-radius:6px;
+  font-size:.85rem; font-weight:600; white-space:nowrap;
+  opacity:0; visibility:hidden; transition:all .3s;
+}
+.chat-tooltip::after{
+  content:''; position:absolute; left:100%; top:50%; transform:translateY(-50%);
+  border:6px solid transparent; border-left-color:#333;
+}
+.chat-launcher:hover .chat-tooltip{ opacity:1; visibility:visible; right:68px; }
+
+.chat-window{display:none; width:340px; height:520px; background:#fff;
+  border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.15);
+  flex-direction:column; overflow:hidden; border:1px solid #eee;}
+.chat-header{background:#28A745; color:#fff; padding:14px; font-weight:700;
+  text-align:center; position:relative;}
+.chat-header::before{content:""; display:inline-block; width:8px; height:8px;
+  background:#fff; border-radius:50%; margin-right:8px; animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.chat-close{position:absolute; right:10px; top:50%; transform:translateY(-50%);
+  background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer;}
+.chat-body{flex:1; padding:15px; overflow-y:auto; background:#f8f9fa;}
+.message{margin:10px 0; padding:10px 14px; border-radius:18px; max-width:80%;
+  line-height:1.5; font-size:.95rem;}
+.user{background:#28A745; color:#fff; margin-left:auto; border-bottom-right-radius:4px;}
+.ai{background:#fff; color:#333; border:1px solid #eee; margin-right:auto; border-bottom-left-radius:4px;}
+.chat-input{display:flex; padding:10px; border-top:1px solid #eee; background:#fff;}
+.chat-input input{flex:1; padding:12px; border:1px solid #ddd; border-radius:25px; font-size:.95rem;}
+.chat-input button{margin-left:8px; background:#28A745; color:#fff; border:none;
+  width:40px; height:40px; border-radius:50%; cursor:pointer;}
+@media(max-width:480px){
+  .chat-window{width:300px;height:480px;}
+  .chat-launcher{width:55px;height:55px;}
+  .chat-launcher svg{width:24px;height:24px;}
+  .chat-tooltip{display:none;}
+}
         /* CSS from your main application's stylesheet is integrated here for consistency */
         :root {
             /* Mapped main app colors to FAQ colors for easier maintenance */
@@ -297,6 +358,27 @@
         }
         
     </style>
+    <div id="taxc-chat-widget">
+  <div class="chat-launcher" onclick="toggleChat()" aria-label="Chat with TaxC AI">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+    <div class="chat-tooltip">Chat with Ada</div>
+  </div>
+
+  <div class="chat-window" id="chat-window">
+    <div class="chat-header">Ada — TaxC AI <button class="chat-close" onclick="toggleChat()">×</button></div>
+    <div class="chat-body" id="chat-body">
+      <div class="message ai">
+        Hi! I'm <strong>Ada</strong>, your personal tax assistant. Ask me anything about taxes, filing, or ebooks!
+      </div>
+    </div>
+    <div class="chat-input">
+      <input type="text" id="chat-input" placeholder="Type here..." onkeypress="if(event.key==='Enter')sendMessage()">
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+</div>
 </head>
 <body>
     <header class="main-header">
@@ -364,7 +446,7 @@
             <details class="faq-item">
                 <summary>How do I file my taxes after using TaxC?</summary>
                 <div class="faq-content">
-                    <p>TaxC provides an estimate to guide you. To file, submit your tax details to your State IRS, either online via their portal or in person. Our ₦500 report includes specific filing guidance for your state. You can also <a href="index.html#chat-agent">Chat with AI</a> for personalized help.</p>
+                    <p>TaxC provides an estimate to guide you. To file, submit your tax details to your State IRS, either online via their portal or in person. Our ₦500 report includes specific filing guidance for your state. You can also <a href="javascript:void(0)" onclick="openChat()">Chat with AI</a> for personalized help.</p>
                 </div>
             </details>
             <details class="faq-item">
@@ -378,7 +460,7 @@
             <h3>Got more questions? Check ebooks or chat with AI!</h3>
             <div style="margin-top: 15px">
                 <button class="btn-primary" onclick="window.location.href='ebooks.html'">Ebooks</button>
-                <button class="btn-primary" style="margin-left: 10px;" onclick="window.location.href='index.html#chat-agent'">Chat with AI</button>
+                <button class="btn-primary" style="margin-left: 10px;" onclick="openChat()">Chat with AI</button>
             </div>
         </section>
     </main>
@@ -389,10 +471,57 @@
 
 <script>
 
-    const name = localStorage.getItem('userName');
-  if (name) {
-    document.getElementById('userGreeting').textContent = `Hi, ${name}!`;
+function openChat(){
+  toggleChat();                     // open the widget
+  document.getElementById('chat-input').focus(); // put cursor in the box
+}
+
+    /* ——— CHAT LOGIC (copy-paste from index.html) ——— */
+const taxcAI = {
+  incomes:[], pension:0, rent:0, state:null,
+  knowledge:{
+    "calculate|tax":()=>"Tell me your income, e.g., '500k monthly salary'",
+    "earn.*(\\d+k?).*monthly.*salary":m=>{taxcAI.incomes.push(parseFloat(m[1])*12*1000);return"Added salary"},
+    "pension.*(\\d+k?)":m=>{taxcAI.pension=parseFloat(m[1])*1000;return"Pension set"},
+    "rent.*(\\d+k?)":m=>{taxcAI.rent=parseFloat(m[1])*1000;return"Rent set"},
+    "live.*lagos":()=>{taxcAI.state="Lagos";return"State: Lagos"},
+    "report|pdf":()=>`<input type="email" id="report-email" placeholder="email"><button onclick="alert('Paystack')">Get PDF</button>`,
+    ".*":()=>"Try: 'Calculate tax', 'I earn 500k', 'How to pay'"
+  },
+  respond(input){
+    const lower=input.toLowerCase();
+    for(let [pat,fn] of Object.entries(this.knowledge)){
+      const m=lower.match(pat);
+      if(m) return typeof fn==='function'?fn(m):fn;
+    }
+    return this.knowledge[".*"]();
   }
+};
+
+function toggleChat(){
+  const win=document.getElementById('chat-window');
+  win.style.display = win.style.display==='flex'?'none':'flex';
+}
+function addMessage(text,type){
+  const body=document.getElementById('chat-body');
+  const div=document.createElement('div');
+  div.className=`message ${type}`;
+  div.innerHTML=text;
+  body.appendChild(div);
+  body.scrollTop=body.scrollHeight;
+}
+function sendMessage(){
+  const input=document.getElementById('chat-input');
+  const text=input.value.trim();
+  if(!text) return;
+  addMessage(text,'user');
+  input.value='';
+  addMessage('<i>Typing...</i>','ai');
+  setTimeout(()=>{
+    document.querySelectorAll('.message').pop().remove();
+    addMessage(taxcAI.respond(text),'ai');
+  },800);
+}
 
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');

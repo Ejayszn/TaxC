@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,6 +11,8 @@
     <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
     <link rel="icon" href="./favicon.ico">
     <link rel="manifest" href="./site.webmanifest">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
 /* -------------------- Color Palette: Vibrant Primary Green #28A745 -------------------- */
@@ -747,225 +750,199 @@ input:focus, select:focus {
 /* Your existing styles remain — we ADD the chatbot */
     body { font-family: 'Inter', sans-serif; position: relative; }
 
-    /* === FLOATING CHAT WIDGET === */
-    #taxc-chat-widget {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 10000;
-      font-family: 'Inter', sans-serif;
-    }
+   /* === FLOATING CHAT (MESSAGE ICON + TOOLTIP) === */
+#taxc-chat-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 10000;
+}
 
-    .chat-launcher {
-      width: 60px;
-      height: 60px;
-      background: #28A745;
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 1.1rem;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      transition: all 0.3s;
-    }
-    .chat-launcher:hover { transform: scale(1.1); }
+.chat-launcher {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  background: #28A745;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: all 0.3s;
+  z-index: 10001;
+}
 
-    .chat-window {
-      display: none;
-      width: 320px;
-      height: 500px;
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-      flex-direction: column;
-      overflow: hidden;
-      border: 1px solid #eee;
-    }
-    .chat-header {
-      background: #28A745;
-      color: white;
-      padding: 14px;
-      font-weight: 700;
-      font-size: 1rem;
-      text-align: center;
-      position: relative;
-    }
-    .chat-close {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      color: white;
-      font-size: 1.4rem;
-      cursor: pointer;
-    }
+.chat-launcher:hover {
+  transform: scale(1.1);
+  background: #218838;
+}
 
-    .chat-body {
-      flex: 1;
-      padding: 15px;
-      overflow-y: auto;
-      background: #f8f9fa;
-    }
-    .message {
-      margin: 10px 0;
-      padding: 10px 14px;
-      border-radius: 18px;
-      max-width: 80%;
-      line-height: 1.5;
-      font-size: 0.95rem;
-    }
-    .user { background: #28A745; color: white; margin-left: auto; border-bottom-right-radius: 4px; }
-    .ai { background: white; color: #333; border: 1px solid #eee; margin-right: auto; border-bottom-left-radius: 4px; }
+.chat-launcher svg {
+  width: 28px;
+  height: 28px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 
-    .chat-input {
-      display: flex;
-      padding: 10px;
-      border-top: 1px solid #eee;
-      background: white;
-    }
-    .chat-input input {
-      flex: 1;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 25px;
-      font-size: 0.95rem;
-    }
-    .chat-input button {
-      margin-left: 8px;
-      background: #28A745;
-      color: white;
-      border: none;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      cursor: pointer;
-    }
+.chat-tooltip {
+  position: absolute;
+  right: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #333;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
 
-    .typing {
-      font-style: italic;
-      color: #666;
-      font-size: 0.9rem;
-    }
+.chat-tooltip::after {
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-left-color: #333;
+}
 
-    /* Mobile */
-    @media (max-width: 480px) {
-      .chat-window { width: 300px; height: 480px; }
-      .chat-launcher { width: 55px; height: 55px; font-size: 1rem; }
-    }
-    /* ==================== FLOATING AI CHATBOT ==================== */
-        #taxc-chat-widget {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 10000;
-            font-family: 'Inter', sans-serif;
-        }
-        .chat-launcher {
-            width: 60px;
-            height: 60px;
-            background: #28A745;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 1.1rem;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            transition: all 0.3s;
-        }
-        .chat-launcher:hover { transform: scale(1.1); }
-        .chat-window {
-            display: none;
-            width: 340px;
-            height: 520px;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            flex-direction: column;
-            overflow: hidden;
-            border: 1px solid #eee;
-        }
-        .chat-header {
-            background: #28A745;
-            color: white;
-            padding: 14px;
-            font-weight: 700;
-            font-size: 1rem;
-            text-align: center;
-            position: relative;
-        }
-        .chat-close {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.4rem;
-            cursor: pointer;
-        }
-        .chat-body {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-            background: #f8f9fa;
-        }
-        .message {
-            margin: 10px 0;
-            padding: 10px 14px;
-            border-radius: 18px;
-            max-width: 80%;
-            line-height: 1.5;
-            font-size: 0.95rem;
-        }
-        .user { background: #28A745; color: white; margin-left: auto; border-bottom-right-radius: 4px; }
-        .ai { background: white; color: #333; border: 1px solid #eee; margin-right: auto; border-bottom-left-radius: 4px; }
-        .chat-input {
-            display: flex;
-            padding: 10px;
-            border-top: 1px solid #eee;
-            background: white;
-        }
-        .chat-input input {
-            flex: 1;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 25px;
-            font-size: 0.95rem;
-        }
-        .chat-input button {
-            margin-left: 8px;
-            background: #28A745;
-            color: white;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-        .typing {
-            font-style: italic;
-            color: #666;
-            font-size: 0.9rem;
-        }
+.chat-launcher:hover .chat-tooltip {
+  opacity: 1;
+  visibility: visible;
+  right: 68px;
+}
 
-        @media (max-width: 480px) {
-            .chat-window { width: 300px; height: 480px; }
-            .chat-launcher { width: 55px; height: 55px; font-size: 1rem; }
-        }
+.chat-window {
+  display: none;
+  width: 340px;
+  height: 520px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #eee;
+}
 
-   footer {
+.chat-header {
+  background: #28A745;
+  color: white;
+  padding: 14px;
+  font-weight: 700;
+  text-align: center;
+  position: relative;
+}
+
+.chat-header::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #fff;
+  border-radius: 50%;
+  margin-right: 8px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.chat-close {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.chat-body {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  background: #f8f9fa;
+}
+
+.message {
+  margin: 10px 0;
+  padding: 10px 14px;
+  border-radius: 18px;
+  max-width: 80%;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.user {
+  background: #28A745;
+  color: white;
+  margin-left: auto;
+  border-bottom-right-radius: 4px;
+}
+
+.ai {
+  background: white;
+  color: #333;
+  border: 1px solid #eee;
+  margin-right: auto;
+  border-bottom-left-radius: 4px;
+}
+
+.chat-input {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #eee;
+  background: white;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 25px;
+  font-size: 0.95rem;
+}
+
+.chat-input button {
+  margin-left: 8px;
+  background: #28A745;
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .chat-window { width: 300px; height: 480px; }
+  .chat-launcher { width: 55px; height: 55px; }
+  .chat-launcher svg { width: 24px; height: 24px; }
+  .chat-tooltip { display: none; }
+}
+
+footer {
             margin-top: 24px; padding: 20px; text-align: center; color: var(--muted);
             border-top: 1px solid #eee;
         }
+
 </style>
 </head>
 <body>
@@ -1155,8 +1132,7 @@ input:focus, select:focus {
     for only ₦500:
 </p>
             <div class="input-group-inline">
-                <input type="email" id="reportEmail" placeholder="Your Email Address" required>
-                <button onclick="startHostedPayment()" class="report-btn">Get PDF Report</button>
+                <button onclick="startHostedPayment()" class="report-btn">Download PDF Report</button>
             </div>
         </div>
     </div>
@@ -1274,32 +1250,36 @@ input:focus, select:focus {
 </div>
         </div>
     </template>
-<!-- AI CHATBOT -->
-    <div id="taxc-chat-widget">
-        <div class="chat-launcher" onclick="toggleChat()">AI</div>
-        <div class="chat-window" id="chat-window">
-            <div class="chat-header">TaxC AI <button class="chat-close" onclick="toggleChat()">×</button></div>
-            <div class="chat-body" id="chat-body">
-                <div class="message ai">Hi! I'm TaxC. Ask me anything about tax.</div>
-            </div>
-            <div class="chat-input">
-                <input type="text" id="chat-input" placeholder="Type here..." onkeypress="if(event.key==='Enter') sendMessage()">
-                <button onclick="sendMessage()">Send</button>
-            </div>
-        </div>
+<!-- FLOATING CHAT -->
+<div id="taxc-chat-widget">
+  <div class="chat-launcher" onclick="toggleChat()" aria-label="Chat with TaxC AI">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+    <div class="chat-tooltip">Chat with Ada</div>
+  </div>
+  <div class="chat-window" id="chat-window">
+    <div class="chat-header">
+      Ada — TaxC AI
+      <button class="chat-close" onclick="toggleChat()">×</button>
     </div>
+    <div class="chat-body" id="chat-body">
+      <div class="message ai">
+        Hi! I'm <strong>Ada</strong>, your personal tax assistant. Ask me anything about taxes, filing, or ebooks!
+      </div>
+    </div>
+    <div class="chat-input">
+      <input type="text" id="chat-input" placeholder="Type here..." onkeypress="if(event.key==='Enter') sendMessage()">
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+</div>
 
     <footer>
     &copy; 2025 TaxC — Made with care. | <a href="mailto:support@taxc.com">support@taxc.com</a>
 </footer>
 
     <script>
-
-const name = localStorage.getItem('userName');
-  if (name) {
-    document.getElementById('userGreeting').textContent = `Hi, ${name}!`;
-  }
-
         // === MOCK AI ===
         const taxcAI = {
             incomes: [], pension: 0, rent: 0, state: null,
@@ -1324,9 +1304,9 @@ const name = localStorage.getItem('userName');
 
         // === CHAT UI ===
         function toggleChat() {
-            const win = document.getElementById('chat-window');
-            win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
-        }
+  const win = document.getElementById('chat-window');
+  win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
+}
         function addMessage(text, type) {
             const body = document.getElementById('chat-body');
             const div = document.createElement('div');
@@ -1864,6 +1844,39 @@ function calculateTax() {
     window.lastCalc = { netTax, state };
 }
 
+function generatePDFReport() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Title
+    doc.setFontSize(18);
+    doc.setTextColor(40, 167, 69);
+    doc.text('TaxC — Your 2025 Tax Report', 105, 20, { align: 'center' });
+
+    // Summary
+    doc.setFontSize(12);
+    doc.setTextColor(0);
+    let y = 40;
+    const lines = document.getElementById('taxSummary').innerText.split('\n');
+    lines.forEach(line => {
+        if (line.trim()) {
+            doc.text(line, 20, y);
+            y += 8;
+        }
+    });
+
+    // Footer
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Generated on ${new Date().toLocaleDateString('en-NG')} | taxc.com`, 105, 280, { align: 'center' });
+
+    // Trigger download
+    doc.save('TaxC_Report_2025.pdf');
+    
+    // Success message
+    document.getElementById('msg').innerHTML = 'Report downloaded! Check your Downloads folder.';
+}
+
         function resetForm() {
     const incomeBlocks = document.querySelectorAll('.income-source-block');
     const outputDiv = document.getElementById('output');
@@ -1895,28 +1908,14 @@ function calculateTax() {
 }
 
         function startHostedPayment() {
-            const email = document.getElementById('reportEmail')?.value || '';
-            
-            if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
-                document.getElementById('msg').textContent = 'Please enter a valid email to receive the report.';
-                return;
-            }
-            if (!window.lastCalc) {
-                document.getElementById('msg').textContent = 'Please calculate your tax first.';
-                return;
-            }
-            
-            // Reminder for the Report Generation Logic task
-            const nextSteps = 'You are almost done with the application! Remember these next steps to complete the TaxC application:\n- Report Generation Logic: Refining the startHostedPayment flow and user messaging.';
-            console.log(nextSteps); 
-            
-            document.getElementById('msg').textContent = 'Redirecting to payment... (Placeholder). Check console for development reminder.';
-            alert("Payment initiated! " + nextSteps); 
-            
-            const paystackHostedLink = "https://paystack.com/pay/TAX-C-REPORT-500-NGN"; 
-            
-            // window.location.href = paystackHostedLink;
-        }
+    if (!window.lastCalc) {
+        document.getElementById('msg').textContent = 'Please calculate your tax first.';
+        return;
+    }
+
+    // Generate and download PDF instantly
+    generatePDFReport();
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Add first income source
