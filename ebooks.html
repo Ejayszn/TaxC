@@ -6,7 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TaxC | Ebooks</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="icon" href="./favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+    <link rel="icon" href="./favicon.ico">
+    <link rel="manifest" href="./site.webmanifest">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
     :root {
@@ -1041,25 +1047,19 @@ const Ada = {
 };
 
 // === CHAT UI ===
-// === CHAT STATE TRACKING ===
-let isChatOpen = false;
+let hasNewMessage = false;
 
-// === TOGGLE CHAT ===
 function toggleChat() {
   const win = document.getElementById('chat-window');
   const launcher = document.querySelector('.chat-launcher');
-
-  isChatOpen = !isChatOpen;
-  win.style.display = isChatOpen ? 'flex' : 'none';
-
-  if (isChatOpen) {
+  win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
+  if (win.style.display === 'flex') {
     hasNewMessage = false;
     launcher.classList.remove('has-notification');
     setTimeout(() => document.getElementById('chat-input')?.focus(), 300);
   }
 }
 
-// === ADD MESSAGE WITH SMART NOTIFICATION ===
 function addMessage(text, type) {
   const body = document.getElementById('chat-body');
   const div = document.createElement('div');
@@ -1068,8 +1068,8 @@ function addMessage(text, type) {
   body.appendChild(div);
   body.scrollTop = body.scrollHeight;
 
-  // === NOTIFICATION: Only if chat is CLOSED ===
-  if (type === 'ai' && !isChatOpen) {
+  // === NOTIFICATION BUBBLE ===
+  if (type === 'ai' && document.getElementById('chat-window').style.display !== 'flex') {
     hasNewMessage = true;
     document.querySelector('.chat-launcher').classList.add('has-notification');
   }
@@ -1082,7 +1082,7 @@ function sendMessage() {
 
   addMessage(text, 'user');
   input.value = '';
-  addMessage('<i class="typing">...</i>', 'ai');
+  addMessage('<i class="typing">•••</i>', 'ai');
 
   setTimeout(() => {
     const messages = document.querySelectorAll('.message');
@@ -1094,10 +1094,6 @@ function sendMessage() {
 // === INIT ===
 document.addEventListener('DOMContentLoaded', () => {
   Ada.init();
-  const chatWindow = document.getElementById('chat-window');
-  isChatOpen = chatWindow.style.display === 'flex';
-  if (!isChatOpen) chatWindow.style.display = 'none'; // Ensure consistency
-
   if (Ada.memory.name) {
     setTimeout(() => {
       addMessage(`Welcome back, ${Ada.memory.name}! Howfar today?`, 'ai');
@@ -1512,14 +1508,7 @@ document.head.appendChild(style);
       grid.classList.add('open');
       toggle.textContent = 'Close';
     }
-  }
-
-  function toggleChat() {
-    const win = document.getElementById('chat-window');
-    win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
-  }
-
-  
+  }  
 
   function toggleMobileMenu() {
     const menu = document.getElementById('menu');
