@@ -11,6 +11,8 @@
     <link rel="icon" href="./favicon.ico">
     <link rel="manifest" href="./site.webmanifest">
 
+    <link rel="stylesheet" href="styles/animations.css">
+
   <style>
     :root {
   --green: #28A745;
@@ -601,7 +603,8 @@ footer {
   <div class="container">
 
     <!-- HERO -->
-    <section class="hero-section" id="heroSection">
+     <section class="hero-section fade-in" id="heroSection">
+    
   <h1>TaxC Ebooks</h1>
   <p id="heroText">Get free and premium guides to help you understand, file, and save on taxes in Nigeria.</p>
   <a href="#ebooks" class="cta-button" onclick="activateAllFilter(event)">
@@ -610,7 +613,7 @@ footer {
 </section>
 
     <!-- FILTER BAR -->
-    <div class="filter-bar">
+    <div class="filter-bar fade-in" style="transition-delay: 0.2s;">
       <button class="filter-btn active" data-filter="all">All</button>
       <button class="filter-btn" data-filter="free">Free (5)</button>
       <button class="filter-btn" data-filter="paid">Paid (15)</button>
@@ -624,7 +627,7 @@ footer {
 <section id="ebooks" class="ebooks-grid">
 
   <!-- === 5 FREE EBOOKS === -->
-      <div class="ebook-card" data-type="free" data-title="Who Pays Tax in Nigeria?">
+      <div class="ebook-card fade-in" data-type="free" data-title="Who Pays Tax in Nigeria?">
         <img src="./covers/who-pays-tax.png" alt="Who Pays Tax in Nigeria?" class="ebook-cover">
         <div class="ebook-body">
           <div class="ebook-badge badge-free">FREE</div>
@@ -635,7 +638,7 @@ footer {
         </div>
       </div>
 
-      <div class="ebook-card" data-type="free" data-title="What is Personal Income Tax (P.I.T.)?">
+      <div class="ebook-card fade-in" data-type="free" data-title="What is Personal Income Tax (P.I.T.)?">
         <img src="./covers/what-is-pit.png" alt="What is Personal Income Tax (P.I.T.)?" class="ebook-cover">
         <div class="ebook-body">
           <div class="ebook-badge badge-free">FREE</div>
@@ -646,7 +649,7 @@ footer {
         </div>
       </div>
 
-      <div class="ebook-card" data-type="free" data-title="Am I Tax Eligible? (Quick Quiz)">
+      <div class="ebook-card fade-in" data-type="free" data-title="Am I Tax Eligible? (Quick Quiz)">
         <img src="./covers/am-i-tax-eligible.png" alt="Am I Tax Eligible? (Quick Quiz)" class="ebook-cover">
         <div class="ebook-body">
           <div class="ebook-badge badge-free">FREE</div>
@@ -657,7 +660,7 @@ footer {
         </div>
       </div>
 
-      <div class="ebook-card" data-type="free" data-title="Top 5 Tax Myths Nigerians Believe">
+      <div class="ebook-card fade-in" data-type="free" data-title="Top 5 Tax Myths Nigerians Believe">
         <img src="./covers/tax-myths.png" alt="Top 5 Tax Myths Nigerians Believe" class="ebook-cover">
         <div class="ebook-body">
           <div class="ebook-badge badge-free">FREE</div>
@@ -668,7 +671,7 @@ footer {
         </div>
       </div>
 
-      <div class="ebook-card" data-type="free" data-title="How Much Tax Should I Pay? (Mini Guide)">
+      <div class="ebook-card fade-in" data-type="free" data-title="How Much Tax Should I Pay? (Mini Guide)">
         <img src="./covers/tax-pay.png" alt="How Much Tax Should I Pay? (Mini Guide)" class="ebook-cover">
         <div class="ebook-body">
           <div class="ebook-badge badge-free">FREE</div>
@@ -680,7 +683,7 @@ footer {
       </div>
 
       <!-- === 15 PAID EBOOKS === -->
-      <div class="ebook-card" data-type="paid" data-title="How to Legally Minimize Your Tax">
+      <div class="ebook-card fade-in" data-type="paid" data-title="How to Legally Minimize Your Tax">
         <img src="./covers/minimize-tax.png" alt="How to Legally Minimize Your Tax" class="ebook-cover">
         <div class="ebook-body">
           <div class="ebook-badge badge-paid">₦2,000</div>
@@ -691,7 +694,7 @@ footer {
         </div>
       </div>
 
-      <div class="ebook-card" data-type="paid" data-title="How Do I File My Tax by State IRS?">
+      <div class="ebook-card fade-in" data-type="paid" data-title="How Do I File My Tax by State IRS?">
         <img src="./covers/file-tax.png" alt="How Do I File My Tax by State IRS?" class="ebook-cover">
         <div class="ebook-body">
           <div class="ebook-badge badge-paid">₦1,500</div>
@@ -702,7 +705,7 @@ footer {
         </div>
       </div>
 
-      <div class="ebook-card" data-type="paid" data-title="What is Tax Evasion? (Avoid Jail)">
+      <div class="ebook-card fade-in" data-type="paid" data-title="What is Tax Evasion? (Avoid Jail)">
         <img src="./covers/tax-evasion.png" alt="What is Tax Evasion? (Avoid Jail)" class="ebook-cover">
         <div class="ebook-body">
           <div class="ebook-badge badge-paid">₦1,200</div>
@@ -713,7 +716,7 @@ footer {
         </div>
       </div>
 
-      <div class="ebook-card" data-type="paid" data-title="Self-Employed Tax Guide">
+      <div class="ebook-card fade-in" data-type="paid" data-title="Self-Employed Tax Guide">
         <img src="./covers/tax-guide.png" alt="Self-Employed Tax Guide" class="ebook-cover">
         <div class="ebook-body">
           <div class="ebook-badge badge-paid">₦2,500</div>
@@ -724,7 +727,7 @@ footer {
         </div>
       </div>
 
-      <div class="ebook-card" data-type="paid" data-title="Rental Income Tax for Landlords">
+      <div class="ebook-card fade-in" data-type="paid" data-title="Rental Income Tax for Landlords">
         <img src="./covers/rental-income.png" alt="Rental Income Tax for Landlords" class="ebook-cover">
         <div class="ebook-body">
           <div class="ebook-badge badge-paid">₦1,800</div>
@@ -735,7 +738,7 @@ footer {
         </div>
       </div>
 
-      <div class="ebook-card" data-type="paid" data-title="Salary Earner’s Tax Handbook 2025">
+      <div class="ebook-card fade-in" data-type="paid" data-title="Salary Earner’s Tax Handbook 2025">
         <img src="./covers/handbook.png" alt="Salary Earner’s Tax Handbook 2025" class="ebook-cover">
         <div class="ebook-body">
           <div class="ebook-badge badge-paid">₦1,500</div>
@@ -746,7 +749,7 @@ footer {
         </div>
       </div>
 
-      <div class="ebook-card" data-type="paid" data-title="How to Claim Tax Refunds">
+      <div class="ebook-card fade-in" data-type="paid" data-title="How to Claim Tax Refunds">
         <img src="./covers/tax-refunds.png" alt="How to Claim Tax Refunds" class="ebook-cover">
         <div class="ebook-body">
           <div class="ebook-badge badge-paid">₦1,800</div>
@@ -757,7 +760,7 @@ footer {
         </div>
       </div>
 
-      <div class="ebook-card" data-type="paid" data-title="PIT vs CIT for Business Owners">
+      <div class="ebook-card fade-in" data-type="paid" data-title="PIT vs CIT for Business Owners">
         <img src="./covers/pit-cit.png" alt="PIT vs CIT for Business Owners" class="ebook-cover">
         <div class="ebook-body">
           <div class="ebook-badge badge-paid">₦2,800</div>
@@ -768,7 +771,7 @@ footer {
         </div>
       </div>
 
-      <div class="ebook-card" data-type="paid" data-title="Pension & NHF Tax Reliefs">
+      <div class="ebook-card fade-in" data-type="paid" data-title="Pension & NHF Tax Reliefs">
         <img src="./covers/nhf-tax.png" alt="Pension & NHF Tax Reliefs" class="ebook-cover">
         <div class="ebook-body">
           <div class="ebook-badge badge-paid">₦1,200</div>
@@ -779,7 +782,7 @@ footer {
         </div>
       </div>
 
-      <div class="ebook-card" data-type="paid" data-title="How to Fill Form A (Annual Return)">
+      <div class="ebook-card fade-in" data-type="paid" data-title="How to Fill Form A (Annual Return)">
         <img src="./covers/form-a.png" alt="How to Fill Form A (Annual Return)" class="ebook-cover">
         <div class="ebook-body">
           <div class="ebook-badge badge-paid">₦1,500</div>
@@ -790,7 +793,7 @@ footer {
         </div>
       </div>
 
-      <div class="ebook-card" data-type="paid" data-title="Tax Audit Survival Guide">
+      <div class="ebook-card fade-in" data-type="paid" data-title="Tax Audit Survival Guide">
         <img src="./covers/tax-audit.png" alt="Tax Audit Survival Guide" class="ebook-cover">
         <div class="ebook-body">
           <div class="ebook-badge badge-paid">₦2,200</div>
@@ -801,7 +804,7 @@ footer {
         </div>
       </div>
 
-      <div class="ebook-card" data-type="paid" data-title="WHT Credit Mastery">
+      <div class="ebook-card fade-in" data-type="paid" data-title="WHT Credit Mastery">
         <img src="./covers/wht-credit.png" alt="WHT Credit Mastery" class="ebook-cover">
         <div class="ebook-body">
           <div class="ebook-badge badge-paid">₦1,300</div>
@@ -812,7 +815,7 @@ footer {
         </div>
       </div>
 
-      <div class="ebook-card" data-type="paid" data-title="Tax for Digital Nomads">
+      <div class="ebook-card fade-in" data-type="paid" data-title="Tax for Digital Nomads">
         <img src="./covers/digital-nomads.png" alt="Tax for Digital Nomads" class="ebook-cover">
         <div class="ebook-body">
           <div class="ebook-badge badge-paid">₦2,000</div>
@@ -823,7 +826,7 @@ footer {
         </div>
       </div>
 
-      <div class="ebook-card" data-type="paid" data-title="Marriage, Kids & Tax Reliefs">
+      <div class="ebook-card fade-in" data-type="paid" data-title="Marriage, Kids & Tax Reliefs">
         <img src="./covers/tax-reliefs.png" alt="Marriage, Kids & Tax Reliefs" class="ebook-cover">
         <div class="ebook-body">
           <div class="ebook-badge badge-paid">₦1,400</div>
@@ -834,7 +837,7 @@ footer {
         </div>
       </div>
 
-      <div class="ebook-card" data-type="paid" data-title="Pay Zero Tax Legally (₦800K Exemption)">
+      <div class="ebook-card fade-in" data-type="paid" data-title="Pay Zero Tax Legally (₦800K Exemption)">
         <img src="./covers/zero-tax.png" alt="Pay Zero Tax Legally (₦800K Exemption)" class="ebook-cover">
         <div class="ebook-body">
           <div class="ebook-badge badge-paid">₦1,800</div>
@@ -848,7 +851,7 @@ footer {
     </section>
 
     <!-- MY LIBRARY -->
-    <section class="library-section">
+    <section class="library-section fade-in">
       <div class="library-header" onclick="toggleLibrary()">
         <h3 class="library-title">My Library (0)</h3>
         <span class="library-toggle">Show</span>
@@ -922,7 +925,7 @@ footer {
     </div>
   </div>
 
-  <footer>
+  <footer class="fade-in">
         &copy; 2025 TaxC — Made with care. | <a href="mailto:support@taxc.com">support@taxc.com</a>
     </footer>
 
@@ -1628,5 +1631,6 @@ document.head.appendChild(style);
     updateHeroText();
   });
 </script>
+<script src="scripts/scroll-animation.js"></script>
 </body>
 </html>
