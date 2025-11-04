@@ -1279,10 +1279,10 @@ footer {
     <label for="wht_INDEX">Withholding Tax (WHT) Paid (₦)</label>
     <div class="tooltip">
         <input type="text" id="wht_INDEX" class="wht-input"
-               oninput="updateFormattedValue(this)" placeholder="e.g. 50,000">
+               oninput="updateFormattedValue(this)" placeholder="e.g. 50,000. Omit if unsure">
         <span class="tooltiptext">
             WHT = 10% tax your tenant/bank pays to govt BEFORE giving you the rest.
-            Leave blank in Unsure → we use standard 10%.
+            Leave blank if Unsure → we use standard 10%.
         </span>
     </div>
 </div>
@@ -1820,7 +1820,7 @@ document.head.appendChild(style);
         whtRow.style.display = 'flex';
         tooltip.innerHTML = `
             WHT = 10% tax your tenant/bank pays to govt BEFORE giving you the rest.
-            sLeave blank → we use standard 10%.
+            Leave blank if Unsure → we use standard 10%.
         `;
     } else {
         whtRow.style.display = 'none';
