@@ -1435,14 +1435,17 @@ const Ada = {
 let hasNewMessage = false;
 
 function toggleChat() {
-  const win = document.getElementById('chat-window');
-  const launcher = document.querySelector('.chat-launcher');
-  win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
-  if (win.style.display === 'flex') {
-    hasNewMessage = false;
-    launcher.classList.remove('has-notification');
-    setTimeout(() => document.getElementById('chat-input')?.focus(), 300);
-  }
+  const win = document.getElementById('chat-window');
+  const launcher = document.querySelector('.chat-launcher');
+  win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
+  if (win.style.display === 'flex') {
+    hasNewMessage = false;
+    launcher.classList.remove('has-notification');
+    // ⭐ NEW: Clear the unread status when the chat is opened/read
+    localStorage.removeItem('taxc_ai_has_unread'); 
+
+    setTimeout(() => document.getElementById('chat-input')?.focus(), 300);
+  }
 }
 
 // -------------------------------------------------
@@ -1459,26 +1462,29 @@ function saveChat() {
   localStorage.setItem('taxc_chat_history', JSON.stringify(messages));
 }
 
-function addMessage(text, type) {
-  const body = document.getElementById('chat-body');
-  const div = document.createElement('div');
-  div.className = `message ${type}`;
-  div.innerHTML = text;
-  body.appendChild(div);
-  body.scrollTop = body.scrollHeight;
-  saveChat();
+function addMessage(text, type, isInitialLoad = false) {
+  const body = document.getElementById('chat-body');
+  const div = document.createElement('div');
+  div.className = `message ${type}`;
+  div.innerHTML = text;
+  body.appendChild(div);
+  body.scrollTop = body.scrollHeight;
+  saveChat();
 
-  // === PLAY SOUND ONLY FOR ADA'S REAL REPLY (not loading dots) ===
-if (type === 'ai' && window.adaSound && !text.includes('typing')) {
-  window.adaSound.currentTime = 0;
-  window.adaSound.play().catch(() => {});
-}
+  // === PLAY SOUND ONLY FOR ADA'S REAL REPLY (not loading dots) ===
+  if (type === 'ai' && window.adaSound && !text.includes('typing')) {
+    window.adaSound.currentTime = 0;
+    window.adaSound.play().catch(() => {});
+  }
 
-  // === NOTIFICATION BUBBLE (when chat is closed) ===
-  if (type === 'ai' && document.getElementById('chat-window').style.display !== 'flex') {
-    hasNewMessage = true;
-    document.querySelector('.chat-launcher').classList.add('has-notification');
-  }
+  // === NOTIFICATION BUBBLE (when chat is closed) ===
+  // Trigger only if it's an AI message, NOT an initial load, and the chat is closed
+  if (type === 'ai' && !isInitialLoad && document.getElementById('chat-window').style.display !== 'flex') {
+    hasNewMessage = true;
+    document.querySelector('.chat-launcher').classList.add('has-notification');
+    // ⭐ NEW: Persist the unread status in localStorage
+    localStorage.setItem('taxc_ai_has_unread', 'true'); 
+  }
 }
 
 // -------------------------------------------------
@@ -1508,38 +1514,47 @@ function sendMessage() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  Ada.init();
+  Ada.init();
+  
+  // ⭐ NEW: Check and apply saved notification status immediately on page load
+  const launcher = document.querySelector('.chat-launcher');
+  if (localStorage.getItem('taxc_ai_has_unread') === 'true') {
+    launcher.classList.add('has-notification');
+  }
 
-  // ==== LOAD PREVIOUS CHAT ====
-  const savedChat = localStorage.getItem('taxc_chat_history');
-  if (savedChat) {
-    const messages = JSON.parse(savedChat);
-    messages.forEach(msg => addMessage(msg.text, msg.type));
-  }
+  // ==== LOAD PREVIOUS CHAT ====
+  const savedChat = localStorage.getItem('taxc_chat_history');
+  if (savedChat) {
+    const messages = JSON.parse(savedChat);
+    // Pass 'true' to ensure history re-load doesn't re-trigger notification
+    messages.forEach(msg => addMessage(msg.text, msg.type, true)); 
+  }
 
-  // === INIT ADA SOUND ===
-  const adaSound = document.getElementById('ada-message-sound');
-  if (adaSound) {
-    adaSound.volume = 0.6;
-    window.adaSound = adaSound;
-  }
+  // === INIT ADA SOUND ===
+  const adaSound = document.getElementById('ada-message-sound');
+  if (adaSound) {
+    adaSound.volume = 0.6;
+    window.adaSound = adaSound;
+  }
 
-  // ==== FIRST-TIME WELCOME (if no name & no chat) ====
-  if (!Ada.memory.name && !savedChat) {
-    addMessage("Hi! I'm <strong>Ada</strong>, your personal tax assistant. Ask me anything about taxes, filing, or ebooks!", 'ai');
-  }
+  // ==== FIRST-TIME WELCOME (if no name & no chat) ====
+  if (!Ada.memory.name && !savedChat) {
+    // Pass 'true' to prevent this greeting from triggering a notification
+    addMessage("Hi! I'm <strong>Ada</strong>, your personal tax assistant. Ask me anything about taxes, filing, or ebooks!", 'ai', true); 
+  }
 
-  // === ONLY SHOW "WELCOME BACK" IF NO CHAT HISTORY ===
-  if (Ada.memory.name) {
-    const hasChat = localStorage.getItem('taxc_chat_history') && 
-                    JSON.parse(localStorage.getItem('taxc_chat_history')).length > 0;
-    
-    if (!hasChat) {
-      setTimeout(() => {
-        addMessage(`Welcome back, ${Ada.memory.name}! Howfar today?`, 'ai');
-      }, 800);
-    }
-  }
+  // === ONLY SHOW "WELCOME BACK" IF NO CHAT HISTORY ===
+  if (Ada.memory.name) {
+    const hasChat = localStorage.getItem('taxc_chat_history') && 
+                    JSON.parse(localStorage.getItem('taxc_chat_history')).length > 0;
+    
+    if (!hasChat) {
+      setTimeout(() => {
+        // Pass 'true' to prevent this greeting from triggering a notification
+        addMessage(`Welcome back, ${Ada.memory.name}! Howfar today?`, 'ai', true); 
+      }, 800);
+    }
+  }
 });
 
 // === CSS: Notification Badge + Clean Numbers ===
