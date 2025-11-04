@@ -14,6 +14,43 @@
     <link rel="stylesheet" href="styles/animations.css">
 
     <style>
+
+    .chat-clear {
+  position: absolute;
+  right: 44px; /* Moves it left of the X */
+  top: 50%;
+  transform: translateY(-50%);
+  background: #dc3545; /* Red */
+  color: #fff;
+  border: none;
+  font-size: 0.75rem; /* Smaller text */
+  padding: 4px 8px; /* Smaller button */
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0.9;
+}
+.chat-clear:hover {
+  opacity: 1;
+  background: #c82333;
+}
+
+/* MOBILE FIX: Move Clear further left + smaller */
+@media (max-width: 480px) {
+  .chat-clear {
+    right: 35px; /* Closer to center on mobile */
+    font-size: 0.7rem; /* Even smaller text */
+    padding: 2px 6px; /* Tighter padding */
+  }
+  .chat-header {
+    padding: 10px 8px; /* Less padding on mobile */
+    font-size: 0.9rem; /* Smaller title text */
+  }
+  .chat-close {
+    right: 5px; /* X closer to edge */
+    font-size: 1.2rem; /* Slightly smaller X */
+  }
+}
+
         /* ——— CHAT WIDGET (same as index.html) ——— */
 #taxc-chat-widget {
   position: fixed;
@@ -50,6 +87,7 @@
 .chat-launcher:hover .chat-tooltip{ opacity:1; visibility:visible; right:68px; }
 
 .chat-window{display:none; width:340px; height:520px; background:#fff;
+
   border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.15);
   flex-direction:column; overflow:hidden; border:1px solid #eee;}
 .chat-header{background:#28A745; color:#fff; padding:14px; font-weight:700;
@@ -369,11 +407,11 @@
   </div>
 
   <div class="chat-window" id="chat-window">
-    <div class="chat-header">Ada — TaxC AI <button class="chat-close" onclick="toggleChat()">×</button></div>
+    <div class="chat-header">
+      Ada — TaxC AI
+      <button class="chat-clear" onclick="clearChat()" title="Clear chat">Clear</button>
+      <button class="chat-close" onclick="toggleChat()">×</button></div>
     <div class="chat-body" id="chat-body">
-      <div class="message ai">
-        Hi! I'm <strong>Ada</strong>, your personal tax assistant. Ask me anything about taxes, filing, or ebooks!
-      </div>
     </div>
     <div class="chat-input">
       <input type="text" id="chat-input" placeholder="Type here..." onkeypress="if(event.key==='Enter')sendMessage()">
@@ -383,6 +421,11 @@
 </div>
 </head>
 <body>
+
+<audio id="ada-message-sound" preload="auto">
+  <source src="taxcaiadamessage.mp3" type="audio/mpeg">
+</audio>
+
     <header class="main-header">
     <a class="logo" href="index.html"><img src="./favicon.ico" alt="TaxC Logo" class="logo-icon" style="height: 25px; margin-right: 5px; vertical-align: middle;">TaxC</a>
         <nav class="desktop-nav">
@@ -608,6 +651,20 @@ function toggleChat() {
   }
 }
 
+// -------------------------------------------------
+// SAVE CHAT HISTORY TO LOCALSTORAGE
+// -------------------------------------------------
+function saveChat() {
+  const messages = [];
+  document.querySelectorAll('#chat-body .message').forEach(msg => {
+    messages.push({
+      text: msg.innerHTML,
+      type: msg.classList.contains('user') ? 'user' : 'ai'
+    });
+  });
+  localStorage.setItem('taxc_chat_history', JSON.stringify(messages));
+}
+
 function addMessage(text, type) {
   const body = document.getElementById('chat-body');
   const div = document.createElement('div');
@@ -615,11 +672,28 @@ function addMessage(text, type) {
   div.innerHTML = text;
   body.appendChild(div);
   body.scrollTop = body.scrollHeight;
+  saveChat();
 
-  // === NOTIFICATION BUBBLE ===
+  // === PLAY SOUND ONLY FOR ADA'S REAL REPLY (not loading dots) ===
+if (type === 'ai' && window.adaSound && !text.includes('typing')) {
+  window.adaSound.currentTime = 0;
+  window.adaSound.play().catch(() => {});
+}
+
+  // === NOTIFICATION BUBBLE (when chat is closed) ===
   if (type === 'ai' && document.getElementById('chat-window').style.display !== 'flex') {
     hasNewMessage = true;
     document.querySelector('.chat-launcher').classList.add('has-notification');
+  }
+}
+
+// -------------------------------------------------
+// CLEAR CHAT + CONFIRM
+// -------------------------------------------------
+function clearChat() {
+  if (confirm("Are you sure you want to clear chat?")) {
+    document.getElementById('chat-body').innerHTML = '';
+    localStorage.removeItem('taxc_chat_history');
   }
 }
 
@@ -639,13 +713,38 @@ function sendMessage() {
   }, 1000);
 }
 
-// === INIT ===
 document.addEventListener('DOMContentLoaded', () => {
   Ada.init();
+
+  // ==== LOAD PREVIOUS CHAT ====
+  const savedChat = localStorage.getItem('taxc_chat_history');
+  if (savedChat) {
+    const messages = JSON.parse(savedChat);
+    messages.forEach(msg => addMessage(msg.text, msg.type));
+  }
+
+  // === INIT ADA SOUND ===
+  const adaSound = document.getElementById('ada-message-sound');
+  if (adaSound) {
+    adaSound.volume = 0.6;
+    window.adaSound = adaSound;
+  }
+
+  // ==== FIRST-TIME WELCOME (if no name & no chat) ====
+  if (!Ada.memory.name && !savedChat) {
+    addMessage("Hi! I'm <strong>Ada</strong>, your personal tax assistant. Ask me anything about taxes, filing, or ebooks!", 'ai');
+  }
+
+  // === ONLY SHOW "WELCOME BACK" IF NO CHAT HISTORY ===
   if (Ada.memory.name) {
-    setTimeout(() => {
-      addMessage(`Welcome back, ${Ada.memory.name}! Howfar today?`, 'ai');
-    }, 800);
+    const hasChat = localStorage.getItem('taxc_chat_history') && 
+                    JSON.parse(localStorage.getItem('taxc_chat_history')).length > 0;
+    
+    if (!hasChat) {
+      setTimeout(() => {
+        addMessage(`Welcome back, ${Ada.memory.name}! Howfar today?`, 'ai');
+      }, 800);
+    }
   }
 });
 
@@ -744,6 +843,9 @@ document.head.appendChild(style);
             // NOTE: The click event for 'hamburger' is handled by the 
             // inline 'onclick="toggleMobileMenu()"' in the HTML for simplicity.
         });
+
+window.addEventListener('beforeunload', saveChat);
+
     </script>
     <script src="scripts/scroll-animation.js"></script>
 </body>

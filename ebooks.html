@@ -14,6 +14,43 @@
     <link rel="stylesheet" href="styles/animations.css">
 
   <style>
+
+  .chat-clear {
+  position: absolute;
+  right: 44px; /* Moves it left of the X */
+  top: 50%;
+  transform: translateY(-50%);
+  background: #dc3545; /* Red */
+  color: #fff;
+  border: none;
+  font-size: 0.75rem; /* Smaller text */
+  padding: 4px 8px; /* Smaller button */
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0.9;
+}
+.chat-clear:hover {
+  opacity: 1;
+  background: #c82333;
+}
+
+/* MOBILE FIX: Move Clear further left + smaller */
+@media (max-width: 480px) {
+  .chat-clear {
+    right: 35px; /* Closer to center on mobile */
+    font-size: 0.7rem; /* Even smaller text */
+    padding: 2px 6px; /* Tighter padding */
+  }
+  .chat-header {
+    padding: 10px 8px; /* Less padding on mobile */
+    font-size: 0.9rem; /* Smaller title text */
+  }
+  .chat-close {
+    right: 5px; /* X closer to edge */
+    font-size: 1.2rem; /* Slightly smaller X */
+  }
+}
+
     :root {
   --green: #28A745;
   --dark-green: #218838;
@@ -319,7 +356,6 @@
       cursor: pointer; margin-top: 12px;
     }
     .btn-download { background: #28A745; color: white; }
-    .btn-paystack { background: #ffc107; color: #212529; }
     .modal-close {
       position: absolute; top: 12px; right: 16px; background: none; border: none;
       font-size: 1.5rem; color: #999; cursor: pointer;
@@ -574,6 +610,10 @@ footer {
   </style>
 </head>
 <body>
+
+  <audio id="ada-message-sound" preload="auto">
+  <source src="taxcaiadamessage.mp3" type="audio/mpeg">
+</audio>
 
   <!-- HEADER -->
   <header class="main-header">
@@ -888,14 +928,8 @@ footer {
       </div>
       <div class="modal-body">
         <img id="paidCover" class="modal-cover" src="" alt="">
-        <ul class="modal-bullets">
-          <li>Step-by-step explanations & instructions</li>
-          <li>Real examples & templates</li>
-          <li>Updated for 2025 tax laws</li>
-          <li>Printable checklist</li>
-        </ul>
         <div class="modal-price" id="paidPrice"></div>
-        <button class="modal-btn btn-paystack" onclick="startPayment()">Pay with Paystack</button>
+        <button onclick="buyEbook()" class="ebook-btn">Buy Now</button>
       </div>
     </div>
   </div>
@@ -911,12 +945,10 @@ footer {
     <div class="chat-window" id="chat-window">
       <div class="chat-header">
   Ada — TaxC AI
+  <button class="chat-clear" onclick="clearChat()" title="Clear chat">Clear</button>
   <button class="chat-close" onclick="toggleChat()">×</button>
 </div>
       <div class="chat-body" id="chat-body">
-        <div class="message ai">
-  Hi! I'm <strong>Ada</strong>, your personal tax assistant. Ask me anything about taxes, filing, or ebooks!
-</div>
       </div>
       <div class="chat-input">
         <input type="text" id="chat-input" placeholder="Type here..." onkeypress="if(event.key==='Enter') sendMessage()">
@@ -939,7 +971,7 @@ const Ada = {
     "who needs to pay personal income tax": "Every Nigerian resident earning income above ₦800,000 annually (after deductions) is required to pay Personal Income Tax to their State Internal Revenue Service (IRS). This includes salaried employees, self-employed individuals, and those with rental or investment income.",
     "how does taxc handle deductions": "TaxC allows you to input pension contributions and annual rent paid. For salaried or self-employed individuals, rent relief is calculated as 20% of your rent, capped at ₦500,000. These deductions reduce your taxable income, lowering your tax liability.",
     "what is withholding tax": "Withholding Tax (WHT) is a tax deducted at source on certain incomes, like rental (10%), investment (10%), or other income (5%). TaxC lets you input WHT paid or applies default rates, which are credited against your final tax liability to avoid double taxation.",
-    "is my data safe": "Yes, TaxC prioritizes your privacy. We don’t store sensitive payment information—payments are securely handled by Paystack. Your input data is used only for calculations and report generation, and we adhere to strict data protection standards.",
+    "is my data safe": "Yes, TaxC prioritizes your privacy. We don’t store sensitive payment information—payments are securely handled by Interswitch. Your input data is used only for calculations and report generation, and we adhere to strict data protection standards.",
     "what’s included in the pdf report": "The PDF report includes a step-by-step breakdown of your tax calculation, deduction summary (pension, rent relief), tax band details, and filing guidance tailored to your state’s IRS. It’s perfect for keeping records or sharing with a tax agent.",
     "how do i file my taxes": "TaxC provides an estimate to guide you. To file, submit your tax details to your State IRS, either online via their portal or in person. Our ₦500 report includes specific filing guidance for your state.",
     "can taxc help with business taxes": "Currently, TaxC focuses on Personal Income Tax for individuals. For business or corporate taxes, consult a tax professional or contact your State IRS. Our eBooks may offer additional resources for business owners."
@@ -1059,6 +1091,20 @@ function toggleChat() {
   }
 }
 
+// -------------------------------------------------
+// SAVE CHAT HISTORY TO LOCALSTORAGE
+// -------------------------------------------------
+function saveChat() {
+  const messages = [];
+  document.querySelectorAll('#chat-body .message').forEach(msg => {
+    messages.push({
+      text: msg.innerHTML,
+      type: msg.classList.contains('user') ? 'user' : 'ai'
+    });
+  });
+  localStorage.setItem('taxc_chat_history', JSON.stringify(messages));
+}
+
 function addMessage(text, type) {
   const body = document.getElementById('chat-body');
   const div = document.createElement('div');
@@ -1066,11 +1112,28 @@ function addMessage(text, type) {
   div.innerHTML = text;
   body.appendChild(div);
   body.scrollTop = body.scrollHeight;
+  saveChat();
 
-  // === NOTIFICATION BUBBLE ===
+  // === PLAY SOUND ONLY FOR ADA'S REAL REPLY (not loading dots) ===
+if (type === 'ai' && window.adaSound && !text.includes('typing')) {
+  window.adaSound.currentTime = 0;
+  window.adaSound.play().catch(() => {});
+}
+
+  // === NOTIFICATION BUBBLE (when chat is closed) ===
   if (type === 'ai' && document.getElementById('chat-window').style.display !== 'flex') {
     hasNewMessage = true;
     document.querySelector('.chat-launcher').classList.add('has-notification');
+  }
+}
+
+// -------------------------------------------------
+// CLEAR CHAT + CONFIRM
+// -------------------------------------------------
+function clearChat() {
+  if (confirm("Are you sure you want to clear chat?")) {
+    document.getElementById('chat-body').innerHTML = '';
+    localStorage.removeItem('taxc_chat_history');
   }
 }
 
@@ -1090,13 +1153,38 @@ function sendMessage() {
   }, 1000);
 }
 
-// === INIT ===
 document.addEventListener('DOMContentLoaded', () => {
   Ada.init();
+
+  // ==== LOAD PREVIOUS CHAT ====
+  const savedChat = localStorage.getItem('taxc_chat_history');
+  if (savedChat) {
+    const messages = JSON.parse(savedChat);
+    messages.forEach(msg => addMessage(msg.text, msg.type));
+  }
+
+  // === INIT ADA SOUND ===
+  const adaSound = document.getElementById('ada-message-sound');
+  if (adaSound) {
+    adaSound.volume = 0.6;
+    window.adaSound = adaSound;
+  }
+
+  // ==== FIRST-TIME WELCOME (if no name & no chat) ====
+  if (!Ada.memory.name && !savedChat) {
+    addMessage("Hi! I'm <strong>Ada</strong>, your personal tax assistant. Ask me anything about taxes, filing, or ebooks!", 'ai');
+  }
+
+  // === ONLY SHOW "WELCOME BACK" IF NO CHAT HISTORY ===
   if (Ada.memory.name) {
-    setTimeout(() => {
-      addMessage(`Welcome back, ${Ada.memory.name}! Howfar today?`, 'ai');
-    }, 800);
+    const hasChat = localStorage.getItem('taxc_chat_history') && 
+                    JSON.parse(localStorage.getItem('taxc_chat_history')).length > 0;
+    
+    if (!hasChat) {
+      setTimeout(() => {
+        addMessage(`Welcome back, ${Ada.memory.name}! Howfar today?`, 'ai');
+      }, 800);
+    }
   }
 });
 
@@ -1417,22 +1505,21 @@ document.head.appendChild(style);
 
   // === PAID MODAL: DYNAMIC BULLETS ===
   function openPaidModal(title, price, file) {
-    currentEbook = ebooks.find(e => e.title === title);
-    document.getElementById('paidTitle').textContent = title;
-    document.getElementById('paidCover').src = currentEbook.cover;
-    document.getElementById('paidPrice').textContent = `₦${price.toLocaleString()}`;
+  currentEbook = ebooks.find(e => e.title === title);
+  document.getElementById('paidTitle').textContent = title;
+  document.getElementById('paidCover').src = currentEbook.cover;
+  document.getElementById('paidPrice').textContent = `₦${price.toLocaleString()}`;
 
-    const bulletsList = document.querySelector('#paidModal .modal-bullets');
-    bulletsList.innerHTML = '';
-    currentEbook.bullets.forEach(bullet => {
-      const li = document.createElement('li');
-      li.textContent = bullet;
-      bulletsList.appendChild(li);
-    });
+  const bulletsList = document.querySelector('#paidModal .modal-bullets');
+  bulletsList.innerHTML = '';
+  currentEbook.bullets.forEach(bullet => {
+    const li = document.createElement('li');
+    li.textContent = bullet;
+    bulletsList.appendChild(li);
+  });
 
-    document.getElementById('paidModal').classList.add('open');
-  }
-
+  document.getElementById('paidModal').classList.add('open');
+}
   function closeModal(id) {
     document.getElementById(id).classList.remove('open');
   }
@@ -1454,30 +1541,40 @@ document.head.appendChild(style);
     return true;
   }
 
-  // === REVISED startPayment() FUNCTION ===
-  function startPayment() {
-    if (!currentEbook) {
-      alert("Error: No ebook selected for payment.");
-      return;
-    }
-
-    // --- SIMULATE PAYMENT SUCCESS INSTANTLY ---
-    // NOTE: In a real app, this is where you would call the Paystack initialization
-    // function (e.g., PaystackPop.setup) and the success callback would execute 
-    // the following steps.
-    
-    alert(`Payment for ${currentEbook.title} successful! Download starting...`);
-    
-    // Add the purchased ebook to the user's local library
-    addToLibrary(currentEbook);
-    
-    // Open the PDF file in a new tab/window
-    window.open(currentEbook.file, '_blank');
-    
-    // Close the modal
-    closeModal('paidModal');
+  // === BUY EBOOK (LIVE IPG + DRC + INSTANT DOWNLOAD) ===
+function buyEbook() {
+  if (!currentEbook) {
+    alert("Error: No ebook selected.");
+    return;
   }
-  // =========================================
+
+  const txnRef = 'EBK_' + Date.now();
+
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = 'https://newwebpay.interswitchng.com/collections/w/pay'; // LIVE
+
+  const fields = {
+    merchant_code: 'MX153376',
+    pay_item_id: '5558761', // ← YOUR CLAIMED ID
+    txn_ref: txnRef,
+    amount: (currentEbook.price * 100).toString(), // ₦2000 → 200000
+    currency: '566',
+    site_redirect_url: `${window.location.origin}/thank-you.html?item=ebook&title=${encodeURIComponent(currentEbook.title)}&txn_ref=${txnRef}&file=${encodeURIComponent(currentEbook.file)}`,
+    pay_item_name: currentEbook.title
+  };
+
+  Object.entries(fields).forEach(([k, v]) => {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = k;
+    input.value = v;
+    form.appendChild(input);
+  });
+
+  document.body.appendChild(form);
+  form.submit();
+}
 
   function addToLibrary(ebook) {
     if (!library.find(i => i.file === ebook.file)) {
@@ -1630,6 +1727,9 @@ document.head.appendChild(style);
     }
     updateHeroText();
   });
+
+window.addEventListener('beforeunload', saveChat);
+
 </script>
 <script src="scripts/scroll-animation.js"></script>
 </body>

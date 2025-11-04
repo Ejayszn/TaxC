@@ -6,66 +6,87 @@
   <title>Thank You - TaxC Nigeria</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="icon" href="./favicon.ico">
+  <!-- jsPDF only needed for the report -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #F8F9FA;
-      color: #343A40;
-      line-height: 1.6;
-      text-align: center;
-      padding: 60px 20px;
+      background:#F8F9FA; color:#343A40; line-height:1.6;
+      text-align:center; padding:60px 20px;
     }
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    h1 {
-      font-size: 2.5rem;
-      color: #28A745;
-      margin-bottom: 16px;
-      font-weight: 700;
-    }
-    p {
-      font-size: 1.1rem;
-      color: #555;
-      margin-bottom: 24px;
-    }
+    .container { max-width:600px; margin:auto; }
+    h1 { font-size:2.5rem; color:#28A745; margin-bottom:16px; font-weight:700; }
+    p { font-size:1.1rem; color:#555; margin-bottom:24px; }
     .btn {
-      display: inline-block;
-      background: #28A745;
-      color: white;
-      padding: 14px 28px;
-      border-radius: 50px;
-      text-decoration: none;
-      font-weight: 600;
-      margin: 0 10px;
-      transition: all 0.3s;
+      display:inline-block; background:#28A745; color:white;
+      padding:14px 28px; border-radius:50px; text-decoration:none;
+      font-weight:600; margin:0 10px; transition:all .3s;
     }
-    .btn:hover {
-      background: #218838;
-      transform: translateY(-2px);
-    }
-    .icon {
-      font-size: 4rem;
-      color: #28A745;
-      margin-bottom: 20px;
-    }
+    .btn:hover { background:#218838; transform:translateY(-2px); }
+    .icon { font-size:4rem; color:#28A745; margin-bottom:20px; }
   </style>
 </head>
 <body>
-
   <div class="container">
-    <div class="icon">Successful!</div>
+    <div class="icon">Success!</div>
     <h1>Thank You!</h1>
-    <p>Your payment was successful and your ebook is downloading now.</p>
-    <p>If the download doesn't start, <a href="ebooks/tax-guide-2024.pdf" download>click here</a>.</p>
-    
-    <div style="margin-top: 40px;">
+    <p id="msg">Processing your purchase…</p>
+
+    <div id="buttons" style="margin-top:40px; display:none;">
       <a href="ebooks.html" class="btn">Buy Another Ebook</a>
       <a href="index.html" class="btn">Back to Home</a>
     </div>
   </div>
 
+<script>
+  const params = new URLSearchParams(location.search);
+  const item   = params.get('item');      // "report" or "ebook"
+  const txnRef = params.get('txn_ref');
+  const title  = decodeURIComponent(params.get('title') || '');
+  const file   = decodeURIComponent(params.get('file')  || '');
+
+  const msgEl    = document.getElementById('msg');
+  const btnsEl   = document.getElementById('buttons');
+
+  if (!item || !txnRef) {
+    msgEl.textContent = 'Invalid payment link.';
+    btnsEl.style.display = 'block';
+    return;
+  }
+
+  if (item === 'report') {
+    // ---------- REPORT ----------
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.setFontSize(18);
+    doc.text('TAXC – Your 2025 Tax Report', 105, 20, { align:'center' });
+    doc.setFontSize(12);
+    doc.text(`Payment ID: ${txnRef}`, 20, 40);
+    doc.text(`Generated: ${new Date().toLocaleDateString('en-NG')}`, 20, 50);
+    // you can pull more data from localStorage if you saved it earlier
+    doc.save(`TaxC_Report_${txnRef}.pdf`);
+
+    msgEl.innerHTML = `<strong>Report generated!</strong><br>Check your Downloads folder.`;
+    btnsEl.style.display = 'block';
+  }
+  else if (item === 'ebook' && file) {
+    // ---------- EBOOK ----------
+    const a = document.createElement('a');
+    a.href = file;
+    a.download = `${title}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    msgEl.innerHTML = `<strong>${title}</strong> is downloading now.<br>
+      <em>If it doesn’t start, <a href="${file}" download>click here</a>.</em>`;
+    btnsEl.style.display = 'block';
+  }
+  else {
+    msgEl.textContent = 'Something went wrong – missing data.';
+    btnsEl.style.display = 'block';
+  }
+</script>
 </body>
 </html>
