@@ -976,6 +976,12 @@ input:focus, select:focus {
   .chat-tooltip { display: none; }
 }
 
+/* Add inside <style> block */
+.report-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 footer {
             margin-top: 24px; padding: 20px; text-align: center; color: var(--muted);
             border-top: 1px solid #eee;
@@ -1170,7 +1176,7 @@ footer {
     for only ₦500:
 </p>
             <div class="input-group-inline">
-                <button onclick="startHostedPayment()" class="report-btn">Download PDF Report</button>
+                <button onclick="startHostedPayment()" class="report-btn">Pay ₦500 & Download PDF</button>
             </div>
         </div>
     </div>
@@ -2234,45 +2240,38 @@ function generatePDFReport() {
     window.lastCalc = null;
 }
 
-        // === PAY FOR REPORT (LIVE IPG + DRC) ===
-function payForReport() {
-  const txnRef = 'RPT_' + Date.now();
-
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = 'https://newwebpay.interswitchng.com/collections/w/pay'; // LIVE
-
-  const fields = {
-    merchant_code: 'MX153376',
-    pay_item_id: '5558761', // ← YOUR CLAIMED ID
-    txn_ref: txnRef,
-    amount: '50000', // ₦500
-    currency: '566',
-    site_redirect_url: `${window.location.origin}/thank-you.html?item=report&txn_ref=${txnRef}`,
-    pay_item_name: 'TaxC Report 2025'
-  };
-
-  Object.entries(fields).forEach(([k, v]) => {
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = k;
-    input.value = v;
-    form.appendChild(input);
-  });
-
-  document.body.appendChild(form);
-  form.submit();
-}
-
-// === OLD FUNCTION — REPLACE WITH THIS ===
 function startHostedPayment() {
   if (!window.lastCalc) {
     document.getElementById('msg').textContent = 'Please calculate your tax first.';
     return;
   }
 
-  // PAY FIRST → THEN DOWNLOAD ON CALLBACK
-  payForReport();
+  const txnRef = 'RPT_' + Date.now();
+
+  const paymentRequest = {
+    merchant_code: "MX6072",
+    pay_item_id: "9405967",
+    txn_ref: txnRef,
+    amount: "50000", // ₦500 in minor denomination
+    currency: 566,
+    site_redirect_url: window.location.href, // Stay on same page
+    onComplete: function(response) {
+      console.log("Payment Response:", response);
+      if (response && response.response_code === "00") {
+  document.getElementById('msg').innerHTML = 'Payment successful! Generating your PDF report...';
+  document.querySelector('.report-btn').disabled = false; // ← Re-enable
+  setTimeout(generatePDFReport, 1000);
+} else {
+  document.getElementById('msg').innerHTML = 'Payment failed or cancelled. Please try again.';
+  document.querySelector('.report-btn').disabled = false; // ← Re-enable on fail too
+}
+    },
+    mode: "TEST"
+  };
+
+  // Trigger inline checkout
+  document.querySelector('.report-btn').disabled = true;
+  window.webpayCheckout(paymentRequest);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -2424,6 +2423,7 @@ function scrollToWhyReport(event) {
 window.addEventListener('beforeunload', saveChat);
 
         </script>
+        <script type="text/javascript" src="https://newwebpay.qa.interswitchng.com/inline-checkout.js"></script>
         <script src="scripts/scroll-animation.js"></script>
     </body>
 </html>
