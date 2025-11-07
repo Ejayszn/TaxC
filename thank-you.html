@@ -41,51 +41,20 @@
 
 <script>
   const params = new URLSearchParams(location.search);
-  const item   = params.get('item');      // "report" or "ebook"
-  const txnRef = params.get('txn_ref');
-  const title  = decodeURIComponent(params.get('title') || '');
-  const file   = decodeURIComponent(params.get('file')  || '');
+  if (params.get('item') === 'ebook') {
+    const title = decodeURIComponent(params.get('title'));
+    const file = decodeURIComponent(params.get('file'));
+    const txn_ref = params.get('txn_ref');
 
-  const msgEl    = document.getElementById('msg');
-  const btnsEl   = document.getElementById('buttons');
-
-  if (!item || !txnRef) {
-    msgEl.textContent = 'Invalid payment link.';
-    btnsEl.style.display = 'block';
-    return;
-  }
-
-  if (item === 'report') {
-    // ---------- REPORT ----------
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    doc.setFontSize(18);
-    doc.text('TAXC – Your 2025 Tax Report', 105, 20, { align:'center' });
-    doc.setFontSize(12);
-    doc.text(`Payment ID: ${txnRef}`, 20, 40);
-    doc.text(`Generated: ${new Date().toLocaleDateString('en-NG')}`, 20, 50);
-    // you can pull more data from localStorage if you saved it earlier
-    doc.save(`TaxC_Report_${txnRef}.pdf`);
-
-    msgEl.innerHTML = `<strong>Report generated!</strong><br>Check your Downloads folder.`;
-    btnsEl.style.display = 'block';
-  }
-  else if (item === 'ebook' && file) {
-    // ---------- EBOOK ----------
-    const a = document.createElement('a');
-    a.href = file;
-    a.download = `${title}.pdf`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-
-    msgEl.innerHTML = `<strong>${title}</strong> is downloading now.<br>
-      <em>If it doesn’t start, <a href="${file}" download>click here</a>.</em>`;
-    btnsEl.style.display = 'block';
-  }
-  else {
-    msgEl.textContent = 'Something went wrong – missing data.';
-    btnsEl.style.display = 'block';
+    fetch('http://localhost:5000/api/purchase', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, file, price: 0, txn_ref }),
+      credentials: 'include'
+    }).finally(() => {
+      localStorage.setItem('justPurchased', JSON.stringify({ title, file }));
+      location.href = 'ebooks.html';
+    });
   }
 </script>
 </body>

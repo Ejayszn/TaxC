@@ -149,6 +149,14 @@
         <span id="switchText">Don't have an account?</span>
         <a href="#" id="switchLink">Sign Up</a>
       </p>
+
+      <!-- ADD THIS -->
+      <p style="text-align:center; margin-top:16px;">
+        <a href="index.html" style="color:#28A745; font-size:0.9rem; text-decoration:none;">
+          ← Back to Home
+        </a>
+      </p>
+
     </div>
   </div>
 
@@ -271,10 +279,13 @@
     }
 
     setTimeout(() => {
-      const displayName = isSignup ? firstName : (email.split('@')[0] || 'User');
-      localStorage.setItem('userName', displayName);
-      location.href = redirectTo;
-    }, 1000);
+  localStorage.setItem('isLoggedIn', 'true');
+  const email = $('email').value.trim();
+  const namePart = email.split('@')[0];
+  const niceName = namePart.charAt(0).toUpperCase() + namePart.slice(1).toLowerCase();
+  localStorage.setItem('userName', isSignup ? firstName : niceName);
+  location.href = redirectTo;
+}, 1000);
   });
 
   function showError(msg) {

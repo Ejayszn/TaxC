@@ -1016,7 +1016,7 @@ footer {
             <a href="faq.html">FAQ</a>
             <a href="ebooks.html">Ebooks</a>
             <a href="#calculator">Calculator</a>
-            <button class="cta-small" onclick="window.location.href='login.html'">Login</button>
+            <button class="cta-small" id="auth-button" onclick="window.location.href='login.html'">Login</button>
         </nav>
 
         <button id="hamburger" class="hamburger" onclick="toggleMobileMenu()" type="button">
@@ -1047,14 +1047,14 @@ footer {
             <a href="faq.html">Frequently Asked Questions</a>
             <a href="ebooks.html">Ebooks</a>
             <a href="#calculator" class="nav-link">Calculator</a>
-            <button class="cta-small" onclick="window.location.href='login.html'">Login</button>
+            <button class="cta-small" id="auth-button-mobile" onclick="window.location.href='login.html'">Login</button>
         </nav>
     </header>
     <main class="container">
         
         <section class="hero-section fade-in">
             <h1>Nigerian Tax Calculator (P.I.T)</h1>
-            <p>Use this calculator to accurately find out how much Personal Income Tax (P.I.T.) you should pay. It uses the latest tax rules and automatically includes all your allowances, like for your pension, rent, and minimum tax relief.</p>
+            <p>Use this calculator to accurately find out how much Personal Income Tax (P.I.T.) you should pay. It uses the latest tax rules and includes all your allowances, like for your pension, rent, and minimum tax relief.</p>
             <a href="#calculator" class="cta-button">Start Calculation Now</a>
         </section>
 
@@ -1069,7 +1069,7 @@ footer {
                 <div class="step-card fade-in">
                     <span class="step-number">2</span>
                     <h3>Apply Deductions</h3>
-                    <p>Enter your Pension contributions and Annual Rent to automatically calculate reliefs based on current tax laws.</p>
+                    <p>Enter your Pension contributions, Annual Rent, etc, to automatically calculate reliefs based on current tax laws.</p>
                 </div>
                 <div class="step-card fade-in">
                     <span class="step-number">3</span>
@@ -1279,10 +1279,10 @@ footer {
     <label for="wht_INDEX">Withholding Tax (WHT) Paid (₦)</label>
     <div class="tooltip">
         <input type="text" id="wht_INDEX" class="wht-input"
-               oninput="updateFormattedValue(this)" placeholder="e.g. 50,000. Omit if unsure">
+               oninput="updateFormattedValue(this)" placeholder="e.g. 50,000">
         <span class="tooltiptext">
             WHT = 10% tax your tenant/bank pays to govt BEFORE giving you the rest.
-            Leave blank if Unsure → we use standard 10%.
+            Leave blank in Unsure → we use standard 10%.
         </span>
     </div>
 </div>
@@ -1316,6 +1316,35 @@ footer {
 </footer>
 
     <script>
+
+        document.addEventListener('DOMContentLoaded', () => {
+  const updateAuth = (btnId) => {
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
+    if (isLoggedIn()) {
+      btn.innerHTML = 'Logout';
+      btn.onclick = logout;
+      btn.style.background = '#dc3545';
+      btn.style.padding = '8px 12px';
+      btn.style.fontSize = '0.9rem';
+      btn.style.fontWeight = '600';
+    }
+  };
+  updateAuth('auth-button');
+  updateAuth('auth-button-mobile');
+});
+
+        function isLoggedIn() {
+  return localStorage.getItem('isLoggedIn') === 'true';
+}
+
+function logout() {
+  if (confirm('Are you sure you want to logout?')) {
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('userName');
+    window.location.href = 'index.html';
+  }
+}
         
 // === ADA v6.0 — HACKATHON DEMO GOD MODE (Fixed Everything) ===
 const Ada = {
@@ -1820,7 +1849,7 @@ document.head.appendChild(style);
         whtRow.style.display = 'flex';
         tooltip.innerHTML = `
             WHT = 10% tax your tenant/bank pays to govt BEFORE giving you the rest.
-            Leave blank if Unsure → we use standard 10%.
+            sLeave blank → we use standard 10%.
         `;
     } else {
         whtRow.style.display = 'none';
@@ -2125,8 +2154,8 @@ function calculateTax() {
     // --- Output Display ---
     taxSummary.innerHTML = `
     <strong>Annual Tax Estimate:</strong> ₦${Math.round(netTax).toLocaleString('en-NG')}<br>
-    <strong>Monthly (approx):</strong> ₦${Math.round(monthlyTax).toLocaleString('en-NG')}<br><br>
-    <strong>Gross Income:</strong> ₦${totalGrossIncome.toLocaleString('en-NG')}<br>
+    <strong>Monthly (approximate):</strong> ₦${Math.round(monthlyTax).toLocaleString('en-NG')}<br><br>
+    <strong>Annual Income (Gross):</strong> ₦${totalGrossIncome.toLocaleString('en-NG')}<br>
     <strong>Total Allowable Deductions:</strong> ₦${Math.round(totalDeductions).toLocaleString('en-NG')} (Pension + Rent Relief)<br>
     <strong>Income Before Exemption:</strong> ₦${Math.round(incomeBeforeExemption).toLocaleString('en-NG')}<br>
     <strong>Chargeable Income:</strong> ₦${Math.round(chargeable).toLocaleString('en-NG')} (After ₦800,000 exemption)<br>
