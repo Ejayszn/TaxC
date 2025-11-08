@@ -2241,22 +2241,25 @@ function generatePDFReport() {
 }
 
 function startHostedPayment() {
-  if (!window.lastCalc) {
-    document.getElementById('msg').textContent = 'Please calculate your tax first.';
-    return;
-  }
+  if (!window.lastCalc) {
+    document.getElementById('msg').textContent = 'Please calculate your tax first.';
+    return;
+  }
 
-  // Unique txn_ref: timestamp + random
-  const txnRef = 'RPT_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+  // FIX 2: Use a format closer to the hackathon reference for reliability
+  const txnRef = 'MX-TRN-TAX' + Date.now(); 
 
-  const paymentRequest = {
-    merchant_code: "MX6072",
-    pay_item_id: "9405967",
-    txn_ref: txnRef,
-    amount: "50000", // ₦500
-    currency: 566,
-    site_redirect_url: "location.href", // ← FIXED
-    onComplete: function(response) {
+  const paymentRequest = {
+    merchant_code: "MX6072",
+    pay_item_id: "9405967",
+    txn_ref: txnRef,
+    // FIX 1: Try the original ₦500 amount first. If it still fails,
+    // revert to the hackathon's "3000" (₦30) to rule out the amount as the issue.
+    amount: "50000", // ₦500
+    currency: 566,
+    // FIX: Must use the literal string expected by the TEST environment
+    site_redirect_url: "location.href", 
+    onComplete: function(response) {
       console.log("Payment Response:", response);
 
       // Re-enable button
