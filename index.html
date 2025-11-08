@@ -2247,17 +2247,15 @@ function startHostedPayment() {
   }
 
   // FIX 2: Use a format closer to the hackathon reference for reliability
-  const txnRef = 'MX-TRN-TAX' + Date.now(); 
+  const txnRef = 'TEST-TAX-001'; 
 
   const paymentRequest = {
     merchant_code: "MX6072",
     pay_item_id: "9405967",
     txn_ref: txnRef,
-    // FIX 1: Try the original ₦500 amount first. If it still fails,
-    // revert to the hackathon's "3000" (₦30) to rule out the amount as the issue.
-    amount: "50000", // ₦500
+    // 2. Test with the known-good amount from the Interswitch example
+    amount: "3000", 
     currency: 566,
-    // FIX: Must use the literal string expected by the TEST environment
     site_redirect_url: "location.href", 
     onComplete: function(response) {
       console.log("Payment Response:", response);
