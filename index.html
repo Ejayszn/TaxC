@@ -1184,116 +1184,131 @@ footer {
     </main>
 
     <template id="income-template">
-        <div class="income-source-block" data-source-id="_INDEX">
-            <div class="income-header">
-                <h3>Income Source <span class="income-index">1</span></h3>
-                <button type="button" class="remove-btn" onclick="removeIncomeSource(this)">Remove</button>
-            </div>
+  <div class="income-source-block" data-source-id="_INDEX">
+    <div class="income-header">
+      <h3>Income Source <span class="income-index">1</span></h3>
+      <button type="button" class="remove-btn" onclick="removeIncomeSource(this)">Remove</button>
+    </div>
 
-            <div class="input-row">
-                <div class="input-group">
-                    <label for="type_INDEX">Source Type</label>
-                    <select id="type_INDEX" class="income-type" onchange="handleIncomeTypeChange(this)">
-                        <option value="salary">Salary/Employment</option>
-                        <option value="self">Self-Employment/Business</option>
-                        <option value="rental">Rental Income</option>
-                        <option value="investment">Investment Income</option>
-                        <option value="other">Other Income</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label for="freq_INDEX">Frequency</label>
-                    <select id="freq_INDEX" class="income-frequency" onchange="toggleMonthlyInputs(this); handleIncomeTypeChange(document.getElementById('type_INDEX'))">
-                        <option value="annual">Annual Income (Gross)</option>
-                        <option value="monthly">Monthly Breakdown</option>
-                    </select>
-                </div>
-            </div>
+    <div class="input-row">
+      <div class="input-group">
+        <label for="type_INDEX">Source Type</label>
+        <select id="type_INDEX" class="income-type" onchange="handleIncomeTypeChange(this)">
+          <option value="salary">Salary/Employment</option>
+          <option value="self">Self-Employment/Business</option>
+          <option value="rental">Rental Income</option>
+          <option value="investment">Investment Income</option>
+          <option value="other">Other Income</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label for="freq_INDEX">Frequency</label>
+        <select id="freq_INDEX" class="income-frequency" onchange="toggleMonthlyInputs(this); handleIncomeTypeChange(document.getElementById('type_INDEX'))">
+          <option value="annual">Annual Income (Gross)</option>
+          <option value="monthly">Monthly Breakdown</option>
+        </select>
+      </div>
+    </div>
 
-            <div class="input-group gross-income-container">
-                <label for="income_INDEX">Gross Annual Income (₦)</label>
-                <div class="tooltip">
-<input type="text" id="income_INDEX" class="gross-income" 
-       oninput="updateFormattedValue(this)" 
-       placeholder="e.g., 1,500,000">
-                    <span class="tooltiptext">Total income earned in the year before taxes and deductions.</span>
-                </div>
-            </div>
+    <!-- GROSS INCOME -->
+    <div class="input-group gross-income-container">
+      <label for="income_INDEX">Gross Annual Income (₦)</label>
+      <div class="tooltip">
+        <input type="text" id="income_INDEX" class="gross-income" 
+               oninput="updateFormattedValue(this)" 
+               placeholder="e.g., 1,500,000">
+        <span class="tooltiptext">Total income earned in the year before taxes and deductions.</span>
+      </div>
+    </div>
 
-            <div class="monthly-income-container" style="display: none;">
-                <div class="input-group">
-                    <label>Gross Monthly Income Breakdown (₦)</label>
-                    <div class="monthly-income-row">
-                <div class="input-group">
-                    <label for="jan_INDEX">Jan</label>
-                    <div class="clickable-tooltip">
-                        <input type="text" id="jan_INDEX" data-month="Jan"
-                            oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
-                        <div class="tooltip-popup">Total income earned per month before taxes and deductions.</div>
-                    </div>
-                </div>
-                        <div class="input-group">
-                            <label for="feb_INDEX">Feb</label>
-                            <input type="text" id="feb_INDEX" data-month="Feb" oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
-                        </div>
-                        <div class="input-group">
-                            <label for="mar_INDEX">Mar</label>
-                            <input type="text" id="mar_INDEX" data-month="Mar" oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
-                        </div>
-                        <div class="input-group">
-                            <label for="apr_INDEX">Apr</label>
-                            <input type="text" id="apr_INDEX" data-month="Apr" oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
-                        </div>
-                        <div class="input-group">
-                            <label for="may_INDEX">May</label>
-                            <input type="text" id="may_INDEX" data-month="May" oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
-                        </div>
-                        <div class="input-group">
-                            <label for="jun_INDEX">Jun</label>
-                            <input type="text" id="jun_INDEX" data-month="Jun" oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
-                        </div>
-                        <div class="input-group">
-                            <label for="jul_INDEX">Jul</label>
-                            <input type="text" id="jul_INDEX" data-month="Jul" oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
-                        </div>
-                        <div class="input-group">
-                            <label for="aug_INDEX">Aug</label>
-                            <input type="text" id="aug_INDEX" data-month="Aug" oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
-                        </div>
-                        <div class="input-group">
-                            <label for="sep_INDEX">Sep</label>
-                            <input type="text" id="sep_INDEX" data-month="Sep" oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
-                        </div>
-                        <div class="input-group">
-                            <label for="oct_INDEX">Oct</label>
-                            <input type="text" id="oct_INDEX" data-month="Oct" oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
-                        </div>
-                        <div class="input-group">
-                            <label for="nov_INDEX">Nov</label>
-                            <input type="text" id="nov_INDEX" data-month="Nov" oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
-                        </div>
-                        <div class="input-group">
-                            <label for="dec_INDEX">Dec</label>
-                            <input type="text" id="dec_INDEX" data-month="Dec" oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
-                        </div>
-                    </div>
-                    <div class="monthly-total">Total Annual Income: ₦0</div>
-                </div>
+    <!-- MONTHLY BREAKDOWN -->
+    <div class="monthly-income-container" style="display: none;">
+      <div class="input-group">
+        <label>Gross Monthly Income Breakdown (₦)</label>
+        <div class="monthly-income-row">
+          <!-- JAN -->
+          <div class="input-group">
+            <label for="jan_INDEX">Jan</label>
+            <input type="text" id="jan_INDEX" data-month="Jan"
+                   oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
+            <div class="clickable-tooltip">
+              <div class="tooltip-popup">Total income earned per month before taxes and deductions.</div>
             </div>
+          </div>
+          <!-- FEB -->
+          <div class="input-group">
+            <label for="feb_INDEX">Feb</label>
+            <input type="text" id="feb_INDEX" data-month="Feb" oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
+          </div>
+          <!-- MAR -->
+          <div class="input-group">
+            <label for="mar_INDEX">Mar</label>
+            <input type="text" id="mar_INDEX" data-month="Mar" oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
+          </div>
+          <!-- APR -->
+          <div class="input-group">
+            <label for="apr_INDEX">Apr</label>
+            <input type="text" id="apr_INDEX" data-month="Apr" oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
+          </div>
+          <!-- MAY -->
+          <div class="input-group">
+            <label for="may_INDEX">May</label>
+            <input type="text" id="may_INDEX" data-month="May" oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
+          </div>
+          <!-- JUN -->
+          <div class="input-group">
+            <label for="jun_INDEX">Jun</label>
+            <input type="text" id="jun_INDEX" data-month="Jun" oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
+          </div>
+          <!-- JUL -->
+          <div class="input-group">
+            <label for="jul_INDEX">Jul</label>
+            <input type="text" id="jul_INDEX" data-month="Jul" oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
+          </div>
+          <!-- AUG -->
+          <div class="input-group">
+            <label for="aug_INDEX">Aug</label>
+            <input type="text" id="aug_INDEX" data-month="Aug" oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
+          </div>
+          <!-- SEP -->
+          <div class="input-group">
+            <label for="sep_INDEX">Sep</label>
+            <input type="text" id="sep_INDEX" data-month="Sep" oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
+          </div>
+          <!-- OCT -->
+          <div class="input-group">
+            <label for="oct_INDEX">Oct</label>
+            <input type="text" id="oct_INDEX" data-month="Oct" oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
+          </div>
+          <!-- NOV -->
+          <div class="input-group">
+            <label for="nov_INDEX">Nov</label>
+            <input type="text" id="nov_INDEX" data-month="Nov" oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
+          </div>
+          <!-- DEC -->
+          <div class="input-group">
+            <label for="dec_INDEX">Dec</label>
+            <input type="text" id="dec_INDEX" data-month="Dec" oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
+          </div>
+        </div>
+        <div class="monthly-total">Total Annual Income: ₦0</div>
+      </div>
+    </div>
 
-            <div class="input-group wht-row" style="display:none;">
-    <label for="wht_INDEX">Withholding Tax (WHT) Paid (₦)</label>
-    <div class="tooltip">
+    <!-- WHT -->
+    <div class="input-group wht-row" style="display:none;">
+      <label for="wht_INDEX">Withholding Tax (WHT) Paid (₦)</label>
+      <div class="tooltip">
         <input type="text" id="wht_INDEX" class="wht-input"
                oninput="updateFormattedValue(this)" placeholder="e.g. 50,000">
         <span class="tooltiptext">
-            WHT = 10% tax your tenant/bank pays to govt BEFORE giving you the rest.
-            Leave blank in Unsure → we use standard 10%.
+          WHT = 10% tax your tenant/bank pays to govt BEFORE giving you the rest.
+          Leave blank in Unsure → we use standard 10%.
         </span>
+      </div>
     </div>
-</div>
-        </div>
-    </template>
+  </div>
+</template>
 <!-- FLOATING CHAT -->
 <div id="taxc-chat-widget">
   <div class="chat-launcher" onclick="toggleChat()" aria-label="Chat with TaxC AI">
