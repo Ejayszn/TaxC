@@ -2255,7 +2255,7 @@ function startHostedPayment() {
     txn_ref: txnRef,
     amount: "50000", // ₦500
     currency: 566,
-    site_redirect_url: window.location.origin + window.location.pathname, // ← FIXED
+    site_redirect_url: "location.href", // ← FIXED
     onComplete: function(response) {
       console.log("Payment Response:", response);
 
