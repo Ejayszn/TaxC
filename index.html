@@ -2246,40 +2246,31 @@ function startHostedPayment() {
     return;
   }
 
-  // Unique txn_ref: timestamp + random
-  const txnRef = 'TEST-TAX-005'
+  const txnRef = 'RPT_' + Date.now();
 
   const paymentRequest = {
     merchant_code: "MX6072",
     pay_item_id: "9405967",
-    txn_ref: "MX-TRN-" + Math.random() * 2.5,
-    amount: "3000", // ₦500
+    txn_ref: txnRef,
+    amount: "50000",
     currency: 566,
-    site_redirect_url: "location.href", // ← FIXED
+    site_redirect_url: location.href,
     onComplete: function(response) {
       console.log("Payment Response:", response);
-
-      // Re-enable button
-      const btn = document.querySelector('.report-btn');
-      btn.disabled = false;
-      btn.textContent = "Pay ₦500 & Download PDF";
-
       if (response && response.response_code === "00") {
         document.getElementById('msg').innerHTML = 'Payment successful! Generating your PDF report...';
+        document.querySelector('.report-btn').disabled = false;
         setTimeout(generatePDFReport, 1000);
       } else {
-        const error = response?.response_description || "Unknown error";
-        document.getElementById('msg').innerHTML = `Payment failed: ${error}<br>Please try again.`;
+        document.getElementById('msg').innerHTML = 'Payment failed or cancelled. Please try again.';
+        document.querySelector('.report-btn').disabled = false;
       }
     },
     mode: "TEST"
   };
 
-  // UI: Disable button + show loading
-  const btn = document.querySelector('.report-btn');
-  btn.disabled = true;
-  btn.textContent = "Processing...";
-
+  // Disable button before opening payment
+  document.querySelector('.report-btn').disabled = true;
   window.webpayCheckout(paymentRequest);
 }
 
