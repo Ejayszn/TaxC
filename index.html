@@ -2252,7 +2252,7 @@ function startHostedPayment() {
   const paymentRequest = {
     merchant_code: "MX6072",
     pay_item_id: "9405967",
-    txn_ref: txnRef,
+    txn_ref: "MX-TRN-" + Math.random() * 2.5,
     amount: "3000", // ₦500
     currency: 566,
     site_redirect_url: "location.href", // ← FIXED
