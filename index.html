@@ -2261,20 +2261,19 @@ function startHostedPayment() {
     return;
   }
 
-  // Unique txn_ref: timestamp + random
+  // Unique transaction reference
   const txnRef = 'RPT_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
 
   const paymentRequest = {
-    merchant_code: "MX6072",
-    pay_item_id: "9405967",
+    merchant_code: "MX153376",        // LIVE MERCHANT CODE
+    pay_item_id: "9915308",           // LIVE PAY ITEM ID
     txn_ref: txnRef,
-    amount: "50000", // ₦500
-    currency: 566,
-    site_redirect_url: window.location.origin + window.location.pathname, // ← FIXED
+    amount: "50000",                  // ₦500 in kobo
+    currency: 566,                    // NGN
+    site_redirect_url: window.location.href,  // Full URL (origin + path + hash)
     onComplete: function(response) {
       console.log("Payment Response:", response);
 
-      // Re-enable button
       const btn = document.querySelector('.report-btn');
       btn.disabled = false;
       btn.textContent = "Pay ₦500 & Download PDF";
@@ -2283,18 +2282,19 @@ function startHostedPayment() {
         document.getElementById('msg').innerHTML = 'Payment successful! Generating your PDF report...';
         setTimeout(generatePDFReport, 1000);
       } else {
-        const error = response?.response_description || "Unknown error";
+        const error = response?.response_description || "Transaction failed or was cancelled.";
         document.getElementById('msg').innerHTML = `Payment failed: ${error}<br>Please try again.`;
       }
     },
-    mode: "TEST"
+    mode: "LIVE"  // PRODUCTION MODE
   };
 
-  // UI: Disable button + show loading
+  // UI: Show processing
   const btn = document.querySelector('.report-btn');
   btn.disabled = true;
   btn.textContent = "Processing...";
 
+  // Use LIVE endpoint (already loaded via <script> in your HTML)
   window.webpayCheckout(paymentRequest);
 }
 
@@ -2447,7 +2447,7 @@ function scrollToWhyReport(event) {
 window.addEventListener('beforeunload', saveChat);
 
         </script>
-        <script type="text/javascript" src="https://newwebpay.qa.interswitchng.com/inline-checkout.js"></script>
+        <script type="text/javascript" src="https://newwebpay.interswitchng.com/inline-checkout.js"></script>
         <script src="scripts/scroll-animation.js"></script>
     </body>
 </html>
