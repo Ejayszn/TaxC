@@ -2246,31 +2246,40 @@ function startHostedPayment() {
     return;
   }
 
-  const txnRef = 'RPT_' + Date.now();
+  // Unique txn_ref: timestamp + random
+  const txnRef = 'RPT_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
 
   const paymentRequest = {
     merchant_code: "MX6072",
     pay_item_id: "9405967",
     txn_ref: txnRef,
-    amount: "50000", // ₦500 in minor denomination
+    amount: "50000", // ₦500
     currency: 566,
-    site_redirect_url: location.origin + location.pathname, // Stay on same page
+    site_redirect_url: window.location.origin + window.location.pathname, // ← FIXED
     onComplete: function(response) {
       console.log("Payment Response:", response);
+
+      // Re-enable button
+      const btn = document.querySelector('.report-btn');
+      btn.disabled = false;
+      btn.textContent = "Pay ₦500 & Download PDF";
+
       if (response && response.response_code === "00") {
-  document.getElementById('msg').innerHTML = 'Payment successful! Generating your PDF report...';
-  document.querySelector('.report-btn').disabled = false; // ← Re-enable
-  setTimeout(generatePDFReport, 1000);
-} else {
-  document.getElementById('msg').innerHTML = 'Payment failed or cancelled. Please try again.';
-  document.querySelector('.report-btn').disabled = false; // ← Re-enable on fail too
-}
+        document.getElementById('msg').innerHTML = 'Payment successful! Generating your PDF report...';
+        setTimeout(generatePDFReport, 1000);
+      } else {
+        const error = response?.response_description || "Unknown error";
+        document.getElementById('msg').innerHTML = `Payment failed: ${error}<br>Please try again.`;
+      }
     },
     mode: "TEST"
   };
 
-  // Trigger inline checkout
-  document.querySelector('.report-btn').disabled = true;
+  // UI: Disable button + show loading
+  const btn = document.querySelector('.report-btn');
+  btn.disabled = true;
+  btn.textContent = "Processing...";
+
   window.webpayCheckout(paymentRequest);
 }
 
