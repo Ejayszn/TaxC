@@ -2261,17 +2261,18 @@ function startHostedPayment() {
     return;
   }
 
+  // Unique transaction reference
   const txnRef = 'RPT_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
 
   const paymentRequest = {
-    merchant_code: "MX153376",     // LIVE
-    pay_item_id: "9915308",        // LIVE
+    merchant_code: "MX153376",        // LIVE MERCHANT CODE
+    pay_item_id: "9915308",           // LIVE PAY ITEM ID
     txn_ref: txnRef,
-    amount: "50000",               // ₦500
-    currency: 566,
-    site_redirect_url: window.location.href,
+    amount: "50000",                  // ₦500 in kobo
+    currency: 566,                    // NGN
+    site_redirect_url: window.location.href,  // Full URL (origin + path + hash)
     onComplete: function(response) {
-      console.log("LIVE Payment Response:", response);
+      console.log("Payment Response:", response);
 
       const btn = document.querySelector('.report-btn');
       btn.disabled = false;
@@ -2281,25 +2282,19 @@ function startHostedPayment() {
         document.getElementById('msg').innerHTML = 'Payment successful! Generating your PDF report...';
         setTimeout(generatePDFReport, 1000);
       } else {
-        const error = response?.response_description || "Transaction failed or cancelled.";
+        const error = response?.response_description || "Transaction failed or was cancelled.";
         document.getElementById('msg').innerHTML = `Payment failed: ${error}<br>Please try again.`;
       }
     },
-    mode: "LIVE"  // PRODUCTION
+    mode: "LIVE"  // PRODUCTION MODE
   };
 
+  // UI: Show processing
   const btn = document.querySelector('.report-btn');
   btn.disabled = true;
   btn.textContent = "Processing...";
 
-  console.log("Initiating LIVE payment:", {
-  merchant_code: "MX153376",
-  pay_item_id: "9915308",
-  txn_ref: txnRef,
-  amount: "50000",
-  site_redirect_url: window.location.href
-});
-
+  // Use LIVE endpoint (already loaded via <script> in your HTML)
   window.webpayCheckout(paymentRequest);
 }
 
