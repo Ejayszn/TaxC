@@ -2247,13 +2247,13 @@ function startHostedPayment() {
   }
 
   // Unique txn_ref: timestamp + random
-  const txnRef = 'RPT_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+  const txnRef = 'TEST-TAX-005'
 
   const paymentRequest = {
     merchant_code: "MX6072",
     pay_item_id: "9405967",
     txn_ref: txnRef,
-    amount: "50000", // ₦500
+    amount: "3000", // ₦500
     currency: 566,
     site_redirect_url: "location.href", // ← FIXED
     onComplete: function(response) {
