@@ -2254,7 +2254,7 @@ function startHostedPayment() {
     txn_ref: txnRef,
     amount: "50000",
     currency: 566,
-    site_redirect_url: location.href,
+    site_redirect_url: "location.href",
     onComplete: function(response) {
       console.log("Payment Response:", response);
       if (response && response.response_code === "00") {
