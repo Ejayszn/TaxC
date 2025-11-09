@@ -1015,7 +1015,7 @@ footer {
                         <li>Any tax already paid</li>
                         <li><strong>Direct link to pay your state IRS</strong></li>
                         <li>How & when to file your tax</li>
-                        <li>Print-ready PDF — keep it forever</li>
+                        <li>Print-ready PDF, keep it forever</li>
                     </ul>
                 </div>
             </div>
@@ -1099,11 +1099,11 @@ footer {
         <div class="input-row">
             <div class="input-group">
                 <label for="pension">Annual Pension Contributions (₦)</label>
-                <input type="text" id="pension" oninput="updateFormattedValue(this)" placeholder="e.g., 200,000">
+                <input type="text" id="pension" oninput="updateFormattedValue(this)" placeholder="e.g., 200,000...Omit if unapplicable">
             </div>
             <div class="input-group">
                 <label for="rent">Annual Rent Paid (₦)</label>
-                <input type="text" id="rent" oninput="updateFormattedValue(this)" placeholder="e.g., 1,500,000">
+                <input type="text" id="rent" oninput="updateFormattedValue(this)" placeholder="e.g., 1,500,000...Omit if unapplicable">
             </div>
         </div>
         
@@ -1131,7 +1131,7 @@ footer {
         <option value="Jigawa">Jigawa</option>
         <option value="Kaduna">Kaduna</option>
         <option value="Kano">Kano</option>
-        <option value="Katsina">Katsina</option>
+        <option value="Katsina">Kastina</option>
         <option value="Kebbi">Kebbi</option>
         <option value="Kogi">Kogi</option>
         <option value="Kwara">Kwara</option>
@@ -1300,10 +1300,10 @@ footer {
       <label for="wht_INDEX">Withholding Tax (WHT) Paid (₦)</label>
       <div class="tooltip">
         <input type="text" id="wht_INDEX" class="wht-input"
-               oninput="updateFormattedValue(this)" placeholder="e.g. 50,000">
+               oninput="updateFormattedValue(this)" placeholder="e.g., 50,000...Omit if unsure">
         <span class="tooltiptext">
           WHT = 10% tax your tenant/bank pays to govt BEFORE giving you the rest.
-          Leave blank in Unsure → we use standard 10%.
+          Leave blank if Unsure → we use standard 10%.
         </span>
       </div>
     </div>
@@ -1870,7 +1870,7 @@ document.head.appendChild(style);
         whtRow.style.display = 'flex';
         tooltip.innerHTML = `
             WHT = 10% tax your tenant/bank pays to govt BEFORE giving you the rest.
-            sLeave blank → we use standard 10%.
+            Leave blank → we use standard 10%.
         `;
     } else {
         whtRow.style.display = 'none';
@@ -2070,7 +2070,7 @@ function calculateTax() {
 
     // 1. Check for Income/Form validation first (triggers the generic 'fill above' message)
     if (!validateForm()) {
-        msgDiv.textContent = 'Please fill the above';
+        msgDiv.textContent = '🔴 Please fill the above';
         outputDiv.style.display = 'block';
         defaultMessage.style.display = 'block'; // Show placeholder below error
         reportSection.scrollIntoView({ behavior: 'smooth' });
@@ -2079,7 +2079,7 @@ function calculateTax() {
 
     // 2. Check for State second (triggers the specific 'select state' message)
     if (!state) {
-        msgDiv.textContent = 'Please select your State of Residence to proceed with the tax calculation.';
+        msgDiv.textContent = '🔴 Please select your State of Residence to proceed with the tax calculation.';
         outputDiv.style.display = 'block';
         defaultMessage.style.display = 'block'; // Show placeholder below error
         reportSection.scrollIntoView({ behavior: 'smooth' });
@@ -2257,7 +2257,7 @@ function generatePDFReport() {
 
 function startHostedPayment() {
   if (!window.lastCalc) {
-    document.getElementById('msg').textContent = 'Please calculate your tax first.';
+    document.getElementById('msg').textContent = '🔴 Please calculate your tax first.';
     return;
   }
 
