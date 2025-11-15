@@ -175,21 +175,29 @@
         </div>
 
         <div class="form-group">
-          <label for="password">Password</label>
-          <div style="position:relative;">
-            <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password" style="padding-right:120px;">
-            <a href="#" id="forgotLink" style="position:absolute; right:16px; top:50%; transform:translateY(-50%); font-size:0.8rem; color:#28A745; text-decoration:none; white-space:nowrap;">
-              Forgot?
-            </a>
-          </div>
-          <div class="password-rules" id="passwordRules" style="display:none; margin-top:8px;">
-            <div class="rule" id="rule-length">Password must be at least 6 characters</div>
-            <div class="rule" id="rule-upper">1 uppercase letter</div>
-            <div class="rule" id="rule-lower">1 lowercase letter</div>
-            <div class="rule" id="rule-number">1 number</div>
-            <div class="rule" id="rule-symbol">1 symbol (.!@#$%^&* etc.)</div>
-          </div>
-        </div>
+  <label for="password">Password</label>
+  <div style="position:relative;">
+    <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password" style="padding-right:140px;">
+    
+    <button type="button" id="togglePassword" style="position:absolute; right:68px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#666; display:flex; align-items:center; font-size:0.9rem;">
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+    <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-4.179-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+    <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+  </svg>
+</button>
+
+    <a href="#" id="forgotLink" style="position:absolute; right:16px; top:50%; transform:translateY(-50%); font-size:0.8rem; color:#28A745; text-decoration:none; white-space:nowrap;">
+      Forgot?
+    </a>
+  </div>
+  <div class="password-rules" id="passwordRules" style="display:none; margin-top:8px;">
+    <div class="rule" id="rule-length">Password must be at least 6 characters</div>
+    <div class="rule" id="rule-upper">1 uppercase letter</div>
+    <div class="rule" id="rule-lower">1 lowercase letter</div>
+    <div class="rule" id="rule-number">1 number</div>
+    <div class="rule" id="rule-symbol">1 symbol (.!@#$%^&* etc.)</div>
+  </div>
+</div>
 
         <button type="submit" class="btn-primary" id="submitBtn">Login</button>
       </form>
@@ -395,6 +403,31 @@ $('googleBtn').addEventListener('click', async () => {
       window.location.href = redirectTo;
     }
   });
+
+    // === PASSWORD TOGGLE (Eye Icon) ===
+  const passwordInput = $('password');  // ADD THIS LINE
+  const toggleBtn = $('togglePassword');
+
+  const eyeOpen = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+    <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-4.179-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+    <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+  </svg>`;
+
+  const eyeClosed = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+  <path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.028 7.028 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755l.896.896z"/>
+  <path d="M.001 1.002l15 15-1.414 1.414-15-15L.001 1.002zm5.657 5.657l1.414 1.414a2.5 2.5 0 0 0 3.535 3.535l1.414 1.414A3.5 3.5 0 0 1 8 13.5c-2.12 0-3.879-1.168-4.179-2.457a13.134 13.134 0 0 1-1.638-2.043l.001-.001c.058-.087.122-.183.195-.288l1.414-1.414z"/>
+</svg>`;
+
+  // Set initial icon
+  toggleBtn.innerHTML = eyeOpen;
+
+  // Toggle functionality
+  toggleBtn.addEventListener('click', () => {
+    const isPassword = passwordInput.getAttribute('type') === 'password';
+    passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+    toggleBtn.innerHTML = isPassword ? eyeClosed : eyeOpen;
+  });
+
 </script>
 </body>
 </html>
