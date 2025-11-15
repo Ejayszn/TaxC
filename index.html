@@ -2418,7 +2418,6 @@ function scrollToWhyReport(event) {
 window.addEventListener('beforeunload', saveChat);
 
         </script>
-        <script type="text/javascript" src="https://newwebpay.interswitchng.com/inline-checkout.js"></script>
         <script src="scripts/scroll-animation.js"></script>
         <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
@@ -2447,6 +2446,21 @@ window.addEventListener('beforeunload', saveChat);
       }
     });
   });
+</script>
+<script>
+  // Smart-load Interswitch ONLY on pages that need payment
+  const needsPayment = ['index.html', 'ebooks.html'].some(page => 
+    window.location.pathname.includes(page) || 
+    (window.location.pathname === '/' && page === 'index.html')
+  );
+
+  if (needsPayment) {
+    const script = document.createElement('script');
+    script.src = 'https://newwebpay.interswitchng.com/inline-checkout.js';
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+  }
 </script>
     </body>
 </html>
