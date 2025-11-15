@@ -1,26 +1,156 @@
 <!DOCTYPE html>
-<html>
-<head><title>Privacy Policy - TaxC</title></head>
-<body style="font-family: sans-serif; padding: 20px; max-width: 700px; margin: auto;">
-  <h1>Privacy Policy</h1>
-  <p><strong>Last updated: November 10, 2025</strong></p>
-  
-  <h3>1. Data We Collect</h3>
-  <ul>
-    <li>Your email (for login)</li>
-    <li>Purchase status (eBooks unlocked?)</li>
-    <li>Last login time</li>
-  </ul>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Privacy Policy - TaxC</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="./favicon.ico">
+  <style>
+    :root {
+      --green: #28A745;
+      --dark-green: #218838;
+      --soft: #F8F9FA;
+      --muted: #6c757d;
+      --card: #ffffff;
+      --dark-text: #343A40;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--soft);
+      color: var(--dark-text);
+      line-height: 1.6;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: var(--card);
+      padding: 32px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    h1 {
+      color: var(--green);
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .last-updated {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 32px;
+    }
+    h3 {
+      color: var(--dark-green);
+      margin: 28px 0 12px;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+    p, li {
+      font-size: 1rem;
+      margin-bottom: 12px;
+      color: var(--dark-text);
+    }
+    ul {
+      padding-left: 20px;
+      margin-bottom: 16px;
+    }
+    ul li {
+      margin-bottom: 8px;
+    }
+    a {
+      color: var(--green);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 32px;
+      font-size: 0.95rem;
+    }
+    .consent-box {
+      background: #e6ffe6;
+      border: 1px solid #b3ffb3;
+      border-radius: 12px;
+      padding: 16px;
+      margin: 24px 0;
+      font-size: 0.95rem;
+    }
+    .consent-box label {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      cursor: pointer;
+    }
+    .consent-box input[type="checkbox"] {
+      margin-top: 4px;
+      accent-color: var(--green);
+    }
+    @media (max-width: 480px) {
+      .container { padding: 24px; }
+      h1 { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
 
-  <h3>2. Why We Collect It</h3>
-  <p>To let you access your eBooks on any device.</p>
+  <div class="container">
+    <h1>Privacy Policy</h1>
+    <p class="last-updated"><strong>Last updated: November 15, 2025</strong></p>
 
-  <h3>3. Storage</h3>
-  <p>Securely stored in Firebase (Google Cloud, NDPR-compliant).</p>
+    <h3>1. Data We Collect</h3>
+    <ul>
+      <li>Your <strong>email</strong> (for login & account recovery)</li>
+      <li><strong>Purchase status</strong> (eBooks unlocked?)</li>
+      <li><strong>Last login time</strong> (for security)</li>
+      <li><strong>Calculator inputs</strong> (optional, saved only if logged in)</li>
+    </ul>
 
-  <h3>4. Your Rights</h3>
-  <p>Email <a href="mailto:support@taxc.com">support@taxc.com.ng</a> to delete your account and all data.</p>
+    <h3>2. Why We Collect It</h3>
+    <p>To let you access your eBooks and saved calculations on any device. No data is sold or shared.</p>
 
-  <p><a href="index.html">← Back to TaxC</a></p>
+    <h3>3. Storage & Security</h3>
+    <p>All data is securely stored in <strong>Firebase (Google Cloud)</strong> — NDPR-compliant, encrypted, and hosted in a region compliant with Nigerian data laws.</p>
+
+    <h3>4. Your Rights (NDPR)</h3>
+    <p>You have full control:</p>
+    <ul>
+      <li><strong>Access</strong> your data anytime</li>
+      <li><strong>Delete</strong> your account and all data</li>
+      <li><strong>Withdraw consent</strong> at any time</li>
+    </ul>
+    <p>Email <a href="mailto:support@taxc.com.ng">support@taxc.com.ng</a> to request deletion or access.</p>
+
+    <div class="consent-box">
+      <label>
+        <input type="checkbox" id="consent" required>
+        I have read and agree to TaxC's Privacy Policy and consent to data processing as described.
+      </label>
+    </div>
+
+    <a href="index.html" class="back-link">← Back to TaxC</a>
+  </div>
+
+  <!-- Auto-check consent on login page -->
+  <script>
+    document.getElementById('consent')?.addEventListener('change', function() {
+      if (this.checked) {
+        localStorage.setItem('taxc_privacy_consent', 'true');
+      }
+    });
+
+    // Optional: Auto-check if already consented
+    if (localStorage.getItem('taxc_privacy_consent') === 'true') {
+      document.getElementById('consent')?.setAttribute('checked', 'true');
+    }
+  </script>
 </body>
 </html>

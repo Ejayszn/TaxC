@@ -57,5 +57,25 @@
     });
   }
 </script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD59PBKVQ_ocfAxWHsMsG0a3SE143Yp5zo",
+    authDomain: "taxc-ebooks.firebaseapp.com",
+    projectId: "taxc-ebooks",
+    storageBucket: "taxc-ebooks.firebasestorage.app",
+    messagingSenderId: "542476707940",
+    appId: "1:542476707940:web:591fd5d3d6fd51eff95771"
+  };
+  
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  onAuthStateChanged(auth, user => {
+    if (!user) location.href = 'login.html';
+  });
+</script>
 </body>
 </html>

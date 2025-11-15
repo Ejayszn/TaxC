@@ -1022,7 +1022,7 @@ footer {
             <a href="faq.html">FAQ</a>
             <a href="ebooks.html">Ebooks</a>
             <a href="#calculator">Calculator</a>
-            <button class="cta-small" id="auth-button" onclick="window.location.href='login.html'">Login</button>
+            <button class="cta-small" id="auth-button"></button>
         </nav>
 
         <button id="hamburger" class="hamburger" onclick="toggleMobileMenu()" type="button">
@@ -1053,7 +1053,7 @@ footer {
             <a href="faq.html">Frequently Asked Questions</a>
             <a href="ebooks.html">Ebooks</a>
             <a href="#calculator" class="nav-link">Calculator</a>
-            <button class="cta-small" id="auth-button-mobile" onclick="window.location.href='login.html'">Login</button>
+            <button class="cta-small" id="auth-button-mobile"></button>
         </nav>
     </header>
     <main class="container">
@@ -1337,35 +1337,6 @@ footer {
 </footer>
 
     <script>
-
-        document.addEventListener('DOMContentLoaded', () => {
-  const updateAuth = (btnId) => {
-    const btn = document.getElementById(btnId);
-    if (!btn) return;
-    if (isLoggedIn()) {
-      btn.innerHTML = 'Logout';
-      btn.onclick = logout;
-      btn.style.background = '#dc3545';
-      btn.style.padding = '8px 12px';
-      btn.style.fontSize = '0.9rem';
-      btn.style.fontWeight = '600';
-    }
-  };
-  updateAuth('auth-button');
-  updateAuth('auth-button-mobile');
-});
-
-        function isLoggedIn() {
-  return localStorage.getItem('isLoggedIn') === 'true';
-}
-
-function logout() {
-  if (confirm('Are you sure you want to logout?')) {
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('userName');
-    window.location.href = 'index.html';
-  }
-}
         
 // === ADA v6.0 — HACKATHON DEMO GOD MODE (Fixed Everything) ===
 const Ada = {
@@ -2449,5 +2420,33 @@ window.addEventListener('beforeunload', saveChat);
         </script>
         <script type="text/javascript" src="https://newwebpay.interswitchng.com/inline-checkout.js"></script>
         <script src="scripts/scroll-animation.js"></script>
+        <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD59PBKVQ_ocfAxWHsMsG0a3SE143Yp5zo",
+    authDomain: "taxc-ebooks.firebaseapp.com",
+    projectId: "taxc-ebooks",
+    storageBucket: "taxc-ebooks.firebasestorage.app",
+    messagingSenderId: "542476707940",
+    appId: "1:542476707940:web:591fd5d3d6fd51eff95771"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  onAuthStateChanged(auth, user => {
+    document.querySelectorAll('#auth-button, #auth-button-mobile').forEach(btn => {
+      if (user) {
+        btn.innerHTML = 'Logout';
+        btn.onclick = () => signOut(auth).then(() => location.reload());
+      } else {
+        btn.innerHTML = 'Login';
+        btn.onclick = () => location.href = 'login.html?redirect=' + encodeURIComponent(location.href);
+      }
+    });
+  });
+</script>
     </body>
 </html>
