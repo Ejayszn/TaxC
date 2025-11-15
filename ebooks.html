@@ -1568,7 +1568,6 @@ function buyEbook() {
 
   const form = document.createElement('form');
   form.method = 'POST';
-  form.action = 'https://newwebpay.interswitchng.com/collections/w/pay'; // LIVE
 
   const fields = {
     merchant_code: 'MX153376',
@@ -1775,6 +1774,21 @@ window.addEventListener('beforeunload', saveChat);
       });
     }
   });
+</script>
+<script>
+  // Smart-load Interswitch ONLY on pages that need payment
+  const needsPayment = ['index.html', 'ebooks.html'].some(page => 
+    window.location.pathname.includes(page) || 
+    (window.location.pathname === '/' && page === 'index.html')
+  );
+
+  if (needsPayment) {
+    const script = document.createElement('script');
+    script.src = 'https://newwebpay.interswitchng.com/inline-checkout.js';
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+  }
 </script>
 </body>
 </html>
