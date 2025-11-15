@@ -142,6 +142,20 @@
       border-radius: 12px;
       font-size: 0.9rem;
     }
+
+    #forgotLink {
+  transition: all 0.2s ease;
+}
+#forgotLink:hover {
+  color: #116824 !important;          /* darker green */
+  text-decoration: underline;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
   </style>
 </head>
 <body>
@@ -177,17 +191,20 @@
         <div class="form-group">
   <label for="password">Password</label>
   <div style="position:relative;">
-    <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password" style="padding-right:140px;">
+    <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password" style="padding-right:130px;">
     
-    <button type="button" id="togglePassword" style="position:absolute; right:68px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#666; display:flex; align-items:center; font-size:0.9rem;">
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-    <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-4.179-2.457A13.134 13.134 0 0 1 1.172 8z"/>
-    <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
-  </svg>
-</button>
+    <!-- Eye Toggle Button -->
+    <button type="button" id="togglePassword" style="position:absolute; right:68px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#666; display:flex; align-items:center;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-4.179-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+        <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+      </svg>
+    </button>
 
-    <a href="#" id="forgotLink" style="position:absolute; right:16px; top:50%; transform:translateY(-50%); font-size:0.8rem; color:#28A745; text-decoration:none; white-space:nowrap;">
-      Forgot?
+    <!-- Forgot? with Spinner -->
+    <a href="#" id="forgotLink" style="position:absolute; right:16px; top:50%; transform:translateY(-50%); font-size:0.8rem; color:#28A745; text-decoration:none; white-space:nowrap; display:flex; align-items:center; gap:6px;">
+      <span id="forgotText">Forgot?</span>
+      <span id="forgotSpinner" style="display:none; width:14px; height:14px; border:2px solid #ccc; border-top:2px solid #28A745; border-radius:50%; animation:spin 0.8s linear infinite;"></span>
     </a>
   </div>
   <div class="password-rules" id="passwordRules" style="display:none; margin-top:8px;">
@@ -378,24 +395,44 @@ $('googleBtn').addEventListener('click', async () => {
   }
 });
 
-  // === FORGOT PASSWORD ===
-  $('forgotLink').addEventListener('click', async (e) => {
-    e.preventDefault();
-    const email = $('email').value.trim();
-    if (!email) {
-      $('errorMsg').textContent = 'Enter your email first';
-      return;
-    }
+  // === FORGOT PASSWORD (Hide Eye + Loading) ===
+$('forgotLink').addEventListener('click', async (e) => {
+  e.preventDefault();
 
-    try {
-      await sendPasswordResetEmail(auth, email);
-      $('errorMsg').textContent = 'Password reset email sent! Check your inbox.';
-      $('errorMsg').style.color = '#28A745';
-    } catch (error) {
-      $('errorMsg').textContent = error.message;
-      $('errorMsg').style.color = '#dc3545';
-    }
-  });
+  const email = $('email').value.trim();
+  const errorMsg = $('errorMsg');
+  const forgotText = $('forgotText');
+  const forgotSpinner = $('forgotSpinner');
+  const toggleBtn = $('togglePassword'); // Eye button
+
+  if (!email) {
+    errorMsg.textContent = 'Enter your email first';
+    errorMsg.style.color = '#dc3545';
+    return;
+  }
+
+  // === SHOW LOADING: Hide eye, show spinner ===
+  toggleBtn.style.display = 'none';
+  forgotText.textContent = 'Sending...';
+  forgotSpinner.style.display = 'inline-block';
+  errorMsg.textContent = '';
+  $('forgotLink').style.pointerEvents = 'none';
+
+  try {
+    await sendPasswordResetEmail(auth, email);
+    errorMsg.textContent = 'Password reset email sent! Check your inbox.';
+    errorMsg.style.color = '#28A745';
+  } catch (error) {
+    errorMsg.textContent = error.message;
+    errorMsg.style.color = '#dc3545';
+  } finally {
+    // === DONE: Show eye, hide spinner ===
+    toggleBtn.style.display = 'flex';
+    forgotText.textContent = 'Forgot?';
+    forgotSpinner.style.display = 'none';
+    $('forgotLink').style.pointerEvents = 'auto';
+  }
+});
 
   // === AUTO-REDIRECT IF LOGGED IN ===
   onAuthStateChanged(auth, (user) => {
