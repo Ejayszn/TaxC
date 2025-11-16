@@ -1779,7 +1779,7 @@ window.addEventListener('beforeunload', saveChat);
   // Smart-load Interswitch ONLY on pages that need payment
   const needsPayment = ['index.html', 'ebooks.html'].some(page => 
     window.location.pathname.includes(page) || 
-    (window.location.pathname === '/' && page === 'index.html')
+    (window.location.pathname === '/' && page === 'ebooks.html')
   );
 
   if (needsPayment) {

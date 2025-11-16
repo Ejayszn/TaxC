@@ -396,6 +396,12 @@
             .cta-banner div { display: flex; flex-direction: column; gap: 10px; }
             .btn-primary { margin: 5px 0 !important; width: 100%; }
         }
+
+        .logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
         
     </style>
     <div id="taxc-chat-widget">
@@ -427,7 +433,13 @@
 </audio>
 
     <header class="main-header">
-    <a class="logo" href="index.html"><img src="./favicon.ico" alt="TaxC Logo" class="logo-icon" style="height: 25px; margin-right: 5px; vertical-align: middle;">TaxC</a>
+    <div class="logo-container">
+  <a class="logo" href="index.html">
+    <img src="./favicon.ico" alt="TaxC Logo" class="logo-icon" style="height: 25px; margin-right: 5px; vertical-align: middle;">
+    TaxC
+  </a>
+  <span id="userDisplay" style="display:none; color:#28A745; font-weight:600; margin-left:15px; font-size:1rem;"></span>
+</div>
         <nav class="desktop-nav">
             <a href="index.html">Home</a>
             <a href="ebooks.html">Ebooks</a>
@@ -879,8 +891,22 @@ window.addEventListener('beforeunload', saveChat);
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
+  const $ = id => document.getElementById(id);
+
   onAuthStateChanged(auth, user => {
-    document.querySelectorAll('#auth-button, #auth-button-mobile').forEach(btn => {
+    const loginBtns = document.querySelectorAll('#auth-button, #auth-button-mobile');
+    const userDisplay = $('userDisplay');
+
+    if (user && user.displayName) {
+      const firstName = user.displayName.split(' ')[0];
+      userDisplay.textContent = `Hi, ${firstName}!`;
+      userDisplay.style.display = 'inline';
+    } else {
+      userDisplay.style.display = 'none';
+    }
+
+    // KEEP ORIGINAL LOGIN/LOGOUT BUTTON LOGIC
+    loginBtns.forEach(btn => {
       if (user) {
         btn.innerHTML = 'Logout';
         btn.onclick = () => signOut(auth).then(() => location.reload());
