@@ -982,10 +982,43 @@ input:focus, select:focus {
   cursor: not-allowed;
 }
 
+/* ——— LOGO + GREETING PERFECT ALIGNMENT (copy to all pages) ——— */
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 40px;                  /* locks the height so everything aligns */
+}
+
+.logo-container .logo-icon {
+  height: 28px;
+  width: auto;
+  vertical-align: middle;
+  margin-bottom: -2px;           /* tiny nudge for favicons with whitespace */
+}
+
+#userDisplay {
+  display: none;                 /* hidden when not logged in */
+  color: #28A745;
+  font-weight: 600;
+  font-size: 1.1rem;
+  line-height: 1;
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* Optional: slightly smaller greeting on very small phones */
+@media (max-width: 480px) {
+  #userDisplay {
+    font-size: 1rem;
+  }
+}
+
 footer {
             margin-top: 24px; padding: 20px; text-align: center; color: var(--muted);
             border-top: 1px solid #eee;
         }
+
 
 </style>
 </head>
@@ -996,7 +1029,13 @@ footer {
 </audio>
 
     <header class="main-header">
-    <a class="logo" href="index.html"><img src="./favicon.ico" alt="TaxC Logo" class="logo-icon" style="height: 25px; margin-right: 5px; vertical-align: middle;">TaxC</a>
+    <div class="logo-container">
+  <a class="logo" href="index.html">
+    <img src="./favicon.ico" alt="TaxC Logo" class="logo-icon">
+    TaxC
+  </a>
+  <span id="userDisplay" style="display:none; color:#28A745; font-weight:600; margin-left:15px; font-size:1rem;"></span>
+</div>
         
         <!-- DESKTOP NAV -->
         <nav class="desktop-nav">
