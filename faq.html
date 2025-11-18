@@ -399,14 +399,29 @@
 
         .logo-container {
   display: flex;
-  align-items: center;
+  align-items: center;        /* Keeps everything centered */
   gap: 12px;
+  height: 40px;               /* Fixed height so everything aligns perfectly */
 }
 
-/* FORCE TEXT TO ALIGN WITH LOGO BASELINE */
-#userDisplay {
-  line-height: 1;
+/* Force the logo image to be perfectly baseline-aligned */
+.logo-container .logo-icon {
+  height: 28px;               /* Slightly larger than before for better balance */
+  width: auto;
   vertical-align: middle;
+  margin-bottom: -2px;        /* Tiny nudge to compensate for any favicon whitespace */
+}
+
+/* Make the greeting perfectly match the TaxC text height */
+#userDisplay {
+  display: none;              /* Hidden when not logged in */
+  color: #28A745;
+  font-weight: 600;
+  font-size: 1.1rem;          /* Slightly bigger to match visual weight of "TaxC" */
+  line-height: 1;
+  margin: 0;
+  padding: 0;
+  white-space: nowrap;
 }
         
     </style>
