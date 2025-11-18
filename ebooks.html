@@ -1801,29 +1801,30 @@ window.addEventListener('beforeunload', saveChat);
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
-
   const $ = id => document.getElementById(id);
 
+  // === PROTECT EBOOKS.HTML — IF NOT LOGGED IN → REDIRECT TO LOGIN ===
   onAuthStateChanged(auth, user => {
-    const loginBtns = document.querySelectorAll('#auth-button, #auth-button-mobile');
-    const userDisplay = $('userDisplay');
-
-    if (user && user.displayName) {
-      const firstName = user.displayName.split(' ')[0];
-      userDisplay.textContent = `Hi, ${firstName}!`;
-      userDisplay.style.display = 'inline';
-    } else {
-      userDisplay.style.display = 'none';
+    if (!user) {
+      // Not logged in → send them to login and remember where they were
+      const redirectTo = encodeURIComponent(location.href);
+      location.replace(`login.html?redirect=${redirectTo}`);
+      return;
     }
 
-    loginBtns.forEach(btn => {
-      if (user) {
-        btn.innerHTML = 'Logout';
-        btn.onclick = () => signOut(auth).then(() => location.reload());
-      } else {
-        btn.innerHTML = 'Login';
-        btn.onclick = () => location.href = 'login.html?redirect=' + encodeURIComponent(location.href);
+    // Logged in → show greeting + change button to Logout
+    if (user.displayName) {
+      const firstName = user.displayName.split(' ')[0];
+      const userDisplay = $('userDisplay');
+      if (userDisplay) {
+        userDisplay.textContent = `Hi, ${firstName}!`;
+        userDisplay.style.display = 'inline';
       }
+    }
+
+    document.querySelectorAll('#auth-button, #auth-button-mobile').forEach(btn => {
+      btn.innerHTML = 'Logout';
+      btn.onclick = () => signOut(auth).then(() => location.reload());
     });
   });
 </script>
