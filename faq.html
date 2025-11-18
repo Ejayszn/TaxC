@@ -423,6 +423,12 @@
   padding: 0;
   white-space: nowrap;
 }
+
+@media (max-width: 480px) {
+  #userDisplay {
+    font-size: 1rem;  /* down from 1.1rem */
+  }
+}
         
     </style>
     <div id="taxc-chat-widget">
@@ -456,7 +462,7 @@
     <header class="main-header">
     <div class="logo-container">
   <a class="logo" href="index.html">
-    <img src="./favicon.ico" alt="TaxC Logo" class="logo-icon" style="height: 25px; margin-right: 5px; vertical-align: middle;">
+    <img src="./favicon.ico" alt="TaxC Logo" class="logo-icon">
     TaxC
   </a>
   <span id="userDisplay" style="display:none; color:#28A745; font-weight:600; margin-left:15px; font-size:1rem;"></span>
