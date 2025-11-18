@@ -1788,7 +1788,7 @@ window.addEventListener('beforeunload', saveChat);
 <script src="scripts/scroll-animation.js"></script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyD59PBKVQ_ocfAxWHsMsG0a3SE143Yp5zo",
@@ -1802,16 +1802,29 @@ window.addEventListener('beforeunload', saveChat);
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
+  const $ = id => document.getElementById(id);
+
   onAuthStateChanged(auth, user => {
-    if (!user) {
-      location.href = 'login.html?redirect=' + encodeURIComponent(location.href);
+    const loginBtns = document.querySelectorAll('#auth-button, #auth-button-mobile');
+    const userDisplay = $('userDisplay');
+
+    if (user && user.displayName) {
+      const firstName = user.displayName.split(' ')[0];
+      userDisplay.textContent = `Hi, ${firstName}!`;
+      userDisplay.style.display = 'inline';
     } else {
-      // Optional: Show Logout button
-      document.querySelectorAll('#auth-button').forEach(btn => {
-        btn.innerHTML = 'Logout';
-        btn.onclick = () => auth.signOut().then(() => location.href = 'index.html');
-      });
+      userDisplay.style.display = 'none';
     }
+
+    loginBtns.forEach(btn => {
+      if (user) {
+        btn.innerHTML = 'Logout';
+        btn.onclick = () => signOut(auth).then(() => location.reload());
+      } else {
+        btn.innerHTML = 'Login';
+        btn.onclick = () => location.href = 'login.html?redirect=' + encodeURIComponent(location.href);
+      }
+    });
   });
 </script>
 <script>

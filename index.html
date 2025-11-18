@@ -2474,8 +2474,21 @@ window.addEventListener('beforeunload', saveChat);
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
+  const $ = id => document.getElementById(id);
+
   onAuthStateChanged(auth, user => {
-    document.querySelectorAll('#auth-button, #auth-button-mobile').forEach(btn => {
+    const loginBtns = document.querySelectorAll('#auth-button, #auth-button-mobile');
+    const userDisplay = $('userDisplay');
+
+    if (user && user.displayName) {
+      const firstName = user.displayName.split(' ')[0];
+      userDisplay.textContent = `Hi, ${firstName}!`;
+      userDisplay.style.display = 'inline';
+    } else {
+      userDisplay.style.display = 'none';
+    }
+
+    loginBtns.forEach(btn => {
       if (user) {
         btn.innerHTML = 'Logout';
         btn.onclick = () => signOut(auth).then(() => location.reload());
