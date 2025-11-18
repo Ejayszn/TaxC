@@ -1803,16 +1803,16 @@ window.addEventListener('beforeunload', saveChat);
   const auth = getAuth(app);
   const $ = id => document.getElementById(id);
 
-  // === PROTECT EBOOKS.HTML — IF NOT LOGGED IN → REDIRECT TO LOGIN ===
+  // THIS IS THE REAL PROTECTION — NOBODY FIT FAKE AM
   onAuthStateChanged(auth, user => {
     if (!user) {
-      // Not logged in → send them to login and remember where they were
+      // Not logged in → kick dem go login page
       const redirectTo = encodeURIComponent(location.href);
       location.replace(`login.html?redirect=${redirectTo}`);
       return;
     }
 
-    // Logged in → show greeting + change button to Logout
+    // Logged in → show name + change button to Logout
     if (user.displayName) {
       const firstName = user.displayName.split(' ')[0];
       const userDisplay = $('userDisplay');
