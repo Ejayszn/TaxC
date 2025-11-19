@@ -796,6 +796,7 @@ input:focus, select:focus {
   z-index: 10000;
 }
 
+/* ——— ANIMATED FLOATING AI ICON (Makes users KNOW they can click it!) ——— */
 .chat-launcher {
   position: relative;
   width: 60px;
@@ -807,24 +808,54 @@ input:focus, select:focus {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  transition: all 0.3s;
+  box-shadow: 0 4px 20px rgba(40, 167, 69, 0.4);
+  transition: all 0.3s ease;
+  animation: float 6s ease-in-out infinite, pulseGlow 2s ease-in-out infinite alternate;
   z-index: 10001;
 }
 
+/* Gentle floating up & down */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+/* Subtle glowing pulse */
+@keyframes pulseGlow {
+  from { box-shadow: 0 4px 20px rgba(40, 167, 69, 0.4); }
+  to { box-shadow: 0 8px 30px rgba(40, 167, 69, 0.7); }
+}
+
+/* Hover = bigger jump + brighter glow */
 .chat-launcher:hover {
-  transform: scale(1.1);
+  transform: translateY(-16px) scale(1.1) !important;
+  box-shadow: 0 12px 40px rgba(40, 167, 69, 0.8);
   background: #218838;
 }
 
-.chat-launcher svg {
-  width: 28px;
-  height: 28px;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+/* Optional: tiny bounce when page loads */
+@keyframes bounceIn {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.1); }
+  70% { transform: scale(0.95); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.chat-launcher {
+  animation: bounceIn 1s ease-out, float 6s ease-in-out infinite 1s, pulseGlow 2s ease-in-out infinite alternate;
+}
+
+/* Mobile: slightly smaller but still animated */
+@media (max-width: 480px) {
+  .chat-launcher {
+    width: 55px;
+    height: 55px;
+  }
+  .chat-launcher svg { width: 24px; height: 24px; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
 }
 
 .chat-tooltip {
@@ -2194,7 +2225,7 @@ function calculateTax() {
     ${stateNote}
     `;
     
-    msgDiv.textContent = 'Calculation complete. Pay only ₦500 to get a detailed PDF report on your taxes.';
+    msgDiv.textContent = 'Calculation complete. Pay only ₦500 to get a detailed PDF report on your taxes. (Optional)';
     outputDiv.style.display = 'block';
 
     // Auto-scroll to Report section
@@ -2236,33 +2267,36 @@ function generatePDFReport() {
 }
 
         function resetForm() {
-    const incomeBlocks = document.querySelectorAll('.income-source-block');
     const outputDiv = document.getElementById('output');
-    const msgDiv = document.getElementById('msg'); // Reference the message div
+    const msgDiv = document.getElementById('msg');
     const taxSummary = document.getElementById('taxSummary');
     const defaultMessage = document.getElementById('default-report-message');
     const stateSelect = document.getElementById('state');
 
+    // Clear deduction fields
     document.getElementById('pension').value = '';
     document.getElementById('rent').value = '';
-    document.getElementById('reportEmail').value = '';
-    
-    if (stateSelect) {
-        stateSelect.value = ''; 
-    }
-    
-    // Remove all existing income blocks
-    incomeBlocks.forEach(block => block.remove());
 
-    // Add back the default first income source
+    // Clear state
+    if (stateSelect) stateSelect.value = '';
+
+    // Remove ALL income blocks
+    document.querySelectorAll('.income-source-block').forEach(block => block.remove());
+
+    // Add back exactly ONE clean income source
     addIncomeSource();
 
-    // Reset output section
+    // Reset output area
     outputDiv.style.display = 'block';
-    msgDiv.textContent = 'Please fill the above'; // <--- THIS IS THE FIX
+    msgDiv.textContent = 'Please fill the above';
     taxSummary.innerHTML = '';
-    defaultMessage.style.display = 'block'; // Show placeholder on reset
+    defaultMessage.style.display = 'block';
+
+    // Clear any stored calculation
     window.lastCalc = null;
+
+    // Scroll back to calculator
+    document.getElementById('calculator').scrollIntoView({ behavior: 'smooth' });
 }
 
 function startHostedPayment() {
