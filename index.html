@@ -339,24 +339,38 @@ h2.section-title {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
     margin-bottom: 30px;
 }
+
+/* PERFECT SECTION DIVIDER — works on mobile & desktop, never overlaps */
 .section-divider {
-    text-align: center;
-    margin: 30px 0 20px;
-    font-weight: 600;
-    color: #28A745; /* Primary Green */
     position: relative;
+    text-align: center;
+    margin: 40px 0 25px;
+    font-weight: 600;
+    color: #28A745;
+    line-height: 1.4;
 }
-.section-divider::before, .section-divider::after {
+
+.section-divider::before,
+.section-divider::after {
     content: '';
     position: absolute;
     top: 50%;
-    width: 35%;
     height: 1px;
-    background: #e0e0e0;
+    background: #ddd;
+    width: 50vw;           /* keep stretching with screen size */
+    max-width: none;       /* ← CHANGE THIS LINE (remove the 100px cap) */
+    transform: translateY(-50%);
 }
-.section-divider::before { left: 0; }
-.section-divider::after { right: 0; }
 
+.section-divider::before { left: 0; }
+.section-divider::after  { right: 0; }
+
+.section-divider span {
+    background: #fff;
+    padding: 0 20px;
+    position: relative;
+    z-index: 1;
+}
 /* Card Content Spacing & Centering */
 .card-form .container-content { 
     max-width: 800px;
@@ -1165,17 +1179,39 @@ footer {
 
         <button onclick="addIncomeSource()" class="add-income-btn">➕ Add Another Income Source</button>
 
-        <div class="section-divider">Other Deductions & Information</div>
-        <div class="input-row">
-            <div class="input-group">
-                <label for="pension">Annual Pension Contributions (₦)</label>
-                <input type="text" id="pension" oninput="updateFormattedValue(this)" placeholder="e.g., 200,000...Omit if unapplicable">
-            </div>
-            <div class="input-group">
-                <label for="rent">Annual Rent Paid (₦)</label>
-                <input type="text" id="rent" oninput="updateFormattedValue(this)" placeholder="e.g., 1,500,000...Omit if unapplicable">
-            </div>
-        </div>
+        <div class="section-divider">
+    <span>Allowable Deductions (2026 Rules)</span>
+</div>
+<div class="input-row">
+    <div class="input-group">
+        <label for="pension">Pension Contribution (8%) (₦)</label>
+        <input type="text" id="pension" oninput="updateFormattedValue(this)" placeholder="e.g. 600,000...Omit if unapplicable">
+    </div>
+    <div class="input-group">
+        <label for="nhf">NHF Contribution (2.5%) (₦)</label>
+        <input type="text" id="nhf" oninput="updateFormattedValue(this)" placeholder="e.g. 187,500...Omit if unapplicable">
+    </div>
+</div>
+<div class="input-row">
+    <div class="input-group">
+        <label for="nhis">NHIS Contribution (₦)</label>
+        <input type="text" id="nhis" oninput="updateFormattedValue(this)" placeholder="e.g. 90,000...Omit if unapplicable">
+    </div>
+    <div class="input-group">
+        <label for="lifeinsurance">Life Insurance Premium (₦)</label>
+        <input type="text" id="lifeinsurance" oninput="updateFormattedValue(this)" placeholder="e.g. 120,000...Omit if unapplicable">
+    </div>
+</div>
+<div class="input-row">
+    <div class="input-group">
+        <label for="mortgage">Mortgage Interest (Owner-Occupier) (₦)</label>
+        <input type="text" id="mortgage" oninput="updateFormattedValue(this)" placeholder="e.g. 800,000...Omit if unapplicable">
+    </div>
+    <div class="input-group">
+        <label for="rent">Annual Rent Paid (₦)</label>
+        <input type="text" id="rent" oninput="updateFormattedValue(this)" placeholder="e.g. 2,400,000...Omit if unapplicable">
+    </div>
+</div>
         
         <div class="input-group">
             <label for="state">State of Residence (For P.I.T. purposes)</label>
@@ -1365,18 +1401,14 @@ footer {
       </div>
     </div>
 
-    <!-- WHT -->
-    <div class="input-group wht-row" style="display:none;">
-      <label for="wht_INDEX">Withholding Tax (WHT) Paid (₦)</label>
-      <div class="tooltip">
-        <input type="text" id="wht_INDEX" class="wht-input"
-               oninput="updateFormattedValue(this)" placeholder="e.g., 50,000...Omit if unsure">
-        <span class="tooltiptext">
-          WHT = 10% tax your tenant/bank pays to govt BEFORE giving you the rest.
-          Leave blank if Unsure → we use standard 10%.
-        </span>
-      </div>
-    </div>
+    <!-- WHT CREDIT (only for rental/investment/other) -->
+<div class="input-group wht-row" style="display:none;">
+  <label for="wht_INDEX">WHT Already Deducted/Paid (₦)</label>
+  <div class="tooltip">
+    <input type="text" id="wht_INDEX" class="wht-input" oninput="updateFormattedValue(this)" placeholder="e.g 200,000...Omit if unsure.">
+    <span class="tooltiptext">This is tax already deducted by tenant/bank. It reduces your final tax.</span>
+  </div>
+</div>
   </div>
 </template>
 <!-- FLOATING CHAT -->
@@ -2084,153 +2116,113 @@ document.head.appendChild(style);
                 validationPassed = false;
             }
             
-            if (!validationPassed) {
-                outputDiv.style.display = 'block';
-                defaultMessage.style.display = 'block'; // Show placeholder with error
-                return false;
-            }
+                        if (!validationPassed) {
+    document.getElementById('msg').textContent = '🔴 Please fill the above';
+    document.getElementById('taxSummary').innerHTML = '';
+    document.getElementById('default-report-message').style.display = 'block';
+    document.getElementById('output').style.display = 'block';
+
+    // ← ADD THIS LINE
+    document.querySelector('#report').scrollIntoView({ behavior: 'smooth' });
+
+    return false;
+}
             
             return true;
         }
 
 function calculateTax() {
     const state = document.getElementById('state').value;
-    const outputDiv = document.getElementById('output');
-    const msgDiv = document.getElementById('msg');
-    const taxSummary = document.getElementById('taxSummary');
-    const defaultMessage = document.getElementById('default-report-message');
-    const reportSection = document.getElementById('report');
 
-    // Reset output display and summary on new calculation attempt
-    msgDiv.textContent = '';
-    taxSummary.innerHTML = '';
-    defaultMessage.style.display = 'none';
-    outputDiv.style.display = 'block';
-
-    // --- NEW REVERSED VALIDATION LOGIC FOR UX FLOW ---
-
-    // 1. Check for Income/Form validation first (triggers the generic 'fill above' message)
+    // 1. FIRST check if income is missing → show the generic red message
     if (!validateForm()) {
-        msgDiv.textContent = '🔴 Please fill the above';
-        outputDiv.style.display = 'block';
-        defaultMessage.style.display = 'block'; // Show placeholder below error
-        reportSection.scrollIntoView({ behavior: 'smooth' });
+        // validateForm() already sets the correct red message + shows placeholder
         return;
     }
 
-    // 2. Check for State second (triggers the specific 'select state' message)
+    // 2. NOW check state → only if income is valid
     if (!state) {
-        msgDiv.textContent = '🔴 Please select your State of Residence to proceed with the tax calculation.';
-        outputDiv.style.display = 'block';
-        defaultMessage.style.display = 'block'; // Show placeholder below error
-        reportSection.scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('msg').innerHTML = '🔴 Please select your State of Residence to proceed with the tax calculation.';
+        document.getElementById('taxSummary').innerHTML = '';
+        document.getElementById('default-report-message').style.display = 'block';
+        document.getElementById('output').style.display = 'block';
+        document.getElementById('state').scrollIntoView({ behavior: 'smooth' });
         return;
     }
-    // --- END NEW LOGIC ---
 
-    // Successful validation: hide placeholder and proceed
-    defaultMessage.style.display = 'none';
-    
-    // Console reminder (kept for development context)
-    console.log("Almost done with the application! Remember these next steps to complete the TaxC application:\n- Input Validation: Ensuring all mandatory fields are filled and values are numerical before calculating.\n- Report Generation Logic: Refining the startHostedPayment flow and user messaging.\n- Responsive Design Refinements: Making final tweaks to how the layout handles different screen sizes.");
-
-    // --- Core Calculation Logic ---
-    let totalGrossIncome = 0;
+    let totalGross = 0;
     let totalWhtCredit = 0;
-    let hasSalaryOrSelfEmployment = false;
 
-    const incomeBlocks = document.querySelectorAll('.income-source-block');
-    for (const block of incomeBlocks) {
-        const blockIndex = block.getAttribute('data-source-id');
-        const type = document.getElementById(`type_${blockIndex}`).value;
-        const frequency = document.getElementById(`freq_${blockIndex}`).value;
-        let incomeValue = 0;
+    // === Collect all income ===
+    document.querySelectorAll('.income-source-block').forEach(block => {
+        const index = block.getAttribute('data-source-id');
+        const type = document.getElementById(`type_${index}`).value;
+        const freq = document.getElementById(`freq_${index}`).value;
 
-        if (frequency === 'monthly') {
-            const monthlyInputs = block.querySelectorAll('.monthly-income-row input');
-            monthlyInputs.forEach(input => {
-                incomeValue += getRawValue(input);
+        let income = 0;
+        if (freq === 'monthly') {
+            block.querySelectorAll('.monthly-income-row input').forEach(inp => {
+                income += getRawValue(inp);
             });
         } else {
-            const incomeInput = document.getElementById(`income_${blockIndex}`);
-            incomeValue = getRawValue(incomeInput);
+            income = getRawValue(document.getElementById(`income_${index}`));
         }
-        totalGrossIncome += incomeValue;
+        totalGross += income;
 
-        if (type === 'salary' || type === 'self') {
-            hasSalaryOrSelfEmployment = true;
-        }
-        
+        // WHT Credit only
         if (['rental', 'investment', 'other'].includes(type)) {
-            const whtInput = document.getElementById(`wht_${blockIndex}`);
-            const whtValue = getRawValue(whtInput);
-            
-            let defaultWhtRate = 0;
-            if (type === 'rental' || type === 'investment') {
-                defaultWhtRate = 0.10; 
-            } else if (type === 'other') {
-                defaultWhtRate = 0.05; 
-            }
-
-            const whtAmount = whtValue > 0 ? whtValue : (incomeValue * defaultWhtRate);
-            totalWhtCredit += whtAmount;
+            const whtInput = document.getElementById(`wht_${index}`);
+            let wht = getRawValue(whtInput);
+            if (wht === 0) wht = income * (type === 'other' ? 0.05 : 0.10);
+            totalWhtCredit += wht;
         }
-    }
+    });
 
-    const pension = getRawValue(document.getElementById('pension'));
-    const rent = getRawValue(document.getElementById('rent'));
-    
-    // Rent relief calculation
-    const rentRelief = hasSalaryOrSelfEmployment ? Math.min(500000, rent * 0.20) : 0; 
-    
-    const totalDeductions = pension + rentRelief; 
-    const incomeBeforeExemption = Math.max(0, totalGrossIncome - totalDeductions); 
-    const chargeable = Math.max(0, incomeBeforeExemption - 800000); 
+    // === Deductions ===
+    const pension = getRawValue(document.getElementById('pension') || {value:''});
+    const nhf = getRawValue(document.getElementById('nhf') || {value:''});
+    const nhis = getRawValue(document.getElementById('nhis') || {value:''});
+    const life = getRawValue(document.getElementById('lifeinsurance') || {value:''});
+    const mortgage = getRawValue(document.getElementById('mortgage') || {value:''});
+    const rentPaid = getRawValue(document.getElementById('rent') || {value:''});
+    const rentRelief = Math.min(200000, rentPaid); // 2026 cap
 
+    const totalDeductions = pension + nhf + nhis + life + mortgage + rentRelief;
+    const taxableIncome = Math.max(0, totalGross - totalDeductions);
+    const chargeableIncome = Math.max(0, taxableIncome - 800000); // First 800k exempt
+
+    // === Tax bands ===
     let tax = 0;
-    let remaining = chargeable;
-    
-    const bands = [
-        { limit: 2200000, rate: 0.15 },
-        { limit: 9000000, rate: 0.18 },
-        { limit: 13000000, rate: 0.21 },
-        { limit: 25000000, rate: 0.23 },
-        { limit: Infinity, rate: 0.25 }
-    ];
-    
-    for (const band of bands) {
-        if (remaining <= 0) break;
-        const taxableInBand = Math.min(remaining, band.limit);
-        tax += taxableInBand * band.rate;
-        remaining -= taxableInBand;
-    }
+    let remaining = chargeableIncome;
 
-    const netTax = Math.max(0, tax - totalWhtCredit);
-    const monthlyTax = (netTax / 12);
-    
-    let stateNote = '';
-    if (rentRelief > 0) {
-        stateNote = `<br><strong>Note:</strong> Your rent relief was calculated as 20% of ₦${rent.toLocaleString('en-NG')}, capped at ₦${Math.round(rentRelief).toLocaleString('en-NG')}.`;
-    }
-    
-    // --- Output Display ---
-    taxSummary.innerHTML = `
-    <strong>Annual Tax Estimate:</strong> ₦${Math.round(netTax).toLocaleString('en-NG')}<br>
-    <strong>Monthly (approximate):</strong> ₦${Math.round(monthlyTax).toLocaleString('en-NG')}<br><br>
-    <strong>Annual Income (Gross):</strong> ₦${totalGrossIncome.toLocaleString('en-NG')}<br>
-    <strong>Total Allowable Deductions:</strong> ₦${Math.round(totalDeductions).toLocaleString('en-NG')} (Pension + Rent Relief)<br>
-    <strong>Income Before Exemption:</strong> ₦${Math.round(incomeBeforeExemption).toLocaleString('en-NG')}<br>
-    <strong>Chargeable Income:</strong> ₦${Math.round(chargeable).toLocaleString('en-NG')} (After ₦800,000 exemption)<br>
-    ${totalWhtCredit > 0 ? `<strong>WHT Credit Applied:</strong> ₦${Math.round(totalWhtCredit).toLocaleString('en-NG')}` : ''}
-    ${stateNote}
+    if (remaining > 0) tax += Math.min(remaining, 2200000) * 0.15; remaining -= 2200000;
+    if (remaining > 0) tax += Math.min(remaining, 9000000) * 0.18; remaining -= 9000000;
+    if (remaining > 0) tax += Math.min(remaining, 13000000) * 0.21; remaining -= 13000000;
+    if (remaining > 0) tax += Math.min(remaining, 25000000) * 0.23; remaining -= 25000000;
+    if (remaining > 0) tax += remaining * 0.25;
+
+    const finalTax = Math.max(0, tax - totalWhtCredit);
+    const monthlyTax = finalTax / 12;
+
+    // === Display ===
+    document.getElementById('taxSummary').innerHTML = `
+        <strong>2026 Personal Income Tax (New Law)</strong><br><br>
+        Gross Annual Income: ₦${totalGross.toLocaleString('en-NG')}<br>
+        Total Deductions: ₦${totalDeductions.toLocaleString('en-NG')}<br>
+        Taxable Income: ₦${taxableIncome.toLocaleString('en-NG')}<br>
+        <strong>Chargeable Income (after ₦800k exemption):</strong> ₦${chargeableIncome.toLocaleString('en-NG')}<br><br>
+        <strong>Tax Before WHT Credit:</strong> ₦${tax.toLocaleString('en-NG')}<br>
+        ${totalWhtCredit > 0 ? `<strong>WHT Credit:</strong> ₦${totalWhtCredit.toLocaleString('en-NG')}<br>` : ''}
+        <strong>Final Tax Payable:</strong> ₦${Math.round(finalTax).toLocaleString('en-NG')}<br>
+        <strong>Monthly PAYE (approx):</strong> ₦${Math.round(monthlyTax).toLocaleString('en-NG')}<br><br>
+        <em>Valid for income earned from January 2026</em>
     `;
-    
-    msgDiv.textContent = 'Calculation complete. Pay only ₦500 to get a detailed PDF report on your taxes. (Optional)';
-    outputDiv.style.display = 'block';
 
-    // Auto-scroll to Report section
-    reportSection.scrollIntoView({ behavior: 'smooth' });
-    window.lastCalc = { netTax, state };
+    document.getElementById('msg').textContent = 'Calculation complete (2026 rules applied)';
+    document.getElementById('output').style.display = 'block';
+    document.querySelector('#report').scrollIntoView({behavior: 'smooth'});
+        document.getElementById('default-report-message').style.display = 'none';  // ← ADD THIS
+    window.lastCalc = { finalTax, state };
 }
 
 function generatePDFReport() {
