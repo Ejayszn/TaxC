@@ -250,15 +250,16 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
   import { 
-    getAuth, 
-    signInWithEmailAndPassword, 
-    createUserWithEmailAndPassword, 
-    onAuthStateChanged, 
-    sendPasswordResetEmail,
-    GoogleAuthProvider,
-    signInWithPopup,
-    updateProfile
-  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+  getAuth, 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword,
+  sendEmailVerification,   // ← ADD THIS LINE
+  onAuthStateChanged, 
+  sendPasswordResetEmail,
+  GoogleAuthProvider,
+  signInWithPopup,
+  updateProfile
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
   import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -369,23 +370,62 @@
     try {
       let userCredential;
       if (isSignup) {
-        const firstName = $('name').value.trim();
-        if (!firstName) throw { code: '', message: 'First name is required' };
+  const firstName = $('name').value.trim();
+  if (!firstName) throw { code: '', message: 'First name is required' };
 
-        userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        await updateProfile(userCredential.user, { displayName: firstName });
-        await setDoc(doc(db, 'users', userCredential.user.uid), {
-          firstName, email, createdAt: new Date().toISOString()
-        });
-        showSuccess('Account created! Taking you in...');
-      } else {
-        userCredential = await signInWithEmailAndPassword(auth, email, password);
-      }
-      setTimeout(() => {
-  const hasPassword = user.providerData.some(p => p.providerId === 'password');
-  const finalRedirect = hasPassword ? redirectTo : `set-password.html?redirect=${encodeURIComponent(redirectTo)}`;
-  window.location.href = finalRedirect;
-}, 800);
+  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  const user = userCredential.user;
+
+  // Update display name
+  await updateProfile(user, { displayName: firstName });
+
+  // Save to Firestore
+  await setDoc(doc(db, 'users', user.uid), {
+    firstName,
+    email,
+    createdAt: new Date().toISOString(),
+    emailVerified: false  // optional: track it yourself too
+  });
+
+  // SEND VERIFICATION EMAIL
+  await sendEmailVerification(user);
+
+  showSuccess('Account created successfully! 🎉 Check your email (including spam) for the verification link.');
+
+  // Reset button and stop redirect
+  $('submitBtn').disabled = false;
+  $('submitBtn').textContent = 'Create Account';
+
+  // Optional: Auto-switch to login mode so they can try logging in immediately
+  setTimeout(() => {
+    window.location.href = 'login.html'; // or just reload the page
+  }, 3000);
+
+  return; // Crucial — don't go to the redirect code below
+
+} else {
+  // LOGIN MODE
+  const userCredential = await signInWithEmailAndPassword(auth, email, password);
+  const user = userCredential.user;
+
+  // RELOAD USER TO GET LATEST emailVerified STATUS (important!)
+  await user.reload();
+
+  if (!user.emailVerified) {
+    showError('', 'Please verify your email first! Check your inbox/spam for the verification link 📧');
+    await auth.signOut();
+    $('submitBtn').disabled = false;
+    $('submitBtn').textContent = 'Login';
+    return;
+  }
+
+  // If verified → proceed to redirect (this runs only if verified)
+  setTimeout(() => {
+    const hasPassword = user.providerData.some(p => p.providerId === 'password');
+    const finalRedirect = hasPassword ? redirectTo : `set-password.html?redirect=${encodeURIComponent(redirectTo)}`;
+    window.location.href = finalRedirect;
+  }, 800);
+}
     } catch (error) {
       showError(error.code, error.message);
     } finally {
