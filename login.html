@@ -188,25 +188,27 @@
           <input type="email" id="email" placeholder="you@example.com" required autocomplete="email">
         </div>
 
-        <div class="form-group">
+<div class="form-group">
   <label for="password">Password</label>
   <div style="position:relative;">
-    <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password" style="padding-right:130px;">
-    
-    <!-- Eye Toggle Button -->
-    <button type="button" id="togglePassword" style="position:absolute; right:68px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#666; display:flex; align-items:center;">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+    <!-- Increased padding so text never goes under icons -->
+    <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password" style="padding-right:140px;">
+
+    <!-- Eye Button — always visible, higher z-index -->
+    <button type="button" id="togglePassword" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#666; z-index:20; padding:8px; border-radius:50%;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16">
         <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-4.179-2.457A13.134 13.134 0 0 1 1.172 8z"/>
         <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
       </svg>
     </button>
 
-    <!-- Forgot? with Spinner -->
-    <a href="#" id="forgotLink" style="position:absolute; right:16px; top:50%; transform:translateY(-50%); font-size:0.8rem; color:#28A745; text-decoration:none; white-space:nowrap; display:flex; align-items:center; gap:6px;">
+    <!-- Forgot? link — only on login, moved to the left of the eye -->
+    <a href="#" id="forgotLink" style="position:absolute; right:50px; top:50%; transform:translateY(-50%); font-size:0.85rem; color:#28A745; text-decoration:none; white-space:nowrap; display:none; align-items:center; gap:6px; z-index:10;">
       <span id="forgotText">Forgot?</span>
       <span id="forgotSpinner" style="display:none; width:14px; height:14px; border:2px solid #ccc; border-top:2px solid #28A745; border-radius:50%; animation:spin 0.8s linear infinite;"></span>
     </a>
   </div>
+
   <div class="password-rules" id="passwordRules" style="display:none; margin-top:8px;">
     <div class="rule" id="rule-length">Password must be at least 6 characters</div>
     <div class="rule" id="rule-upper">1 uppercase letter</div>
@@ -323,6 +325,12 @@
     $('switchText').textContent = "Don't have an account?";
     $('switchLink').textContent = 'Sign Up';
     $('switchLink').href = `login.html?mode=signup&redirect=${encodeURIComponent(redirectParam || '')}`;
+  }
+
+  if (!isSignup) {
+    $('forgotLink').style.display = 'flex';   // show "Forgot?" only on login
+  } else {
+    $('forgotLink').style.display = 'none';   // hide it on signup
   }
 
   // Password rules (unchanged)
@@ -466,15 +474,32 @@ window.location.href = redirectUrl;
 
   // Password toggle eye (unchanged — already perfect)
   const toggleBtn = $('togglePassword');
-  const passwordInput = $('password');
-  const eyeOpen = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">/* open eye */</svg>`;
-  const eyeClosed = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">/* closed eye */</svg>`;
-  toggleBtn.innerHTML = eyeOpen;
-  toggleBtn.addEventListener('click', () => {
-    const isPassword = passwordInput.type === 'password';
-    passwordInput.type = isPassword ? 'text' : 'password';
-    toggleBtn.innerHTML = isPassword ? eyeClosed : eyeOpen;
-  });
+const passwordInput = $('password');
+
+const eyeOpenSVG = `
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+  <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-4.179-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+  <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+</svg>`;
+
+const eyeClosedSVG = `
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+  <path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.028 7.028 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755-.165.165-.337.328-.511.5l1.702 1.702z"/>
+  <path d="M8 5.5a2.5 2.5 0 0 1 2.5 2.5l3.146 3.147a3.5 3.5 0 0 0-4.5-4.5L8 5.5zM2.646 4.646l1.5 1.5A13.03 13.03 0 0 0 1.173 8c.058.087.122.183.195.288.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c1.078 0 2.104-.23 3.023-.635l1.5 1.5 1.414-1.414L3.061 3.232 2.646 4.646z"/>
+  <path d="M5.5 8a2.5 2.5 0 0 1 2.5-2.5l3.146 3.147A3.5 3.5 0 0 0 5.5 8z"/>
+</svg>`;
+
+toggleBtn.innerHTML = eyeOpenSVG;
+
+toggleBtn.addEventListener('click', () => {
+  if (passwordInput.type === 'password') {
+    passwordInput.type = 'text';
+    toggleBtn.innerHTML = eyeClosedSVG;
+  } else {
+    passwordInput.type = 'password';
+    toggleBtn.innerHTML = eyeOpenSVG;
+  }
+});
 </script>
 </body>
 </html>
