@@ -16,7 +16,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <!-- Paystack Inline (Test + Live auto-switch) -->
-<script src="https://js.paystack.co/v2/inline.js"></script>
+<script src="https://js.paystack.co/v2/inline.js" defer></script>
     
     <style>
 
@@ -1290,7 +1290,7 @@ footer {
 </div>
 
 <script>
-  // Wrap everything so it runs only after page don load
+  // This wrapper + the clean V2 setup = THE WINNING COMBO
   document.addEventListener("DOMContentLoaded", function () {
     let paymentInProgress = false;
 
