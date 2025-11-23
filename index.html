@@ -1285,61 +1285,58 @@ footer {
     for only ₦500:
 </p>
             <div class="input-group-inline">
-                <!-- Paystack Inline Script -->
-
-<button id="paystack-btn" class="report-btn">Pay ₦500 & Download PDF</button>
+  <button id="paystack-btn" class="report-btn">Pay ₦500 & Download PDF</button>
+</div>
 
 <script>
-document.getElementById("paystack-btn").onclick = function() {
-  if (!window.lastCalc) {
-    alert("Please calculate your tax first");
-    return;
-  }
-
-  const email = prompt("Enter your email for receipt & PDF delivery:");
-  if (!email || !email.includes("@")) {
-    alert("Please enter a valid email");
-    return;
-  }
-
-  // NEW METHOD: new PaystackPop() - fixes deprecation
-  const paystack = new PaystackPop({
-    key: 'pk_test_bc9c09e6d51c4e025bb44c6c57ad1c1144386b55', // your test public key
-    email: email,
-    amount: 50000, // ₦500 in kobo
-    currency: "NGN",
-    ref: 'TAXC_' + Date.now(), // unique ref
-    callback: function(response) {
-      // Verify on Firebase backend
-      fetch('https://us-central1-taxc-ebooks.cloudfunctions.net/verifyPayment', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reference: response.reference })
-      })
-      .then(r => r.json())
-      .then(data => {
-        if (data.status === true) {
-          document.getElementById('msg').innerHTML = 'Payment successful! 🎉 Generating your PDF...';
-          setTimeout(generatePDFReport, 1000); // instant download
-        } else {
-          alert("Payment failed: " + (data.message || "Try again"));
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        alert("Verification error – contact support");
-      });
-    },
-    onClose: function() {
-      document.getElementById('msg').innerHTML = 'Payment cancelled.';
+// Paystack v2 – latest & clean (no more 400 error, no more deprecation warnings
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("paystack-btn").onclick = function () {
+    if (!window.lastCalc) {
+      alert("Please calculate your tax first");
+      return;
     }
-  });
 
-  // NEW METHOD: .open() - fixes deprecation
-  paystack.open();
-};
+    const email = prompt("Enter your email for receipt & PDF delivery:");
+    if (!email || !email.includes("@")) {
+      alert("Please enter a valid email");
+      return;
+    }
+
+    const paystack = new PaystackPop({
+      key: "pk_test_bc9c09e6d51c4e025bb44c6c57ad1c1144386b55",
+      email: email,
+      amount: 50000,                 // ₦500
+      currency: "NGN",
+      ref: "TAXC_" + Date.now() + "_" + Math.floor(Math.random() * 10000),
+      callback: function (response) {
+        // Verify with your Firebase function
+        fetch("https://us-central1-taxc-ebooks.cloudfunctions.net/verifyPayment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ reference: response.reference })
+        })
+          .then((r) => r.json())
+          .then((data) => {
+            if (data.status === true) {
+              document.getElementById("msg").innerHTML =
+                "Payment successful! Generating your PDF...";
+              setTimeout(generatePDFReport, 800);
+            } else {
+              alert("Payment failed: " + (data.message || "Please try again"));
+            }
+          })
+          .catch(() => alert("Network error – check your connection and try again"));
+      },
+      onClose: function () {
+        document.getElementById("msg").innerHTML = "Payment was cancelled.";
+      },
+    });
+
+    paystack.open(); // new syntax – no more deprecation warnings
+  };
+});
 </script>
-            </div>
         </div>
     </div>
 </section>
