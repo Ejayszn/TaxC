@@ -1290,21 +1290,27 @@ footer {
 <button id="paystack-btn" class="report-btn">Pay ₦500 & Download PDF</button>
 
 <script>
-// Paystack Inline – ₦500 PDF Report
 document.getElementById("paystack-btn").onclick = function() {
   if (!window.lastCalc) {
     alert("Please calculate your tax first");
     return;
   }
 
-  let handler = PaystackPop.setup({
+  const email = prompt("Enter your email for receipt & PDF delivery:");
+  if (!email || !email.includes("@")) {
+    alert("Please enter a valid email");
+    return;
+  }
+
+  // NEW METHOD: new PaystackPop() - fixes deprecation
+  const paystack = new PaystackPop({
     key: 'pk_test_bc9c09e6d51c4e025bb44c6c57ad1c1144386b55', // your test public key
-    email: prompt("Enter your email for receipt & PDF delivery"),
+    email: email,
     amount: 50000, // ₦500 in kobo
     currency: "NGN",
-    ref: 'TAXC_' + Math.floor((Math.random() * 1000000000) + 1),
-    onClose: function(){ alert('Payment cancelled'); },
+    ref: 'TAXC_' + Date.now(), // unique ref
     callback: function(response) {
+      // Verify on Firebase backend
       fetch('https://us-central1-taxc-ebooks.cloudfunctions.net/verifyPayment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1313,16 +1319,24 @@ document.getElementById("paystack-btn").onclick = function() {
       .then(r => r.json())
       .then(data => {
         if (data.status === true) {
-          alert("Payment successful! Generating your PDF...");
-          generatePDFReport(); // your existing function
+          document.getElementById('msg').innerHTML = 'Payment successful! 🎉 Generating your PDF...';
+          setTimeout(generatePDFReport, 1000); // instant download
         } else {
-          alert("Payment failed: " + data.message);
+          alert("Payment failed: " + (data.message || "Try again"));
         }
       })
-      .catch(() => alert("Verification error – contact support"));
+      .catch(err => {
+        console.error(err);
+        alert("Verification error – contact support");
+      });
+    },
+    onClose: function() {
+      document.getElementById('msg').innerHTML = 'Payment cancelled.';
     }
   });
-  handler.openIframe();
+
+  // NEW METHOD: .open() - fixes deprecation
+  paystack.open();
 };
 </script>
             </div>
