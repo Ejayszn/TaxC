@@ -395,7 +395,7 @@ await sendEmailVerification(user);
 // The onAuthStateChanged listener will not be triggered with a logged-in user.
 await auth.signOut(); // <--- ADD THIS LINE
 
-showSuccess('Account created successfully! 🎉 Check your email (including spam) for the verification link. Please **log in** after verification.'); // <--- Update message
+showSuccess('Account created successfully! 🎉 Check your email (including spam) for the verification link. Please log in after verification.'); // <--- Update message
 
 // Reset button and stop redirect
 $('submitBtn').disabled = false;

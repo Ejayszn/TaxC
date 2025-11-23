@@ -1285,7 +1285,46 @@ footer {
     for only ₦500:
 </p>
             <div class="input-group-inline">
-                <button onclick="startHostedPayment()" class="report-btn">Pay ₦500 & Download PDF</button>
+                <!-- Paystack Inline Script -->
+
+<button id="paystack-btn" class="report-btn">Pay ₦500 & Download PDF</button>
+
+<script>
+// Paystack Inline – ₦500 PDF Report
+document.getElementById("paystack-btn").onclick = function() {
+  if (!window.lastCalc) {
+    alert("Please calculate your tax first");
+    return;
+  }
+
+  let handler = PaystackPop.setup({
+    key: 'pk_test_bc9c09e6d51c4e025bb44c6c57ad1c1144386b55', // your test public key
+    email: prompt("Enter your email for receipt & PDF delivery"),
+    amount: 50000, // ₦500 in kobo
+    currency: "NGN",
+    ref: 'TAXC_' + Math.floor((Math.random() * 1000000000) + 1),
+    onClose: function(){ alert('Payment cancelled'); },
+    callback: function(response) {
+      fetch('https://us-central1-taxc-ebooks.cloudfunctions.net/verifyPayment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reference: response.reference })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.status === true) {
+          alert("Payment successful! Generating your PDF...");
+          generatePDFReport(); // your existing function
+        } else {
+          alert("Payment failed: " + data.message);
+        }
+      })
+      .catch(() => alert("Verification error – contact support"));
+    }
+  });
+  handler.openIframe();
+};
+</script>
             </div>
         </div>
     </div>
@@ -2546,7 +2585,7 @@ async function verifyPaystackPayment(reference, email) {
   btn.textContent = "Verifying payment...";
 
   try {
-    const res = await fetch('https://taxc.com.ng/verify-payment.php', {  // ← Change to your domain
+    const res = await fetch('https://us-central1-taxc-ebooks.cloudfunctions.net/verifyPayment', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ reference, email, item: 'pdf_report' })
