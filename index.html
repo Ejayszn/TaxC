@@ -1284,47 +1284,49 @@ footer {
     </a> 
     for only ₦500:
 </p>
-            <div class="input-group-inline">
+    <div class="input-group-inline">
   <button id="paystack-btn" class="report-btn">Pay ₦500 & Download PDF</button>
 </div>
 
+<!-- ONLY ONE PAYSTACK SCRIPT - LATEST & WORKING -->
+<script src="https://js.paystack.co/v2/inline.js"></script>
+
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-  document.getElementById("paystack-btn").onclick = function () {
-    if (!window.lastCalc) {
-      alert("Please calculate your tax first");
-      return;
-    }
-    const email = prompt("Enter your email for receipt & PDF delivery:");
-    if (!email || !email.includes("@")) {
-      alert("Valid email required");
-      return;
-    }
-    const paystack = new PaystackPop({
-      key: "pk_test_bc9c09e6d51c4e025bb44c6c57ad1c1144386b55",
-      email: email,
-      amount: 50000,
-      currency: "NGN",
-      ref: "TAXC_" + Date.now(),
-      callback: function (response) {
-        fetch("https://us-central1-taxc-ebooks.cloudfunctions.net/verifyPayment", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ reference: response.reference })
-        })
-        .then(r => r.json())
-        .then(data => {
-          if (data.status) {
-            alert("Payment successful! Generating PDF...");
-            generatePDFReport();
-          } else alert("Payment failed");
-        });
-      },
-      onClose: () => alert("Payment cancelled")
-    });
-    paystack.open();   // this is the new, working method
-  };
-});
+document.getElementById("paystack-btn").onclick = function () {
+  if (!window.lastCalc) {
+    alert("Calculate your tax first!");
+    return;
+  }
+
+  const email = prompt("Your email for receipt:");
+  if (!email || !email.includes("@")) return alert("Enter valid email");
+
+  new PaystackPop({
+    key: "pk_test_bc9c09e6d51c4e025bb44c6c57ad1c1144386b55",
+    email: email,
+    amount: 50000,
+    currency: "NGN",
+    ref: "TAXC_" + Date.now(),
+    callback: function (response) {
+      fetch("https://us-central1-taxc-ebooks.cloudfunctions.net/verifyPayment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reference: response.reference })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.status) {
+          alert("Paid! Generating PDF...");
+          generatePDFReport();
+        } else {
+          alert("Payment failed");
+        }
+      })
+      .catch(() => alert("Network error"));
+    },
+    onClose: () => alert("Payment cancelled")
+  }).open();
+};
 </script>
         </div>
     </div>
