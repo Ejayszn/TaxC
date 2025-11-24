@@ -2496,6 +2496,8 @@ let paymentInProgress = false;
 
 // Main function user clicks
 // Main function user clicks
+// Function to replace your current payWithPaystack function
+
 function payWithPaystack() {
     // 1. Pre-check: Tax calculated
     if (!window.lastCalc) {
@@ -2503,7 +2505,7 @@ function payWithPaystack() {
         return;
     }
 
-    // 2. Pre-check: Payment in progress
+    // 2. Pre-check: Payment in progress (NOTE: paymentInProgress must be defined outside this function)
     if (paymentInProgress) return;
     paymentInProgress = true;
 
@@ -2518,11 +2520,11 @@ function payWithPaystack() {
         alert("Valid email is required");
         btn.disabled = false;
         btn.textContent = "Pay ₦500 & Download PDF";
-        paymentInProgress = false;
+        paymentInProgress = false; // Reset state on error
         return;
     }
 
-    // 5. Initialize and Open Paystack Pop-up (The Corrected Part)
+    // 5. Initialize and Open Paystack Pop-up (Modern, Clean Implementation)
     new PaystackPop({
         key: PAYSTACK_PUBLIC_KEY,
         email: email,
@@ -2536,13 +2538,13 @@ function payWithPaystack() {
         },
 
         onClose: function() {
-            // Restore button state
+            // Restore button state and reset lock
             btn.disabled = false;
             btn.textContent = "Pay ₦500 & Download PDF";
-            paymentInProgress = false;
+            paymentInProgress = false; // Reset state on close
             document.getElementById('msg').innerHTML = 'Payment cancelled.';
         }
-    }).open(); // <-- Correctly opens the new instance
+    }).open(); 
 }
 
 // Called after Paystack callback
