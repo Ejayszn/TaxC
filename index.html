@@ -2307,6 +2307,7 @@ totalWhtCredit += wht;
     });
 
     const finalTax = Math.max(0, tax - totalWhtCredit);
+    const effectiveRate = totalGross > 0 ? ((finalTax / totalGross) * 100).toFixed(1) : '0.0';
     const monthlyTax = finalTax / 12;
 
     // === Display ===
@@ -2319,8 +2320,9 @@ totalWhtCredit += wht;
         <tr><td>Chargeable Income (after ₦800k exemption)</td><td>₦${chargeableIncome.toLocaleString('en-NG')}</td></tr>
         <tr><td>Tax Before WHT Credit</td><td>₦${tax.toLocaleString('en-NG')}</td></tr>
         ${totalWhtCredit > 0 ? `<tr><td>WHT Credit</td><td>₦${totalWhtCredit.toLocaleString('en-NG')}</td></tr>` : ''}
-        <tr><td><strong>Final Tax Payable</strong></td><td>₦${Math.round(finalTax).toLocaleString('en-NG')}</td></tr>
-        <tr><td>Monthly PAYE (approx)</td><td>₦${Math.round(monthlyTax).toLocaleString('en-NG')}</td></tr>
+        <tr><td><strong>Final Tax Payable</strong></td><td><strong>₦${Math.round(finalTax).toLocaleString('en-NG')}</strong></td></tr>
+<tr><td><strong>Effective Tax Rate</strong></td><td><strong style="color:#28A745; font-size:1.1em;">${effectiveRate}%</strong><br><small>of your total income</small></td></tr>
+<tr><td>Monthly PAYE (approx)</td><td>₦${Math.round(monthlyTax).toLocaleString('en-NG')}</td></tr>
         <tr><td colspan="2"><em>Valid for income earned from January 2026</em></td></tr>
     </table>
 `;

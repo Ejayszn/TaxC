@@ -13,6 +13,8 @@
 
     <link rel="stylesheet" href="styles/animations.css">
 
+    <script src="https://js.paystack.co/v2/inline.js"></script>
+
   <style>
 
   .chat-clear {
@@ -1627,38 +1629,49 @@ document.head.appendChild(style);
     return true;
   }
 
-  // === BUY EBOOK (LIVE IPG + DRC + INSTANT DOWNLOAD) ===
+  // === BUY EBOOK ===
 function buyEbook() {
   if (!currentEbook) {
     alert("Error: No ebook selected.");
     return;
   }
 
-  const txnRef = 'EBK_' + Date.now();
+  const user = firebase.auth().currentUser;
+  if (!user || !user.email) {
+    alert("Please log in to purchase.");
+    return;
+  }
 
-  const form = document.createElement('form');
-  form.method = 'POST';
-
-  const fields = {
-    merchant_code: 'MX153376',
-    pay_item_id: '5558761', // ← YOUR CLAIMED ID
-    txn_ref: txnRef,
-    amount: (currentEbook.price * 100).toString(), // ₦2000 → 200000
-    currency: '566',
-    site_redirect_url: `${window.location.origin}/thank-you.html?item=ebook&title=${encodeURIComponent(currentEbook.title)}&txn_ref=${txnRef}&file=${encodeURIComponent(currentEbook.file)}`,
-    pay_item_name: currentEbook.title
-  };
-
-  Object.entries(fields).forEach(([k, v]) => {
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = k;
-    input.value = v;
-    form.appendChild(input);
+  const handler = PaystackPop.setup({
+    key: 'pk_live_6b8f9c8e8d8f9e9d8f9e9d8f9e9d8f9e9d8f9e9d', // ← CHANGE TO YOUR LIVE KEY LATER
+    // key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxxxxxx', // ← Use this for testing
+    email: user.email,
+    amount: currentEbook.price * 100, // Paystack uses kobo
+    currency: 'NGN',
+    ref: 'EBK_' + Date.now() + '_' + Math.floor(Math.random() * 10000),
+    metadata: {
+      custom_fields: [
+        { display_name: "Customer", variable_name: "customer", value: user.displayName || user.email },
+        { display_name: "Ebook", variable_name: "ebook", value: currentEbook.title }
+      ]
+    },
+    callback: function(response) {
+      // Success! Add to library + close modal
+      addToLibrary(currentEbook);
+      closeModal('paidModal');
+      
+      // Show success message
+      alert(`Payment successful! 🎉\n"${currentEbook.title}" has been added to your library.\n\nCheck "My Library" below ↓`);
+      
+      // Optional: Track in Firebase or send receipt
+      console.log('Paystack ref:', response.reference);
+    },
+    onClose: function() {
+      alert('Payment cancelled. You can try again anytime.');
+    }
   });
 
-  document.body.appendChild(form);
-  form.submit();
+  handler.openIframe();
 }
 
   function addToLibrary(ebook) {
@@ -1858,21 +1871,6 @@ window.addEventListener('beforeunload', saveChat);
       btn.onclick = () => signOut(auth).then(() => location.reload());
     });
   });
-</script>
-<script>
-  // Smart-load Interswitch ONLY on pages that need payment
-  const needsPayment = ['index.html', 'ebooks.html'].some(page => 
-    window.location.pathname.includes(page) || 
-    (window.location.pathname === '/' && page === 'ebooks.html')
-  );
-
-  if (needsPayment) {
-    const script = document.createElement('script');
-    script.src = 'https://newwebpay.interswitchng.com/inline-checkout.js';
-    script.async = true;
-    script.defer = true;
-    document.head.appendChild(script);
-  }
 </script>
 </body>
 </html>
