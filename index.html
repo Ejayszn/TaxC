@@ -2495,49 +2495,54 @@ const PAYSTACK_PUBLIC_KEY = "pk_test_bc9c09e6d51c4e025bb44c6c57ad1c1144386b55"; 
 let paymentInProgress = false;
 
 // Main function user clicks
+// Main function user clicks
 function payWithPaystack() {
-  if (!window.lastCalc) {
-    document.getElementById('msg').textContent = '🔴 Please calculate your tax first.';
-    return;
-  }
-
-  if (paymentInProgress) return;
-  paymentInProgress = true;
-
-  const btn = document.querySelector('.report-btn');
-  btn.disabled = true;
-  btn.textContent = "Opening secure checkout...";
-
-  const email = prompt("Enter your email for the receipt & PDF delivery:", "");
-  if (!email || !email.includes('@')) {
-    alert("Valid email is required");
-    btn.disabled = false;
-    btn.textContent = "Pay ₦500 & Download PDF";
-    paymentInProgress = false;
-    return;
-  }
-
-  let handler = PaystackPop.setup({
-    key: PAYSTACK_PUBLIC_KEY,
-    email: email,
-    amount: 50000, // ₦500 in kobo
-    currency: "NGN",
-    ref: 'TAXC_RPT_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-
-    callback: function(response) {
-      // Payment completed — now verify on backend
-      verifyPaystackPayment(response.reference, email);
-    },
-
-    onClose: function() {
-      btn.disabled = false;
-      btn.textContent = "Pay ₦500 & Download PDF";
-      paymentInProgress = false;
-      document.getElementById('msg').innerHTML = 'Payment cancelled.';
+    // 1. Pre-check: Tax calculated
+    if (!window.lastCalc) {
+        document.getElementById('msg').textContent = '🔴 Please calculate your tax first.';
+        return;
     }
-  });
 
-  handler.open();
+    // 2. Pre-check: Payment in progress
+    if (paymentInProgress) return;
+    paymentInProgress = true;
+
+    // 3. UI setup
+    const btn = document.querySelector('.report-btn');
+    btn.disabled = true;
+    btn.textContent = "Opening secure checkout...";
+
+    // 4. Get Email
+    const email = prompt("Enter your email for the receipt & PDF delivery:", "");
+    if (!email || !email.includes('@')) {
+        alert("Valid email is required");
+        btn.disabled = false;
+        btn.textContent = "Pay ₦500 & Download PDF";
+        paymentInProgress = false;
+        return;
+    }
+
+    // 5. Initialize and Open Paystack Pop-up (The Corrected Part)
+    new PaystackPop({
+        key: PAYSTACK_PUBLIC_KEY,
+        email: email,
+        amount: 50000, // ₦500 in kobo
+        currency: "NGN",
+        ref: 'TAXC_RPT_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+
+        callback: function(response) {
+            // Payment completed — now verify on backend
+            verifyPaystackPayment(response.reference, email);
+        },
+
+        onClose: function() {
+            // Restore button state
+            btn.disabled = false;
+            btn.textContent = "Pay ₦500 & Download PDF";
+            paymentInProgress = false;
+            document.getElementById('msg').innerHTML = 'Payment cancelled.';
+        }
+    }).open(); // <-- Correctly opens the new instance
 }
 
 // Called after Paystack callback
