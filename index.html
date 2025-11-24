@@ -13,6 +13,8 @@
 
     <link rel="stylesheet" href="styles/animations.css">
 
+    <script src="https://js.paystack.co/v2/inline.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
@@ -1285,54 +1287,6 @@ footer {
 <div class="input-group-inline">
   <button id="paystack-btn" class="report-btn">Pay ₦500 & Download PDF</button>
 </div>
-
-<!-- ONLY ONE PAYSTACK SCRIPT - LATEST & WORKING -->
-<script src="https://js.paystack.co/v2/inline.js"></script>
-
-<script>
-document.getElementById("paystack-btn").onclick = function () {
-  if (!window.lastCalc) {
-    alert("Calculate your tax first!");
-    return;
-  }
-
-  const email = prompt("Your email for receipt & PDF:");
-  if (!email || !email.includes("@")) return alert("Enter valid email");
-
-  // MODERN WAY — THIS ONE WORKS IN 2025
-  new PaystackPop({
-    key: "pk_test_bc9c09e6d51c4e025bb44c6c57ad1c1144386b55", // ← change to live when ready
-    email: email,
-    amount: 50000, // ₦500
-    currency: "NGN",
-    ref: "TAXC_" + Date.now() + "_" + Math.floor(Math.random() * 10000),
-    
-    callback: function (response) {
-      // Success → verify on your Cloud Function
-      fetch("https://us-central1-taxc-ebooks.cloudfunctions.net/verifyPayment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          reference: response.reference,
-          email: email 
-        })
-      })
-      .then(r => r.json())
-      .then(data => {
-        if (data.status) {
-          alert("Paid! Generating PDF...");
-          generatePDFReport();
-        } else {
-          alert("Verification failed — contact support");
-        }
-      })
-      .catch(() => alert("Network error"));
-    },
-    
-    onClose: () => alert("Payment cancelled")
-  }).open(); // ← this is the correct new method
-};
-</script>
         </div>
     </div>
 </section>
@@ -2531,6 +2485,97 @@ window.addEventListener('beforeunload', saveChat);
     });
   });
 </script>
+<script>
+// ==================== PAYSTACK INTEGRATION (TAXC 2025) ====================
 
+// CHANGE THIS TO LIVE WHEN READY
+const PAYSTACK_PUBLIC_KEY = "pk_test_bc9c09e6d51c4e025bb44c6c57ad1c1144386b55"; // ← Put your real test key here
+// const PAYSTACK_PUBLIC_KEY = "pk_live_xxxxxxxxxxxxxxxxxxxxxxxx"; // ← Live key (switch later)
+
+let paymentInProgress = false;
+
+// Main function user clicks
+function payWithPaystack() {
+  if (!window.lastCalc) {
+    document.getElementById('msg').textContent = '🔴 Please calculate your tax first.';
+    return;
+  }
+
+  if (paymentInProgress) return;
+  paymentInProgress = true;
+
+  const btn = document.querySelector('.report-btn');
+  btn.disabled = true;
+  btn.textContent = "Opening secure checkout...";
+
+  const email = prompt("Enter your email for the receipt & PDF delivery:", "");
+  if (!email || !email.includes('@')) {
+    alert("Valid email is required");
+    btn.disabled = false;
+    btn.textContent = "Pay ₦500 & Download PDF";
+    paymentInProgress = false;
+    return;
+  }
+
+  let handler = PaystackPop.setup({
+    key: PAYSTACK_PUBLIC_KEY,
+    email: email,
+    amount: 50000, // ₦500 in kobo
+    currency: "NGN",
+    ref: 'TAXC_RPT_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+
+    callback: function(response) {
+      // Payment completed — now verify on backend
+      verifyPaystackPayment(response.reference, email);
+    },
+
+    onClose: function() {
+      btn.disabled = false;
+      btn.textContent = "Pay ₦500 & Download PDF";
+      paymentInProgress = false;
+      document.getElementById('msg').innerHTML = 'Payment cancelled.';
+    }
+  });
+
+  handler.open();
+}
+
+// Called after Paystack callback
+async function verifyPaystackPayment(reference, email) {
+  const btn = document.querySelector('.report-btn');
+  btn.textContent = "Verifying payment...";
+
+  try {
+    const res = await fetch('https://us-central1-taxc-ebooks.cloudfunctions.net/verifyPayment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reference, email, item: 'pdf_report' })
+    });
+
+    const data = await res.json();
+
+    if (data.status === true) {
+      document.getElementById('msg').innerHTML = 'Payment successful! Generating your professional PDF report...';
+      btn.textContent = "Download Again";
+      btn.disabled = false;
+      btn.onclick = generatePDFReport;
+      setTimeout(generatePDFReport, 1200); // Instant download
+    } else {
+      throw new Error(data.message || "Verification failed");
+    }
+  } catch (err) {
+    console.error(err);
+    document.getElementById('msg').innerHTML = 'Payment verification failed. Contact support@taxc.com.ng with ref: ' + reference;
+    btn.disabled = false;
+    btn.textContent = "Try Again";
+    btn.onclick = payWithPaystack;
+  } finally {
+    paymentInProgress = false;
+  }
+}
+
+// Change the button onclick
+document.querySelector('.report-btn').onclick = payWithPaystack;
+</script>
     </body>
 </html>
