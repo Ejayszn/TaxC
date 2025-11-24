@@ -2486,102 +2486,87 @@ window.addEventListener('beforeunload', saveChat);
   });
 </script>
 <script>
-// ==================== PAYSTACK INTEGRATION (TAXC 2025) ====================
-
-// CHANGE THIS TO LIVE WHEN READY
-const PAYSTACK_PUBLIC_KEY = "pk_test_bc9c09e6d51c4e025bb44c6c57ad1c1144386b55"; // ← Put your real test key here
-// const PAYSTACK_PUBLIC_KEY = "pk_live_xxxxxxxxxxxxxxxxxxxxxxxx"; // ← Live key (switch later)
-
+// ==================== PAYSTACK INTEGRATION – WORKING 2025 VERSION ====================
+const PAYSTACK_PUBLIC_KEY = "pk_test_bc9c09e6d51c4e025bb44c6c57ad1c1144386b55";
 let paymentInProgress = false;
 
-// Main function user clicks
-// Main function user clicks
-// Function to replace your current payWithPaystack function
-
 function payWithPaystack() {
-    // 1. Pre-check: Tax calculated
     if (!window.lastCalc) {
-        document.getElementById('msg').textContent = '🔴 Please calculate your tax first.';
+        document.getElementById('msg').textContent = 'Please calculate your tax first.';
         return;
     }
 
-    // 2. Pre-check: Payment in progress (NOTE: paymentInProgress must be defined outside this function)
     if (paymentInProgress) return;
     paymentInProgress = true;
 
-    // 3. UI setup
     const btn = document.querySelector('.report-btn');
     btn.disabled = true;
-    btn.textContent = "Opening secure checkout...";
+    btn.textContent = "Opening Paystack...";
 
-    // 4. Get Email
-    const email = prompt("Enter your email for the receipt & PDF delivery:", "");
-    if (!email || !email.includes('@')) {
-        alert("Valid email is required");
+    const email = prompt("Enter your email for receipt & PDF delivery:", "");
+    if (!email || !email.includes('@') || !email.includes('.')) {
+        alert("Please enter a valid email address");
         btn.disabled = false;
         btn.textContent = "Pay ₦500 & Download PDF";
-        paymentInProgress = false; // Reset state on error
+        paymentInProgress = false;
         return;
     }
 
-    // 5. Initialize and Open Paystack Pop-up (Modern, Clean Implementation)
-    new PaystackPop({
+    // NEW CORRECT v2 SYNTAX
+    const handler = PaystackPop.setup({
         key: PAYSTACK_PUBLIC_KEY,
         email: email,
         amount: 50000, // ₦500 in kobo
         currency: "NGN",
-        ref: 'TAXC_RPT_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+        ref: 'TAXC_' + Math.random().toString(36).substring(2, 15) + Date.now(),
 
         callback: function(response) {
-            // Payment completed — now verify on backend
             verifyPaystackPayment(response.reference, email);
         },
 
         onClose: function() {
-            // Restore button state and reset lock
             btn.disabled = false;
             btn.textContent = "Pay ₦500 & Download PDF";
-            paymentInProgress = false; // Reset state on close
-            document.getElementById('msg').innerHTML = 'Payment cancelled.';
+            document.getElementById('msg').innerHTML = 'Payment was cancelled.';
+            paymentInProgress = false;
         }
-    }).open(); 
-}
-
-// Called after Paystack callback
-async function verifyPaystackPayment(reference, email) {
-  const btn = document.querySelector('.report-btn');
-  btn.textContent = "Verifying payment...";
-
-  try {
-    const res = await fetch('https://us-central1-taxc-ebooks.cloudfunctions.net/verifyPayment', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ reference, email, item: 'pdf_report' })
     });
 
-    const data = await res.json();
-
-    if (data.status === true) {
-      document.getElementById('msg').innerHTML = 'Payment successful! Generating your professional PDF report...';
-      btn.textContent = "Download Again";
-      btn.disabled = false;
-      btn.onclick = generatePDFReport;
-      setTimeout(generatePDFReport, 1200); // Instant download
-    } else {
-      throw new Error(data.message || "Verification failed");
-    }
-  } catch (err) {
-    console.error(err);
-    document.getElementById('msg').innerHTML = 'Payment verification failed. Contact support@taxc.com.ng with ref: ' + reference;
-    btn.disabled = false;
-    btn.textContent = "Try Again";
-    btn.onclick = payWithPaystack;
-  } finally {
-    paymentInProgress = false;
-  }
+    handler.openIframe(); // THIS is the correct method in v2
 }
 
-// Change the button onclick
+async function verifyPaystackPayment(reference, email) {
+    const btn = document.querySelector('.report-btn');
+    btn.textContent = "Verifying payment...";
+
+    try {
+        const res = await fetch('https://us-central1-taxc-ebooks.cloudfunctions.net/verifyPayment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reference, email, item: 'pdf_report' })
+        });
+
+        const data = await res.json();
+
+        if (data.status === true) {
+            document.getElementById('msg').innerHTML = 'Payment successful! Downloading your report...';
+            btn.textContent = "Download PDF Again";
+            btn.onclick = generatePDFReport;
+            setTimeout(generatePDFReport, 800);
+        } else {
+            throw new Error("Verification failed");
+        }
+    } catch (err) {
+        document.getElementById('msg').innerHTML = 'Verification failed. Contact support@taxc.com.ng with reference: ' + reference;
+        btn.textContent = "Try Again";
+        btn.onclick = payWithPaystack;
+    } finally {
+        paymentInProgress = false;
+        btn.disabled = false;
+    }
+}
+
+// Attach the handler
 document.querySelector('.report-btn').onclick = payWithPaystack;
 </script>
     </body>
