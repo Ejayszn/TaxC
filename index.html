@@ -718,6 +718,11 @@ input:focus, select:focus {
 .tax-summary-box strong {
     color: #28A745; /* Primary Green */
 }
+
+#taxSummary table { border-collapse: collapse; width: 100%; }
+#taxSummary th, #taxSummary td { border: 1px solid #ddd; padding: 8px; }
+#taxSummary th { background-color: #f2f2f2; text-align: left; }
+
 .report-section {
     margin-top: 25px;
     padding-top: 15px;
@@ -1935,23 +1940,31 @@ document.head.appendChild(style);
             }
         }
 
-        function toggleWhtField(selectElement) {
+    function toggleWhtField(selectElement) {
     const type = selectElement.value;
     const block = selectElement.closest('.income-source-block');
     const whtRow = block.querySelector('.wht-row');
     const tooltip = block.querySelector('.wht-row .tooltiptext');
-
     if (!whtRow) return;
 
-    if (type === 'rental' || type === 'investment') {
+    // Show WHT field for Rental, Investment, AND Other
+    if (type === 'rental' || type === 'investment' || type === 'other') {
         whtRow.style.display = 'flex';
-        tooltip.innerHTML = `
-            WHT = 10% tax your tenant/bank pays to govt BEFORE giving you the rest.
-            Leave blank → we use standard 10%.
-        `;
+
+        if (type === 'other') {
+            tooltip.innerHTML = `
+                Enter actual WHT paid (if any, e.g. 5-10% on consulting fees).<br>
+                Students, gifts, personal sales? Leave blank (₦0—no credit needed).
+            `;
+        } else {
+            tooltip.innerHTML = `
+                WHT = 10% tax your tenant/bank pays to govt BEFORE giving you the rest.<br>
+                Leave blank → we use standard 10%.
+            `;
+        }
     } else {
+        // Hide only for Salary & Self-Employment
         whtRow.style.display = 'none';
-        // Clear input when hidden
         const input = block.querySelector('.wht-input');
         if (input) input.value = '';
     }
@@ -2219,11 +2232,19 @@ function calculateTax() {
         }
 
         const whtInput = document.getElementById(`wht_${index}`);
-        let wht = getRawValue(whtInput);
-        if (wht === 0 && ['rental', 'investment', 'other'].includes(type)) {
-            wht = income * (type === 'other' ? 0.05 : 0.10);
-        }
-        totalWhtCredit += wht;
+let wht = getRawValue(whtInput);  // Always start with user input (0 if blank)
+
+// Auto-apply 10% ONLY for Rental & Investment if user left blank
+if (wht === 0 && (type === 'rental' || type === 'investment')) {
+    wht = income * 0.10;  // Standard deduction at source
+}
+
+// For "Other": If blank, stays 0. No auto. (User enters actual if any)
+if (type === 'other' && wht === 0) {
+    wht = 0;  // Explicit: No default—perfect for students/gifts
+}
+
+totalWhtCredit += wht;
 
         incomeSources.push({
             type: type.charAt(0).toUpperCase() + type.slice(1),  // e.g., "Salary"
@@ -2243,7 +2264,7 @@ function calculateTax() {
     const life = getRawValue(document.getElementById('lifeinsurance') || {value: ''});
     const mortgage = getRawValue(document.getElementById('mortgage') || {value: ''});
     const rentPaid = getRawValue(document.getElementById('rent') || {value: ''});
-    const rentRelief = Math.min(200000, rentPaid); // 2026 cap
+    const rentRelief = Math.min(500000, rentPaid * 0.2);
 
     const deductions = {  // NEW: Object for deductions
         pension: pension,
@@ -2256,6 +2277,7 @@ function calculateTax() {
     const totalDeductions = pension + nhf + nhis + life + mortgage + rentRelief;
     const taxableIncome = Math.max(0, totalGross - totalDeductions);
     const chargeableIncome = Math.max(0, taxableIncome - 800000); // First 800k exempt
+
 
     // === Tax bands with details ===
     let tax = 0;
@@ -2289,17 +2311,19 @@ function calculateTax() {
 
     // === Display ===
     document.getElementById('taxSummary').innerHTML = `
-        <strong>2026 Personal Income Tax (New Law)</strong><br><br>
-        Gross Annual Income: ₦${totalGross.toLocaleString('en-NG')}<br>
-        Total Deductions: ₦${totalDeductions.toLocaleString('en-NG')}<br>
-        Taxable Income: ₦${taxableIncome.toLocaleString('en-NG')}<br>
-        <strong>Chargeable Income (after ₦800k exemption):</strong> ₦${chargeableIncome.toLocaleString('en-NG')}<br><br>
-        <strong>Tax Before WHT Credit:</strong> ₦${tax.toLocaleString('en-NG')}<br>
-        ${totalWhtCredit > 0 ? `<strong>WHT Credit:</strong> ₦${totalWhtCredit.toLocaleString('en-NG')}<br>` : ''}
-        <strong>Final Tax Payable:</strong> ₦${Math.round(finalTax).toLocaleString('en-NG')}<br>
-        <strong>Monthly PAYE (approx):</strong> ₦${Math.round(monthlyTax).toLocaleString('en-NG')}<br><br>
-        <em>Valid for income earned from January 2026</em>
-    `;
+    <table style="width:100%; border-collapse: collapse;">
+        <tr><th colspan="2">2026 Personal Income Tax (New Law)</th></tr>
+        <tr><td>Gross Annual Income</td><td>₦${totalGross.toLocaleString('en-NG')}</td></tr>
+        <tr><td>Total Deductions</td><td>₦${totalDeductions.toLocaleString('en-NG')}</td></tr>
+        <tr><td>Taxable Income</td><td>₦${taxableIncome.toLocaleString('en-NG')}</td></tr>
+        <tr><td>Chargeable Income (after ₦800k exemption)</td><td>₦${chargeableIncome.toLocaleString('en-NG')}</td></tr>
+        <tr><td>Tax Before WHT Credit</td><td>₦${tax.toLocaleString('en-NG')}</td></tr>
+        ${totalWhtCredit > 0 ? `<tr><td>WHT Credit</td><td>₦${totalWhtCredit.toLocaleString('en-NG')}</td></tr>` : ''}
+        <tr><td><strong>Final Tax Payable</strong></td><td>₦${Math.round(finalTax).toLocaleString('en-NG')}</td></tr>
+        <tr><td>Monthly PAYE (approx)</td><td>₦${Math.round(monthlyTax).toLocaleString('en-NG')}</td></tr>
+        <tr><td colspan="2"><em>Valid for income earned from January 2026</em></td></tr>
+    </table>
+`;
 
     document.getElementById('msg').textContent = 'Calculation complete (2026 rules applied)';
     document.getElementById('output').style.display = 'block';
