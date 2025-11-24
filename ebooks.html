@@ -994,18 +994,26 @@ footer {
 </div>
 
   <div id="paidModal" class="modal">
-    <div class="modal-content">
-      <button class="modal-close" onclick="closeModal('paidModal')">×</button>
-      <div class="modal-header">
-        <h3 id="paidTitle"></h3>
-      </div>
-      <div class="modal-body">
-        <img id="paidCover" class="modal-cover" src="" alt="">
-        <div class="modal-price" id="paidPrice"></div>
-        <button onclick="buyEbook()" class="ebook-btn">Buy Now</button>
-      </div>
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeModal('paidModal')">×</button>
+    <div class="modal-header">
+      <h3 id="paidTitle"></h3>
+    </div>
+    <div class="modal-body">
+      <img id="paidCover" class="modal-cover" src="" alt="">
+      <div class="modal-price" id="paidPrice"></div>
+
+      <!-- THIS WAS MISSING — ADD THIS BLOCK -->
+      <ul class="modal-bullets" style="margin: 20px 0; padding-left: 22px; line-height: 1.7;">
+        <!-- Bullets will be injected here by JavaScript -->
+      </ul>
+
+      <button onclick="buyEbook()" class="ebook-btn" style="background:#28A745; color:white; font-weight:600;">
+        Buy Now with Paystack
+      </button>
     </div>
   </div>
+</div>
 
   <!-- FLOATING CHAT -->
   <div id="taxc-chat-widget">
@@ -1594,20 +1602,26 @@ document.head.appendChild(style);
   // === PAID MODAL: DYNAMIC BULLETS ===
   function openPaidModal(title, price, file) {
   currentEbook = ebooks.find(e => e.title === title);
+  if (!currentEbook) return;
+
   document.getElementById('paidTitle').textContent = title;
   document.getElementById('paidCover').src = currentEbook.cover;
   document.getElementById('paidPrice').textContent = `₦${price.toLocaleString()}`;
 
-  const bulletsList = document.querySelector('#paidModal .modal-bullets');
-  bulletsList.innerHTML = '';
-  currentEbook.bullets.forEach(bullet => {
-    const li = document.createElement('li');
-    li.textContent = bullet;
-    bulletsList.appendChild(li);
-  });
+  // Safely populate bullets
+  const bulletsContainer = document.querySelector('#paidModal .modal-bullets');
+  if (bulletsContainer) {
+    bulletsContainer.innerHTML = ''; // Clear previous
+    (currentEbook.bullets || []).forEach(bullet => {
+      const li = document.createElement('li');
+      li.textContent = bullet;
+      bulletsContainer.appendChild(li);
+    });
+  }
 
   document.getElementById('paidModal').classList.add('open');
 }
+
   function closeModal(id) {
     document.getElementById(id).classList.remove('open');
   }
