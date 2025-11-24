@@ -16,6 +16,7 @@
     <script src="https://js.paystack.co/v2/inline.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/5.0.2/jspdf.plugin.autotable.min.js"></script>
     
     <style>
 
@@ -2134,6 +2135,48 @@ document.head.appendChild(style);
             return true;
         }
 
+        const statePortals = {
+    'FCT Abuja': { name: 'FCT Internal Revenue Service', url: 'https://fcttaxportal.fctirs.gov.ng/selfservice', filingTips: 'Login to file PIT returns online. Deadline: March 31.' },
+    'Abia': { name: 'Abia State Internal Revenue Service', url: 'https://abia.tax/', filingTips: 'Use portal for e-filing and payments. Deadline: March 31.' },
+    'Adamawa': { name: 'Adamawa State Internal Revenue Service', url: 'https://adirs.net/', filingTips: 'File annual returns online. Deadline: March 31.' },
+    'Akwa Ibom': { name: 'Akwa Ibom State Internal Revenue Service', url: 'https://akirs.up-ng.com/', filingTips: 'PAYE, direct assessment, and payments portal. Deadline: March 31.' },
+    'Anambra': { name: 'Anambra State Internal Revenue Service', url: 'https://airs.an.gov.ng/', filingTips: 'Online filing and payments available. Deadline: March 31.' },
+    'Bauchi': { name: 'Bauchi State Internal Revenue Service', url: 'https://birs.bu.gov.ng/', filingTips: 'Self-service portal for payments and returns.' },
+    'Bayelsa': { name: 'Bayelsa State Board of Internal Revenue', url: 'https://www.bir.by.gov.ng/', filingTips: 'Use eTax portal for assessments and payments. Deadline: March 31.' },
+    'Benue': { name: 'Benue State Internal Revenue Service', url: 'https://birs.be.gov.ng/', filingTips: 'Portal for taxpayer services.' },
+    'Borno': { name: 'Borno State Internal Revenue Service', url: 'https://birs.bo.gov.ng/', filingTips: 'Generate slips and pay online. Deadline: March 31.' },
+    'Cross River': { name: 'Cross River Internal Revenue Service', url: 'https://www.crirs.ng/', filingTips: 'Join online community for tax payments.' },
+    'Delta': { name: 'Delta State Internal Revenue Service', url: 'https://deltairs.com/', filingTips: 'Pay bills/assessments online. Deadline: March 31.' },
+    'Ebonyi': { name: 'Ebonyi State Internal Revenue Service', url: 'https://www.irs.ebsgov.org/', filingTips: 'Pay taxes and verify receipts online. Deadline: March 31.' },
+    'Edo': { name: 'Edo State Internal Revenue Service', url: 'https://eirs.gov.ng/', filingTips: 'Online payment and registration.' },
+    'Ekiti': { name: 'Ekiti State Internal Revenue Service', url: 'https://www.ekitistaterevenue.com/', filingTips: 'Pay taxes and task your government. Deadline: March 31.' },
+    'Enugu': { name: 'Enugu State Internal Revenue Service', url: 'https://irs.en.gov.ng/', filingTips: 'Log in for payments and returns. Deadline: March 31.' },
+    'Gombe': { name: 'Gombe State Internal Revenue Service', url: 'https://irs.gm.gov.ng/', filingTips: 'Tax management portal. Deadline: March 31.' },
+    'Imo': { name: 'Imo State Internal Revenue Service', url: 'https://iirs.im.gov.ng/', filingTips: 'Verify documents and pay online. Deadline: March 31.' },
+    'Jigawa': { name: 'Jigawa State Internal Revenue Service', url: 'https://jsirs.org.ng/', filingTips: 'Direct assessment and payments. Deadline: March 31.' },
+    'Kaduna': { name: 'Kaduna State Internal Revenue Service', url: 'https://kadirs.kdsg.gov.ng/', filingTips: 'Efficient revenue generation portal. Deadline: March 31.' },
+    'Kano': { name: 'Kano State Internal Revenue Service', url: 'https://kirs.gov.ng/', filingTips: 'Secure online payments.' },
+    'Katsina': { name: 'Katsina State Internal Revenue Service', url: 'https://irs.kt.gov.ng/', filingTips: 'Tax assessment and collection portal.' },
+    'Kebbi': { name: 'Kebbi State Internal Revenue Service', url: 'https://irs.kb.gov.ng/etax/', filingTips: 'Harmonized e-tax portal. Deadline: March 31.' },
+    'Kogi': { name: 'Kogi State Internal Revenue Service', url: 'https://irs.kg.gov.ng/', filingTips: 'Pay taxes and services online. Deadline: March 31.' },
+    'Kwara': { name: 'Kwara State Internal Revenue Service', url: 'https://web.kwirs.site/home/', filingTips: 'Self-service portal for filings. Deadline: March 31.' },
+    'Lagos': { name: 'Lagos State Internal Revenue Service', url: 'https://etax.lirs.net/', filingTips: 'File returns instantly online.' },
+    'Nasarawa': { name: 'Nasarawa State Internal Revenue Service', url: 'https://www.irs.na.gov.ng/', filingTips: 'Secure tax payments.' },
+    'Niger': { name: 'Niger State Internal Revenue Service', url: 'https://www.ngsirs.gov.ng/', filingTips: 'Pay taxes online. Deadline: March 31.' },
+    'Ogun': { name: 'Ogun State Internal Revenue Service', url: 'https://portal.ogetax.ogunstate.gov.ng/', filingTips: 'Easy tax payments.' },
+    'Ondo': { name: 'Ondo State Internal Revenue Service', url: 'https://www.odirs.ng/', filingTips: 'Verify receipts, obtain TIN.' },
+    'Osun': { name: 'Osun State Internal Revenue Service', url: 'https://irs.os.gov.ng/', filingTips: 'Online payments and verifications. Deadline: March 31.' },
+    'Oyo': { name: 'Oyo State Internal Revenue Service', url: 'https://oyostaterevenue.com/', filingTips: 'Self-service portal. Deadline: March 31.' },
+    'Plateau': { name: 'Plateau State Internal Revenue Service', url: 'https://www.psirs.gov.ng/', filingTips: 'Pay your tax to develop Plateau. Deadline: March 31.' },
+    'Rivers': { name: 'Rivers State Internal Revenue Service', url: 'https://rivtamis.riversbirs.gov.ng/', filingTips: 'RIVTAMIS tax management system. Deadline: March 31.' },
+    'Sokoto': { name: 'Sokoto State Internal Revenue Service', url: 'https://itas.irs.sk.gov.ng/', filingTips: 'Pay taxes and file returns online. Deadline: March 31.' },
+    'Taraba': { name: 'Taraba State Internal Revenue Service', url: 'https://www.tarababir.gov.ng/', filingTips: 'Pay taxes and services. Deadline: March 31.' },
+    'Yobe': { name: 'Yobe State Internal Revenue Service', url: 'https://www.irs.yb.gov.ng/', filingTips: 'Verify certificates online. Deadline: March 31.' },
+    'Zamfara': { name: 'Zamfara State Internal Revenue Service', url: 'https://irs.zm.gov.ng/', filingTips: 'Registration and payments portal. Deadline: March 31.' }
+};
+
+// Note: Verify/update with real URLs. Fallback if not in map: general advice.
+
 function calculateTax() {
     const state = document.getElementById('state').value;
 
@@ -2155,54 +2198,91 @@ function calculateTax() {
 
     let totalGross = 0;
     let totalWhtCredit = 0;
+    let incomeSources = [];
 
-    // === Collect all income ===
+    // === Collect all income with details ===
     document.querySelectorAll('.income-source-block').forEach(block => {
         const index = block.getAttribute('data-source-id');
         const type = document.getElementById(`type_${index}`).value;
         const freq = document.getElementById(`freq_${index}`).value;
-
         let income = 0;
+        let monthlyBreakdown = [];  // If monthly, store per month
+
         if (freq === 'monthly') {
             block.querySelectorAll('.monthly-income-row input').forEach(inp => {
-                income += getRawValue(inp);
+                const monthValue = getRawValue(inp);
+                income += monthValue;
+                monthlyBreakdown.push({ month: inp.dataset.month, amount: monthValue });
             });
         } else {
             income = getRawValue(document.getElementById(`income_${index}`));
         }
-        totalGross += income;
 
-        // WHT Credit only
-        if (['rental', 'investment', 'other'].includes(type)) {
-            const whtInput = document.getElementById(`wht_${index}`);
-            let wht = getRawValue(whtInput);
-            if (wht === 0) wht = income * (type === 'other' ? 0.05 : 0.10);
-            totalWhtCredit += wht;
+        const whtInput = document.getElementById(`wht_${index}`);
+        let wht = getRawValue(whtInput);
+        if (wht === 0 && ['rental', 'investment', 'other'].includes(type)) {
+            wht = income * (type === 'other' ? 0.05 : 0.10);
         }
+        totalWhtCredit += wht;
+
+        incomeSources.push({
+            type: type.charAt(0).toUpperCase() + type.slice(1),  // e.g., "Salary"
+            frequency: freq,
+            annualIncome: income,
+            whtCredit: wht,
+            monthlyBreakdown: freq === 'monthly' ? monthlyBreakdown : null
+        });
+
+        totalGross += income;
     });
 
-    // === Deductions ===
-    const pension = getRawValue(document.getElementById('pension') || {value:''});
-    const nhf = getRawValue(document.getElementById('nhf') || {value:''});
-    const nhis = getRawValue(document.getElementById('nhis') || {value:''});
-    const life = getRawValue(document.getElementById('lifeinsurance') || {value:''});
-    const mortgage = getRawValue(document.getElementById('mortgage') || {value:''});
-    const rentPaid = getRawValue(document.getElementById('rent') || {value:''});
+    // === Deductions with details ===
+    const pension = getRawValue(document.getElementById('pension') || {value: ''});
+    const nhf = getRawValue(document.getElementById('nhf') || {value: ''});
+    const nhis = getRawValue(document.getElementById('nhis') || {value: ''});
+    const life = getRawValue(document.getElementById('lifeinsurance') || {value: ''});
+    const mortgage = getRawValue(document.getElementById('mortgage') || {value: ''});
+    const rentPaid = getRawValue(document.getElementById('rent') || {value: ''});
     const rentRelief = Math.min(200000, rentPaid); // 2026 cap
 
+    const deductions = {  // NEW: Object for deductions
+        pension: pension,
+        nhf: nhf,
+        nhis: nhis,
+        lifeInsurance: life,
+        mortgage: mortgage,
+        rentRelief: rentRelief
+    };
     const totalDeductions = pension + nhf + nhis + life + mortgage + rentRelief;
     const taxableIncome = Math.max(0, totalGross - totalDeductions);
     const chargeableIncome = Math.max(0, taxableIncome - 800000); // First 800k exempt
 
-    // === Tax bands ===
+    // === Tax bands with details ===
     let tax = 0;
     let remaining = chargeableIncome;
+    let bandDetails = [];  // NEW: Per-band breakdown
+    const bands = [
+        { limit: 2200000, rate: 0.15, desc: 'First ₦2,200,000 @ 15%' },
+        { limit: 9000000, rate: 0.18, desc: 'Next ₦9,000,000 @ 18%' },
+        { limit: 13000000, rate: 0.21, desc: 'Next ₦13,000,000 @ 21%' },
+        { limit: 25000000, rate: 0.23, desc: 'Next ₦25,000,000 @ 23%' },
+        { limit: Infinity, rate: 0.25, desc: 'Above ₦49,200,000 @ 25%' }
+    ];
 
-    if (remaining > 0) tax += Math.min(remaining, 2200000) * 0.15; remaining -= 2200000;
-    if (remaining > 0) tax += Math.min(remaining, 9000000) * 0.18; remaining -= 9000000;
-    if (remaining > 0) tax += Math.min(remaining, 13000000) * 0.21; remaining -= 13000000;
-    if (remaining > 0) tax += Math.min(remaining, 25000000) * 0.23; remaining -= 25000000;
-    if (remaining > 0) tax += remaining * 0.25;
+    bands.forEach(band => {
+        if (remaining > 0) {
+            let taxableInBand = Math.min(remaining, band.limit);
+            let taxInBand = taxableInBand * band.rate;
+            tax += taxInBand;
+            bandDetails.push({
+                desc: band.desc,
+                taxable: taxableInBand,
+                rate: band.rate * 100 + '%',
+                tax: taxInBand
+            });
+            remaining -= taxableInBand;
+        }
+    });
 
     const finalTax = Math.max(0, tax - totalWhtCredit);
     const monthlyTax = finalTax / 12;
@@ -2225,39 +2305,189 @@ function calculateTax() {
     document.getElementById('output').style.display = 'block';
     document.querySelector('#report').scrollIntoView({behavior: 'smooth'});
         document.getElementById('default-report-message').style.display = 'none';  // ← ADD THIS
-    window.lastCalc = { finalTax, state };
+    window.lastCalc = {
+        state,
+        incomeSources,
+        deductions,
+        totalGross,
+        totalDeductions,
+        taxableIncome,
+        chargeableIncome,
+        bandDetails,
+        taxBeforeWht: tax,
+        totalWhtCredit,
+        finalTax: Math.round(finalTax),
+        monthlyTax: Math.round(monthlyTax)
+    };
 }
 
 function generatePDFReport() {
+    if (!window.lastCalc) { 
+        alert('Please calculate tax first!'); 
+        return; 
+    }
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
+    doc.setFont('helvetica');  // FIX: Set font early for better char support
+    const data = window.lastCalc;
+    const pageWidth = doc.internal.pageSize.width;
+    const margin = 15;
+    let y = 30;
 
-    // Title
-    doc.setFontSize(18);
-    doc.setTextColor(40, 167, 69);
-    doc.text('TaxC — Your 2025 Tax Report', 105, 20, { align: 'center' });
+    // Helper functions
+    function addHeading(text, size = 16, color = [40, 167, 69]) {
+        doc.setFontSize(size);
+        doc.setTextColor(...color);
+        doc.setFont('helvetica', 'bold');
+        doc.text(text, margin, y);
+        y += size / 2 + 5;
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(12);
+    }
 
-    // Summary
-    doc.setFontSize(12);
-    doc.setTextColor(0);
-    let y = 40;
-    const lines = document.getElementById('taxSummary').innerText.split('\n');
-    lines.forEach(line => {
-        if (line.trim()) {
-            doc.text(line, 20, y);
-            y += 8;
+    function addParagraph(text, maxWidth = pageWidth - margin * 2) {
+        const lines = doc.splitTextToSize(text, maxWidth);
+        doc.text(lines, margin, y);
+        y += lines.length * 7 + 5;  // Line height + spacing
+    }
+
+    function addFooter() {
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text(`Generated on ${new Date().toLocaleDateString('en-NG')} | taxc.com.ng`, pageWidth / 2, doc.internal.pageSize.height - 10, { align: 'center' });
+        doc.text(`Page ${doc.getCurrentPageInfo().pageNumber}`, pageWidth - margin, doc.internal.pageSize.height - 10, { align: 'right' });
+    }
+
+    // Cover Page
+    addHeading('TaxC — Your 2025/2026 Tax Report', 24, [40, 167, 69]);
+    y += 20;
+    addParagraph('Personalized report based on your inputs. This is an estimate under the 2026 Nigerian Tax Act (NTA). Consult a tax professional for official advice.', pageWidth - margin * 2);
+    y += 20;
+    addParagraph('State: ' + data.state);
+    addFooter();
+    doc.addPage();
+
+    // Page 2: Tax Summary (FIX: Use '\u20A6' for all amounts)
+    y = 20;
+    addHeading('Your Tax Summary Explained Clearly');
+    addParagraph('No wahala! Here’s a quick overview of your calculated Personal Income Tax (PIT). We used the new 2026 rules to keep it accurate.');
+    const summaryData = [
+        ['Gross Annual Income', '\u20A6' + data.totalGross.toLocaleString('en-NG')],
+        ['Total Deductions', '\u20A6' + data.totalDeductions.toLocaleString('en-NG')],
+        ['Taxable Income', '\u20A6' + data.taxableIncome.toLocaleString('en-NG')],
+        ['Chargeable Income (after \u20A6800k exemption)', '\u20A6' + data.chargeableIncome.toLocaleString('en-NG')],
+        ['Tax Before WHT Credit', '\u20A6' + data.taxBeforeWht.toLocaleString('en-NG')],
+        ['WHT Credit (Tax Already Paid)', '\u20A6' + data.totalWhtCredit.toLocaleString('en-NG')],
+        ['Final Tax You Really Owe', '\u20A6' + data.finalTax.toLocaleString('en-NG')],
+        ['Monthly PAYE (Approx - Plan Ahead!)', '\u20A6' + data.monthlyTax.toLocaleString('en-NG')]
+    ];
+    doc.autoTable({
+        head: [['Item', 'Amount']],
+        body: summaryData,
+        startY: y,
+        margin: { left: margin, right: margin },
+        theme: 'grid',
+        headStyles: { fillColor: [40, 167, 69] },
+        styles: { fontSize: 11, cellPadding: 5 }
+    });
+    y = doc.lastAutoTable.finalY + 10;
+    addParagraph('Valid for income from Jan 2026. If your details change, recalculate on taxc.com.ng.');
+    addFooter();
+    doc.addPage();
+
+    // Page 3: Income Sources (FIX: Use '\u20A6')
+    y = 20;
+    addHeading('All Your Income Sources Listed');
+    addParagraph('Here’s a breakdown of everything you entered. We summed them up for your total gross income.');
+    if (data.incomeSources.length > 0) {  // Note: Changed to data.incomeSources
+        const incomeTable = data.incomeSources.map(src => [
+            src.type,
+            '\u20A6' + src.annualIncome.toLocaleString('en-NG'),
+            src.frequency.charAt(0).toUpperCase() + src.frequency.slice(1),
+            '\u20A6' + src.whtCredit.toLocaleString('en-NG')
+        ]);
+        doc.autoTable({
+            head: [['Type', 'Annual Amount', 'Frequency', 'WHT Credit']],
+            body: incomeTable,
+            startY: y,
+            margin: { left: margin, right: margin },
+            theme: 'grid',
+            headStyles: { fillColor: [40, 167, 69] }
+        });
+        y = doc.lastAutoTable.finalY + 10;
+    } else {
+        addParagraph('No income sources added.');
+    }
+    addFooter();
+    doc.addPage();
+
+    // Page 4: Deductions
+    y = 20;
+    addHeading('Your Deductions (How We Reduced Your Tax)');
+    addParagraph('Deductions lower your taxable income. Here’s what you qualified for under 2026 rules.');
+    const dedTable = [];
+    Object.entries(data.deductions).forEach(([key, val]) => {
+        if (val > 0) {
+            let label = key.replace(/([A-Z])/g, ' $1').trim().charAt(0).toUpperCase() + key.replace(/([A-Z])/g, ' $1').trim().slice(1);  // e.g., "Life Insurance"
+            dedTable.push([label, '\u20A6' + val.toLocaleString('en-NG')]);
         }
     });
+    if (dedTable.length > 0) {
+        doc.autoTable({
+            head: [['Deduction Type', 'Amount']],
+            body: dedTable,
+            startY: y,
+            margin: { left: margin, right: margin },
+            theme: 'grid',
+            headStyles: { fillColor: [40, 167, 69] }
+        });
+        y = doc.lastAutoTable.finalY + 10;
+    } else {
+        addParagraph('No deductions applied.');
+    }
+    addFooter();
+    doc.addPage();
 
-    // Footer
-    doc.setFontSize(10);
-    doc.setTextColor(100);
-    doc.text(`Generated on ${new Date().toLocaleDateString('en-NG')} | taxc.com.ng`, 105, 280, { align: 'center' });
+    // Page 5: Step-by-Step Calculation
+    y = 20;
+    addHeading('Step-by-Step: How Your Tax Was Calculated (We Did the Math!)');
+    addParagraph('We follow the 2026 NTA bands. First ₦800k is exempt, then progressive rates. Here’s the breakdown:');
+    const bandTable = data.bandDetails.map(b => [b.desc, '\u20A6' + b.taxable.toLocaleString('en-NG'), b.rate, '\u20A6' + b.tax.toLocaleString('en-NG')]);
+    doc.autoTable({
+        head: [['Band Description', 'Taxable in Band', 'Rate', 'Tax Amount']],
+        body: bandTable,
+        startY: y,
+        margin: { left: margin, right: margin },
+        theme: 'grid',
+        headStyles: { fillColor: [40, 167, 69] }
+    });
+    y = doc.lastAutoTable.finalY + 10;
+    addParagraph('Total Tax Before Credits: ₦' + data.taxBeforeWht.toLocaleString('en-NG'));
+    addFooter();
+    doc.addPage();
 
-    // Trigger download
+    // Page 6: What to Do Next
+    y = 20;
+    addHeading('What to Do Next: How & When to File Your Tax');
+    addParagraph('File annually with your State IRS. For salaried: Employer deducts PAYE, but reconcile by March 31. Self-employed: Self-assess by March 31.');
+    addParagraph('Deadline: March 31, 2026 for 2025 income. Penalties for late filing!');
+    addParagraph('How to File: Submit online via portal or in-person. Use our estimate as guide.');
+
+    const portal = statePortals[data.state] || { name: data.state + ' State IRS', url: null, filingTips: 'Search online for official portal or visit local office.' };
+    addHeading('Direct Link for ' + data.state, 14);
+    addParagraph(portal.filingTips);
+    if (portal.url) {
+        doc.setTextColor(0, 0, 255);
+        doc.textWithLink('Click here to file/pay: ' + portal.url, margin, y, { url: portal.url });
+        doc.setTextColor(0);
+    } else {
+        addParagraph('No direct portal found — contact ' + portal.name + ' for details.');
+    }
+    addFooter();
+
+    // Save
     doc.save('TaxC_Report_2025.pdf');
-    
-    // Success message
     document.getElementById('msg').innerHTML = 'Report downloaded! Check your Downloads folder.';
 }
 
@@ -2538,26 +2768,30 @@ function payWithPaystack() {
 async function verifyPaystackPayment(reference, email) {
     const btn = document.querySelector('.report-btn');
     btn.textContent = "Verifying payment...";
-
     try {
         const res = await fetch('https://us-central1-taxc-ebooks.cloudfunctions.net/verifyPayment', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ reference, email, item: 'pdf_report' })
         });
-
         const data = await res.json();
-
         if (data.status === true) {
-            document.getElementById('msg').innerHTML = 'Payment successful! Downloading your report...';
+            document.getElementById('msg').innerHTML = 'Payment successful! Generating report...';
             btn.textContent = "Download PDF Again";
             btn.onclick = generatePDFReport;
-            setTimeout(generatePDFReport, 800);
+            try {
+                generatePDFReport();  // Call the PDF gen inside try-catch
+            } catch (err) {
+                console.error('PDF Gen Error:', err);  // Log to console for debugging
+                document.getElementById('msg').innerHTML = 'Report gen failed! Try again or contact support.';
+            }
+            setTimeout(() => {}, 800);  // Optional: Keep delay if needed, but not for gen
         } else {
             throw new Error("Verification failed");
         }
     } catch (err) {
-        document.getElementById('msg').innerHTML = 'Verification failed. Contact support@taxc.com.ng with reference: ' + reference;
+        console.error(err);
+        document.getElementById('msg').innerHTML = 'Verification failed. Contact support@taxc.com.ng with ref: ' + reference;
         btn.textContent = "Try Again";
         btn.onclick = payWithPaystack;
     } finally {
