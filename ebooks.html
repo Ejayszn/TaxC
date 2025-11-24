@@ -1009,7 +1009,7 @@ footer {
       </ul>
 
       <button onclick="buyEbook()" class="ebook-btn" style="background:#28A745; color:white; font-weight:600;">
-        Buy Now with Paystack
+        Buy now
       </button>
     </div>
   </div>
@@ -1650,17 +1650,18 @@ function buyEbook() {
     return;
   }
 
-  const user = firebase.auth().currentUser;
+  const user = auth.currentUser;  // ← This is the correct way now!
+
   if (!user || !user.email) {
-    alert("Please log in to purchase.");
+    alert("Please log in to purchase this ebook.");
+    closeModal('paidModal');
     return;
   }
 
   const handler = PaystackPop.setup({
-    key: 'pk_live_6b8f9c8e8d8f9e9d8f9e9d8f9e9d8f9e9d8f9e9d', // ← CHANGE TO YOUR LIVE KEY LATER
-    // key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxxxxxx', // ← Use this for testing
+    key: 'pk_test_bc9c09e6d51c4e025bb44c6c57ad1c1144386b55', // ← Put your real test key here
     email: user.email,
-    amount: currentEbook.price * 100, // Paystack uses kobo
+    amount: currentEbook.price * 100,
     currency: 'NGN',
     ref: 'EBK_' + Date.now() + '_' + Math.floor(Math.random() * 10000),
     metadata: {
@@ -1670,21 +1671,15 @@ function buyEbook() {
       ]
     },
     callback: function(response) {
-      // Success! Add to library + close modal
       addToLibrary(currentEbook);
       closeModal('paidModal');
-      
-      // Show success message
-      alert(`Payment successful! 🎉\n"${currentEbook.title}" has been added to your library.\n\nCheck "My Library" below ↓`);
-      
-      // Optional: Track in Firebase or send receipt
+      alert(`Payment successful!\n"${currentEbook.title}" has been added to your library.`);
       console.log('Paystack ref:', response.reference);
     },
     onClose: function() {
       alert('Payment cancelled. You can try again anytime.');
     }
   });
-
   handler.openIframe();
 }
 
@@ -1859,6 +1854,7 @@ window.addEventListener('beforeunload', saveChat);
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
+  window.auth = auth;
   const $ = id => document.getElementById(id);
 
   // THIS IS THE REAL PROTECTION — NOBODY FIT FAKE AM
