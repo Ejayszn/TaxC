@@ -2284,12 +2284,12 @@ totalWhtCredit += wht;
     let remaining = chargeableIncome;
     let bandDetails = [];  // NEW: Per-band breakdown
     const bands = [
-        { limit: 2200000, rate: 0.15, desc: 'First ₦2,200,000 @ 15%' },
-        { limit: 9000000, rate: 0.18, desc: 'Next ₦9,000,000 @ 18%' },
-        { limit: 13000000, rate: 0.21, desc: 'Next ₦13,000,000 @ 21%' },
-        { limit: 25000000, rate: 0.23, desc: 'Next ₦25,000,000 @ 23%' },
-        { limit: Infinity, rate: 0.25, desc: 'Above ₦49,200,000 @ 25%' }
-    ];
+    { limit: 2200000, rate: 0.15, desc: 'First NGN 2,200,000 @ 15%' },
+    { limit: 9000000, rate: 0.18, desc: 'Next NGN 9,000,000 @ 18%' },
+    { limit: 13000000, rate: 0.21, desc: 'Next NGN 13,000,000 @ 21%' },
+    { limit: 25000000, rate: 0.23, desc: 'Next NGN 25,000,000 @ 23%' },
+    { limit: Infinity, rate: 0.25, desc: 'Above NGN 49,200,000 @ 25%' }
+];
 
     bands.forEach(band => {
         if (remaining > 0) {
@@ -2317,7 +2317,7 @@ totalWhtCredit += wht;
         <tr><td>Gross Annual Income</td><td>₦${totalGross.toLocaleString('en-NG')}</td></tr>
         <tr><td>Total Deductions</td><td>₦${totalDeductions.toLocaleString('en-NG')}</td></tr>
         <tr><td>Taxable Income</td><td>₦${taxableIncome.toLocaleString('en-NG')}</td></tr>
-        <tr><td>Chargeable Income (after ₦800k exemption)</td><td>₦${chargeableIncome.toLocaleString('en-NG')}</td></tr>
+        <tr><td>Chargeable Income (after NGN 800k exemption)</td><td>₦${chargeableIncome.toLocaleString('en-NG')}</td></tr>
         <tr><td>Tax Before WHT Credit</td><td>₦${tax.toLocaleString('en-NG')}</td></tr>
         ${totalWhtCredit > 0 ? `<tr><td>WHT Credit</td><td>₦${totalWhtCredit.toLocaleString('en-NG')}</td></tr>` : ''}
         <tr><td><strong>Final Tax Payable</strong></td><td><strong>₦${Math.round(finalTax).toLocaleString('en-NG')}</strong></td></tr>
@@ -2438,7 +2438,7 @@ function generatePDFReport() {
         ['Gross Annual Income', money(data.totalGross)],
         ['Total Deductions', money(data.totalDeductions)],
         ['Taxable Income', money(data.taxableIncome)],
-        ['Chargeable Income (after ₦800k exemption)', money(data.chargeableIncome)],
+        ['Chargeable Income (after NGN 800k exemption)', money(data.chargeableIncome)],
         ['Tax Before WHT Credit', money(data.taxBeforeWht)],
         ['WHT Credit (Tax Already Paid)', money(data.totalWhtCredit)],
         ['Final Tax You Really Owe', money(data.finalTax)],
@@ -2521,7 +2521,7 @@ didParseCell: (d) => {
     addHeader('Step-by-Step: How Your Tax Was Calculated');
     doc.setTextColor(0);
     doc.setFont('helvetica', 'normal'); // Explicitly set normal font
-    doc.text('We follow the 2026 NTA bands. First ₦800k is exempt, then progressive rates.', margin, y); y += 12;
+    doc.text('We follow the 2026 NTA bands. First NGN 800,000 is exempt, then progressive rates.', margin, y); y += 12;
 
     doc.autoTable({
         startY: y,
