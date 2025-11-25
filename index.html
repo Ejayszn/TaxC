@@ -2365,11 +2365,12 @@ function generatePDFReport() {
     const lightGreen = [240, 255, 240];
     const gray = [100, 100, 100];
 
-    // FORMAT MONEY SAFELY (NO MORE GARBLED ₦)
     const money = (amt) => {
-        if (!amt) amt = 0;
-        return '₦' + Number(amt).toLocaleString('en-NG');
-    };
+    if (!amt) amt = 0;
+    const num = Number(amt);
+    if (isNaN(num)) return 'NGN 0';
+    return 'NGN ' + num.toLocaleString('en-NG');
+};
 
     // ADD LOGO (from your favicon folder)
     const logoPath = './favicon-32x32.png'; // You have this already
@@ -2453,15 +2454,17 @@ function generatePDFReport() {
         headStyles: { fillColor: green, textColor: [255,255,255], fontSize: 11, fontStyle: 'bold' },
         bodyStyles: { fontSize: 11, cellPadding: 6 },
         alternateRowStyles: { fillColor: lightGreen },
-        columnStyles: { 1: { halign: 'right', fontStyle: 'bold', textColor: green } },
-        margin: { left: margin, right: margin },
-        didParseCell: (d) => {
-            if (d.row.raw[0] === 'Final Tax You Really Owe') {
-                d.cell.styles.fillColor = green;
-                d.cell.styles.textColor = 255;
-                d.cell.styles.fontSize = 13;
-            }
-        }
+        columnStyles: { 
+    1: { halign: 'right', fontStyle: 'bold', textColor: green } 
+},
+didParseCell: (d) => {
+    if (d.row.raw[0] === 'Final Tax You Really Owe') {
+        d.cell.styles.fillColor = green;
+        d.cell.styles.textColor = [255, 255, 255];
+        d.cell.styles.fontSize = 13;
+        d.cell.styles.fontStyle = 'bold';
+    }
+}
     });
 
     y = doc.lastAutoTable.finalY + 10;
