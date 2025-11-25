@@ -2355,6 +2355,33 @@ function generatePDFReport() {
 
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF('p', 'mm', 'a4');
+
+// ─────── FINAL BULLETPROOF PIE SLICE (2025) ───────
+doc.pieSlice = function(cx, cy, r, startAngleDeg, endAngleDeg, style = 'F') {
+    try {
+        const degToRad = deg => deg * Math.PI / 180;
+
+        const x1 = cx + r * Math.cos(degToRad(startAngleDeg));
+        const y1 = cy + r * Math.sin(degToRad(startAngleDeg));
+        const x2 = cx + r * Math.cos(degToRad(endAngleDeg));
+        const y2 = cy + r * Math.sin(degToRad(endAngleDeg));
+
+        // Start drawing
+        this.moveTo(cx, cy);
+        this.lineTo(x1, y1);
+        this.arc(cx, cy, r, startAngleDeg, endAngleDeg);  // jsPDF arc uses DEGREES
+        this.lineTo(cx, cy);
+        this.close();
+
+        if (style.includes('F')) this.fill();
+        if (style.includes('S')) this.stroke();
+    } catch (e) {
+        console.warn('Pie slice failed (fallback to circle)', e);
+        // Fallback: draw a full circle so PDF never dies
+        this.setFillColor(34, 139, 34);
+        this.circle(cx, cy, r, 'F');
+    }
+};
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
     const margin = 18;
@@ -2485,24 +2512,161 @@ didParseCell: (d) => {
     doc.addPage();
 
     // PAGE 3 - INCOME SOURCES
-    addHeader('All Your Income Sources Listed');
-    doc.setTextColor(0);
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'normal'); // Explicitly set normal font
-    doc.text(`Here’s a breakdown of everything you entered. Total: ${money(data.totalGross)}.`, margin, y); y += 8;
-    doc.text(`Any tax already paid (WHT): ${money(data.totalWhtCredit)}.`, margin, y); y += 12;
+addHeader('All Your Income Sources Listed');
+doc.setTextColor(0);
+doc.setFontSize(11);
+doc.setFont('helvetica', 'normal'); // Explicitly set normal font
+doc.text(`Here’s a breakdown of everything you entered. Total: ${money(data.totalGross)}.`, margin, y); y += 8;
+doc.text(`Any tax already paid (WHT): ${money(data.totalWhtCredit)}.`, margin, y); y += 12;
 
-    doc.autoTable({
-        startY: y,
-        head: [['Type', 'Annual Amount', 'Frequency', 'WHT Credit']],
-        body: data.incomeSources.map(s => [s.type, money(s.annualIncome), s.frequency === 'monthly' ? 'Monthly' : 'Annual', money(s.whtCredit)]),
-        theme: 'grid',
-        headStyles: { fillColor: green, textColor: [255,255,255] },
-        columnStyles: { 1: { halign: 'right' }, 3: { halign: 'right' } },
-        margin: { left: margin, right: margin }
+doc.autoTable({
+    startY: y,
+    head: [['Type', 'Annual Amount', 'Frequency', 'WHT Credit']],
+    body: data.incomeSources.map(s => [s.type, money(s.annualIncome), s.frequency === 'monthly' ? 'Monthly' : 'Annual', money(s.whtCredit)]),
+    theme: 'grid',
+    headStyles: { fillColor: green, textColor: [255,255,255] },
+    columnStyles: { 1: { halign: 'right' }, 3: { halign: 'right' } },
+    margin: { left: margin, right: margin }
+});
+
+// Calculate where the pie chart should start after the autoTable
+y = doc.lastAutoTable.finalY;
+
+// === ADD PIE CHART - INCOME SOURCES BREAKDOWN ===
+// We only draw the chart if there is one or more source with income > 0
+if (data.incomeSources.length > 1 || (data.incomeSources.length === 1 && data.incomeSources[0].annualIncome > 0)) {
+    
+    y += 15; // Space below the table
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(0);
+    doc.text('Income Sources Breakdown', margin, y);
+    y += 8;
+
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...gray);
+    doc.text('Visual representation of where your income comes from', margin, y);
+    y += 10;
+
+    // --- CRITICAL FIX: DEFINITION OF PIEDATA ---
+    // Prepare data for pie chart
+    const pieData = data.incomeSources
+        .filter(s => s.annualIncome > 0)
+        .map(s => ({
+            label: s.type,
+            value: s.annualIncome,
+            percent: ((s.annualIncome / data.totalGross) * 100).toFixed(1)
+        }));
+
+    // Colors for pie slices (beautiful & professional)
+    const pieColors = [
+        [34, 139, 34],     // Green
+        [0, 128, 0],       // Darker green
+        [50, 205, 50],     // Lime green
+        [0, 100, 0],       // Deep green
+        [144, 238, 144]    // Light green
+    ];
+    // --- END CRITICAL FIX ---
+    
+    // Generate pie chart (centered)
+    const centerX = pageWidth / 2;
+    const centerY = y + 40;
+    const radius = 35;
+
+    if (pieData.length === 1) {
+        // 100% Case: Draw a single solid circle (The robust fix)
+        const color = pieColors[0];
+        doc.setFillColor(...color);
+        doc.setDrawColor(255, 255, 255);
+        doc.setLineWidth(2);
+        
+        // Draw the filled circle
+        doc.circle(centerX, centerY, radius, 'F'); 
+        
+        // Draw the white outline
+        doc.circle(centerX, centerY, radius, 'S');
+
+        // Add the percentage label to the center
+        doc.setFontSize(10);
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('helvetica', 'bold');
+        doc.text(pieData[0].percent + '%', centerX, centerY, { align: 'center', baseline: 'middle' });
+
+    } else {
+    // MULTIPLE SOURCES — 100% safe version
+    let startAngle = 0;
+
+    pieData.forEach((slice, i) => {
+        const sliceAngle = (slice.value / data.totalGross) * 360;
+        const endAngle = startAngle + sliceAngle;
+
+        // Safety: if slice is too tiny (<0.5%), skip drawing to avoid jsPDF bugs
+        if (sliceAngle < 1.8) {
+            startAngle = endAngle;
+            return;
+        }
+
+        try {
+            // Fill
+            doc.setFillColor(...(pieColors[i % pieColors.length]));
+            doc.pieSlice(centerX, centerY, radius, startAngle, endAngle, 'F');
+
+            // White border
+            doc.setDrawColor(255, 255, 255);
+            doc.setLineWidth(2.5);
+            doc.pieSlice(centerX, centerY, radius, startAngle, endAngle, 'S');
+
+            // Label only if big enough
+            if (sliceAngle > 15) {
+                const midRad = degToRad(startAngle + sliceAngle / 2);
+                const labelX = centerX + radius * 0.65 * Math.cos(midRad);
+                const labelY = centerY + radius * 0.65 * Math.sin(midRad);
+
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(9);
+                doc.setFont('helvetica', 'bold');
+                doc.text(`${slice.percent}%`, labelX, labelY, { align: 'center', baseline: 'middle' });
+            }
+        } catch (e) {
+            console.warn('Failed to draw slice, skipping', e);
+        }
+
+        startAngle = endAngle;
     });
-    addFooter(3);
-    doc.addPage();
+}
+
+    // === LEGEND (Below pie chart) ===
+    y = centerY + radius + 15; // Set y position after the chart
+
+    doc.setFontSize(10);
+    doc.setTextColor(0);
+    pieData.forEach((slice, i) => {
+        if (y > pageHeight - 40) {
+            doc.addPage();
+            y = 40;
+            addHeader('All Your Income Sources Listed');
+        }
+
+        const color = pieColors[i % pieColors.length];
+        doc.setFillColor(...color);
+        doc.rect(margin, y - 5, 6, 6, 'F');
+
+        doc.setTextColor(0);
+        doc.setFont('helvetica', 'bold');
+        doc.text(`${slice.label}: `, margin + 10, y);
+
+        doc.setFont('helvetica', 'normal');
+        doc.text(`${slice.percent}% (${money(slice.value)})`, margin + 45, y);
+
+        y += 8;
+    });
+
+    y += 10; // Extra space after legend
+}
+
+addFooter(3);
+doc.addPage();
 
     // PAGE 4 - DEDUCTIONS
     addHeader('Your Deductions (How We Reduced Your Tax)');
