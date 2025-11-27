@@ -2613,13 +2613,13 @@ if (data.incomeSources.length > 1 || (data.incomeSources.length === 1 && data.in
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // Label if big enough
-        if (sliceAngle > Math.PI / 12) { // >15 degrees
+                // Only show percentage label on the slice when there are MULTIPLE sources
+        if (pieData.length > 1 && sliceAngle > Math.PI / 12) {
             const midAngle = startAngle + sliceAngle / 2;
             const labelX = centerX + (radius * 0.65) * Math.cos(midAngle);
             const labelY = centerY + (radius * 0.65) * Math.sin(midAngle);
             ctx.fillStyle = '#FFFFFF';
-            ctx.font = 'bold 18px Helvetica'; // Increased font for higher res
+            ctx.font = 'bold 18px Helvetica';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText(`${slice.percent}%`, labelX, labelY);
@@ -2820,35 +2820,118 @@ doc.addPage();
     addFooter(5);
     doc.addPage();
 
-    // PAGE 6 - FILING
+    // PAGE 6 – FINAL VERSION: WORKS FOR ALL 36 STATES + FCT
 addHeader('What to Do Next: How & When to File Your Tax');
+
+doc.setTextColor(0);
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(15);
+doc.text('What to Do Next, Let’s Finish Strong!', margin, y);
+y += 10;
+
+doc.setFont('helvetica', 'normal');
+doc.setFontSize(11.5);
+doc.text('You’ve seen everything: how much you owe, how it was calculated,', margin, y); y += 6;
+doc.text('and how to pay less next year. Now just two simple things remain:', margin, y); y += 12;
+
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(12);
+doc.text('1. File your annual tax return', margin, y); y += 8;
+
+doc.setFont('helvetica', 'normal');
+doc.setFontSize(11);
+doc.text('• Salaried? Your office deducts PAYE monthly, but you still need to file by 31 March 2027.', margin + 5, y); y += 6;
+doc.text('• Self-employed / side hustle? File and pay the balance on or before 31 March 2027.', margin + 5, y); y += 10;
+
+doc.setFont('helvetica', 'bold');
+doc.text('Miss the deadline = 10% penalty + interest every month. No story.', margin, y); y += 12;
+
+doc.setFontSize(12);
+doc.text('2. Click the link below right now and settle am in 5 minutes', margin, y); y += 10;
+
+// DYNAMIC STATE NAME & IRS LINK (works for all states)
+const stateName = data.state || 'your state';
+const stateIRS = {
+    'Abia': 'https://irs.ab.gov.ng',
+    'Adamawa': 'https://irs.ad.gov.ng',
+    'Akwa Ibom': 'https://irs.ak.gov.ng',
+    'Anambra': 'https://irs.an.gov.ng',
+    'Bauchi': 'https://irs.ba.gov.ng',
+    'Bayelsa': 'https://irs.by.gov.ng',
+    'Benue': 'https://irs.be.gov.ng',
+    'Borno': 'https://irs.bo.gov.ng',
+    'Cross River': 'https://irs.cr.gov.ng',
+    'Delta': 'https://irs.dt.gov.ng',
+    'Ebonyi': 'https://irs.eb.gov.ng',
+    'Edo': 'https://irs.ed.gov.ng',
+    'Ekiti': 'https://irs.ek.gov.ng',
+    'Enugu': 'https://irs.en.gov.ng',
+    'Gombe': 'https://irs.go.gov.ng',
+    'Imo': 'https://irs.im.gov.ng',
+    'Jigawa': 'https://irs.ji.gov.ng',
+    'Kaduna': 'https://irs.kd.gov.ng',
+    'Kano': 'https://kirs.kn.gov.ng',
+    'Katsina': 'https://irs.kt.gov.ng',
+    'Kebbi': 'https://irs.ke.gov.ng',
+    'Kogi': 'https://irs.kg.gov.ng',
+    'Kwara': 'https://kirs.kw.gov.ng',
+    'Lagos': 'https://lirs.lg.gov.ng',
+    'Nasarawa': 'https://irs.ns.gov.ng',
+    'Niger': 'https://irs.ng.gov.ng',
+    'Ogun': 'https://irs.og.gov.ng',
+    'Ondo': 'https://irs.od.gov.ng',
+    'Osun': 'https://irs.os.gov.ng',
+    'Oyo': 'https://irs.oy.gov.ng',
+    'Plateau': 'https://irs.pl.gov.ng',
+    'Rivers': 'https://irs.rv.gov.ng',
+    'Sokoto': 'https://irs.so.gov.ng',
+    'Taraba': 'https://irs.tr.gov.ng',
+    'Yobe': 'https://irs.yo.gov.ng',
+    'Zamfara': 'https://irs.zm.gov.ng',
+    'FCT': 'https://firs.gov.ng'
+}[stateName] || 'https://firs.gov.ng';  // fallback to FIRS
+
+doc.setFont('helvetica', 'normal');
+doc.setFontSize(11.5);
+doc.text(`${stateName} people, this one na direct link:`, margin, y); y += 10;
+
+doc.setFontSize(15);
+doc.setTextColor(0, 102, 204);
+doc.setFont('helvetica', 'bold');
+doc.textWithLink(stateIRS, margin, y, { url: stateIRS });
+doc.setDrawColor(0, 102, 204);
+doc.setLineWidth(0.5);
+doc.line(margin, y + 2, margin + doc.getTextWidth(stateIRS), y + 2);
+y += 20;
+
+doc.setTextColor(0);
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(12);
+doc.text('Quick reminder, don’t make these 3 classic mistakes:', margin, y); y += 9;
+
+doc.setFont('helvetica', 'normal');
+doc.setFontSize(11);
+doc.text('• Forget to claim WHT you’ve already paid (free money left on table!)', margin, y); y += 6;
+doc.text('• Miss the March 31 deadline (penalty no dey smile)', margin, y); y += 6;
+doc.text('• Hide small income (if dem catch you, the fine no get mercy)', margin, y); y += 14;
+
+doc.setFont('helvetica', 'normal');
+doc.setFontSize(12);
+doc.text('Do it today, sleep like baby tonight.', margin, y); y += 12;
+
+doc.setFontSize(11.5);
+doc.text('Thank you for doing the right thing.', margin, y); y += 7;
+doc.text('Your small tax today = better roads, schools, and hospitals tomorrow.', margin, y); y += 12;
+
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(13);
+doc.setTextColor(...green);
+doc.text('Na we we. Together we build Nigeria!', margin, y); y += 12;
+
+doc.setFont('helvetica', 'normal');
 doc.setTextColor(0);
 doc.setFontSize(11);
-doc.setFont('helvetica', 'normal'); // Explicitly set normal font
-doc.text('• File annually with your State IRS.', margin, y); y += 7;
-doc.text('• For salaried: Employer deducts PAYE, but reconcile by March 31.', margin, y); y += 7;
-doc.text('• Self-employed: Self-assess by March 31.', margin, y); y += 12;
-
-doc.setFont('helvetica', 'bold');
-doc.text('Deadline: March 31st, 2027 for 2026 income. Penalties for late filing!', margin, y); y += 12;
-
-y += 10;
-doc.setFont('helvetica', 'bold');
-doc.text('Bonus: Common Mistakes to Avoid', margin, y); y += 8;
-doc.setFont('helvetica', 'normal');
-doc.setFontSize(10);
-doc.text('• Forgetting WHT credits: Always claim them.', margin, y); y += 6;
-doc.text('• Missing deadlines: Late fees add up fast.', margin, y); y += 6;
-doc.text('• Under-reporting income: Be honest to avoid audits.', margin, y); y += 20;
-
-const portal = statePortals[data.state] || { name: data.state + ' IRS', url: null };
-doc.setFont('helvetica', 'bold');
-doc.text(`Direct Link for ${data.state}:`, margin, y); y += 10;
-doc.setFont('helvetica', 'normal');
-if (portal.url) {
-    doc.setTextColor(0, 0, 255);
-    doc.textWithLink('Click here to file/pay: ' + portal.url, margin, y, { url: portal.url });
-}
+doc.text('Team TaxC (with plenty love and cactus)', margin, y);
 
 addFooter(6);
 
