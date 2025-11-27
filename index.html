@@ -2433,7 +2433,7 @@ doc.pieSlice = function(cx, cy, r, startAngleDeg, endAngleDeg, style = 'F') {
         doc.text(`Page ${pageNum}`, pageWidth - margin - 20, pageHeight - 10);
     };
 
-    // PAGE 1 - COVER
+        // PAGE 1 - COVER
     addHeader('Your Personalized 2025/2026 Tax Report');
     doc.setTextColor(0);
     doc.setFontSize(13);
@@ -2443,22 +2443,39 @@ doc.pieSlice = function(cx, cy, r, startAngleDeg, endAngleDeg, style = 'F') {
 
     doc.setFontSize(11);
     doc.setTextColor(...gray);
-    doc.text('Remember: This is just an estimate! Consult a tax pro at taxc.com.ng for official filing.', margin, y); y += 20;
+    doc.text('Remember: This is just an estimate! Consult a tax pro at taxc.com.ng for official filing.', margin, y); y += 12;
 
+    // ─────── NEW MOTIVATIONAL + FEATURES TEXT (CLEAN ENGLISH) ───────
+    doc.setFontSize(12);
+    doc.setTextColor(0);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Staying on top of your taxes helps build Nigeria.', margin, y); y += 7;
+    doc.text('Your contributions power better roads, schools, and hospitals, for a stronger nation we all benefit from!', margin, y); y += 7;
+
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    const featureText = 'Dive in to explore your tax summary explained in clear detail, discover all your income sources with engaging visuals that bring everything to life, follow our step-by-step guide on how the calculations were done (we handled the math to make it effortless!), uncover exactly what you owe, get ahead with a practical monthly breakdown, factor in any WHT you\'ve already paid, access a direct link to settle with your state IRS, and receive straightforward advice on how and when to file without any hassle.';
+
+    const splitFeature = doc.splitTextToSize(featureText, pageWidth - margin * 2);
+    doc.text(splitFeature, margin, y);
+    y += splitFeature.length * 5.5 + 8; // line height + extra spacing
+
+    // Back to original closing content
     doc.setTextColor(0);
     doc.setFontSize(12);
     doc.text(`State: ${data.state}`, margin, y); y += 8;
     const effectiveRate = data.finalTax && data.totalGross ? 
         ((data.finalTax / data.totalGross) * 100).toFixed(1) : '0';
     doc.text(`Effective Tax Rate: ${effectiveRate}% (of gross income)`, margin, y);
+
     addFooter(1);
     doc.addPage();
 
-    // PAGE 2 - TAX SUMMARY
+        // PAGE 2 - TAX SUMMARY
     addHeader('Your Tax Summary Explained Clearly');
     doc.setTextColor(0);
     doc.setFontSize(12);
-    doc.setFont('helvetica', 'normal'); // Explicitly set normal font
+    doc.setFont('helvetica', 'normal');
     doc.text('Here’s a quick overview of your calculated Personal Income Tax (PIT).', margin, y); y += 8;
     doc.text(`How much you really owe: ${money(data.finalTax)}`, margin, y); y += 15;
 
@@ -2483,32 +2500,23 @@ doc.pieSlice = function(cx, cy, r, startAngleDeg, endAngleDeg, style = 'F') {
         bodyStyles: { fontSize: 11, cellPadding: 6 },
         alternateRowStyles: { fillColor: lightGreen },
         columnStyles: { 
-    1: { halign: 'right', fontStyle: 'bold', textColor: green } 
-},
-didParseCell: (d) => {
-    if (d.row.raw[0] === 'Final Tax You Really Owe') {
-        d.cell.styles.fillColor = green;
-        d.cell.styles.textColor = [255, 255, 255];
-        d.cell.styles.fontSize = 13;
-        d.cell.styles.fontStyle = 'bold';
-    }
-}
+            1: { halign: 'right', fontStyle: 'bold', textColor: green } 
+        },
+        didParseCell: (d) => {
+            if (d.row.raw[0] === 'Final Tax You Really Owe') {
+                d.cell.styles.fillColor = green;
+                d.cell.styles.textColor = [255, 255, 255];
+                d.cell.styles.fontSize = 13;
+                d.cell.styles.fontStyle = 'bold';
+            }
+        }
     });
 
     y = doc.lastAutoTable.finalY + 10;
     doc.setFontSize(10);
     doc.setTextColor(...gray);
-    doc.text('Valid for income from Jan 2026. If your details change, recalculate on taxc.com.ng.', margin, y); y += 10;
+    doc.text('Valid for income from Jan 2026. If your details change, recalculate on taxc.com.ng.', margin, y);
 
-    doc.setFontSize(11);
-    doc.setTextColor(0);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Quick Tip: Ways to Reduce Your Tax Next Year', margin, y); y += 8;
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(10);
-    doc.text('• Maximize deductions: Contribute more to pension or other allowable deductions available to legally minimize your tax', margin, y); y += 6;
-    doc.text('• Track WHT: Always get certificates from banks/tenants to claim credits.', margin, y); y += 6;
-    doc.text('• Consult a pro: They can spot more reliefs like NHF/NHIS.', margin, y);
     addFooter(2);
     doc.addPage();
 
@@ -2570,7 +2578,7 @@ if (data.incomeSources.length > 1 || (data.incomeSources.length === 1 && data.in
 
     // Create a temporary canvas to draw the pie
     const canvas = document.createElement('canvas');
-    const canvasSize = 200; // Adjust size as needed
+    const canvasSize = 600; // Increased for sharper quality
     canvas.width = canvasSize;
     canvas.height = canvasSize;
     const ctx = canvas.getContext('2d');
@@ -2611,7 +2619,7 @@ if (data.incomeSources.length > 1 || (data.incomeSources.length === 1 && data.in
             const labelX = centerX + (radius * 0.65) * Math.cos(midAngle);
             const labelY = centerY + (radius * 0.65) * Math.sin(midAngle);
             ctx.fillStyle = '#FFFFFF';
-            ctx.font = 'bold 9px Helvetica';
+            ctx.font = 'bold 18px Helvetica'; // Increased font for higher res
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText(`${slice.percent}%`, labelX, labelY);
@@ -2623,19 +2631,21 @@ if (data.incomeSources.length > 1 || (data.incomeSources.length === 1 && data.in
     // For single slice (100%)
     if (pieData.length === 1) {
         ctx.fillStyle = '#FFFFFF';
-        ctx.font = 'bold 10px Helvetica';
+        ctx.font = 'bold 24px Helvetica'; // Increased font for higher res
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(`${pieData[0].percent}%`, centerX, centerY);
     }
 
     // Add the canvas image to PDF (centered)
-    const pdfCenterX = pageWidth / 2 - (canvasSize / 2) / (72 / 25.4); // Convert px to mm (~2.835 px per mm)
+    const pdfChartWidthMm = 70; // Desired width in mm (adjust for PDF fit, e.g., ~2.75 inches)
+    const scale = pdfChartWidthMm / (canvasSize / (72 / 25.4)); // Scale to fit while keeping high res
+    const pdfCenterX = pageWidth / 2 - pdfChartWidthMm / 2;
     const pdfCenterY = y; // Current y
-    doc.addImage(canvas.toDataURL('image/png'), 'PNG', pdfCenterX, pdfCenterY, canvasSize / (72 / 25.4), canvasSize / (72 / 25.4));
+    doc.addImage(canvas.toDataURL('image/png'), 'PNG', pdfCenterX, pdfCenterY, pdfChartWidthMm, pdfChartWidthMm);
 
     // Update y after chart
-    y = pdfCenterY + canvasSize / (72 / 25.4) + 10;
+    y = pdfCenterY + pdfChartWidthMm + 10;
 
     // === LEGEND (Below pie chart) ===
     doc.setFontSize(10);
@@ -2667,25 +2677,79 @@ if (data.incomeSources.length > 1 || (data.incomeSources.length === 1 && data.in
 addFooter(3);
 doc.addPage();
 
-    // PAGE 4 - DEDUCTIONS
-    addHeader('Your Deductions (How We Reduced Your Tax)');
+        // PAGE 4 - DEDUCTIONS (Smart version: handles zero deductions beautifully)
+    addHeader('Your Deductions: How You Can Save on Tax');
+
     doc.setTextColor(0);
-    doc.setFont('helvetica', 'normal'); // Explicitly set normal font
-    doc.text(`Deductions lower your taxable income. Total saved: ${money(data.totalDeductions)}.`, margin, y); y += 12;
-    if (data.totalDeductions == 0) {
-        doc.setFontSize(11);
-        doc.setFont('helvetica', 'normal'); // Explicitly set normal font
-        doc.text('No deductions applied. Tip: Next year, consider pension or rent relief to save big!', margin, y);
+    doc.setFontSize(13);
+    doc.setFont('helvetica', 'bold');
+
+    // ─────── ZERO DEDUCTIONS CASE ───────
+    if (data.totalDeductions == 0 || !data.totalDeductions) {
+        doc.text('No deductions applied this year…', margin, y); y += 8;
+        doc.text('But here’s how to Save Tax This Year, And How to Save WAY MORE Next Year!', margin, y);
+        y += 15;
     }
+    // ─────── HAD DEDUCTIONS CASE ───────
+    else {
+        doc.text('How You Saved Tax This Year, And How to Save WAY MORE Next Year!', margin, y);
+        y += 10;
+
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`You already saved ${money(data.totalDeductions)} this year just because some money was removed before tax was calculated. Nice one!`, margin, y);
+        y += 12;
+    }
+
+    // ─────── THE TIPS (same for everyone) ───────
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Here’s how to make next year even better (in plain English):', margin, y);
+    y += 10;
+
+    const tips = [
+        '1. Put extra money inside your Pension (RSA):',
+        '   The money you save for old age. Any extra money you add to this is like telling tax people “don’t touch this one”. The more you add, the less tax you pay. Simple!',
+
+        '2. Join National Housing Fund (NHF):',
+        '   Small money (2.5% of your salary) goes to government so that one day you can collect cheap loan to build or buy house. That small money is also removed before tax; double win!',
+
+        '3. Pay for Life Insurance:',
+        '   The money you pay every month or year so your family is safe if anything happens to you. Government says “we won’t tax that money”. Free tax break!',
+
+        '4. Pay for Health Insurance',
+        '   Money you pay so that hospital bills no go finish you. That money too is removed before tax. You stay healthy AND keep more money.',
+
+        '5. If you pay house rent',
+        '   In Lagos and some states, you can tell tax people “I pay rent o!” and they will remove small money from your tax. Ask your state tax office how.',
+
+        '6. Give small money to real charity',
+        '   If you dash approved charity or school, government fit remove that money from tax too.'
+    ];
+
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    tips.forEach(line => {
+        const splitLine = doc.splitTextToSize(line, pageWidth - margin * 2);
+        doc.text(splitLine, margin, y);
+        y += splitLine.length * 5.8;
+    });
+
+    y += 8;
+
     addFooter(4);
     doc.addPage();
 
-    // PAGE 5 - TAX BANDS
+                // PAGE 5 - TAX BANDS + SUPER SIMPLE EXPLANATION (CLEAN, NO BACKGROUND BOX)
     addHeader('Step-by-Step: How Your Tax Was Calculated');
-    doc.setTextColor(0);
-    doc.setFont('helvetica', 'normal'); // Explicitly set normal font
-    doc.text('We follow the 2026 NTA bands. First NGN 800,000 is exempt, then progressive rates.', margin, y); y += 12;
 
+    doc.setTextColor(0);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.text('We follow the official 2026 Nigerian Personal Income Tax rates. First NGN 800,000 is completely exempt, then higher earnings are taxed at increasing rates (progressive tax).', margin, y);
+    y += 15;
+
+    // TAX BANDS TABLE (CORRECT 2026 BANDS)
     doc.autoTable({
         startY: y,
         head: [['Band Description', 'Taxable in Band', 'Rate', 'Tax Amount']],
@@ -2696,10 +2760,63 @@ doc.addPage();
         margin: { left: margin, right: margin }
     });
 
-    y = doc.lastAutoTable.finalY + 8;
-    doc.setFontSize(11);
+    y = doc.lastAutoTable.finalY + 18;
+
+    // TOTAL TAX BEFORE CREDITS
+    doc.setFontSize(13);
     doc.setFont('helvetica', 'bold');
     doc.text(`Total Tax Before Credits: ${money(data.taxBeforeWht)}`, margin, y);
+    y += 25;
+
+    // KID-FRIENDLY EXPLANATION – CLEAN & BOX-FREE
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...green);
+    doc.text('How Nigeria Taxes Your Money; Explained Like You’re 10 Years Old', margin, y);
+    y += 12;
+
+    doc.setFontSize(10.5);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(0);
+
+    const explanation = [
+    'Imagine your yearly income is one huge bowl of jollof rice.',
+    'The government says: "We will only take a little from the top, and the higher the bowl gets, the bigger the spoon we use."',
+    'Here\'s exactly how it works in 2026:',
+    '',
+    '1. First NGN 800,000 -> Completely FREE!',
+    '   Government says: "This part is yours forever. No tax at all."',
+    '',
+    '2. Next NGN 2,200,000 (NGN 800,001 - NGN 3,000,000) -> 15%',
+    '   For every NGN 100 here, they take NGN 15.',
+    '',
+    '3. Next NGN 9,000,000 (NGN 3,000,001 - NGN 12,000,000) -> 18%',
+    '   Now they take NGN 18 out of every NGN 100.',
+    '',
+    '4. Next NGN 13,000,000 (NGN 12,000,001 - NGN 25,000,000) -> 21%',
+    '   NGN 21 from every NGN 100.',
+    '',
+    '5. Next NGN 25,000,000 (NGN 25,000,001 - NGN 50,000,000) -> 23%',
+    '   NGN 23 out of every NGN 100.',
+    '',
+    '6. Everything above NGN 50,000,000 -> 25%',
+    '   The biggest spoon - NGN 25 from every NGN 100.',
+    '',
+    'This system is called "progressive" because:',
+    '• Low earners pay little (or nothing at all)',
+    '• High earners pay more - but only on the money above each band',
+    'That\'s the simple magic behind the table above'
+];
+
+    explanation.forEach(line => {
+        if (line === '') { y += 5; return; }
+        const split = doc.splitTextToSize(line, pageWidth - margin * 2);
+        doc.text(split, margin, y);
+        y += split.length * 5.6;
+    });
+
+    y += 10;
+
     addFooter(5);
     doc.addPage();
 
