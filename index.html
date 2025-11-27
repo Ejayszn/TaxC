@@ -2550,7 +2550,6 @@ if (data.incomeSources.length > 1 || (data.incomeSources.length === 1 && data.in
     doc.text('Visual representation of where your income comes from', margin, y);
     y += 10;
 
-    // --- CRITICAL FIX: DEFINITION OF PIEDATA ---
     // Prepare data for pie chart
     const pieData = data.incomeSources
         .filter(s => s.annualIncome > 0)
@@ -2568,78 +2567,77 @@ if (data.incomeSources.length > 1 || (data.incomeSources.length === 1 && data.in
         [0, 100, 0],       // Deep green
         [144, 238, 144]    // Light green
     ];
-    // --- END CRITICAL FIX ---
-    
-    // Generate pie chart (centered)
-    const centerX = pageWidth / 2;
-    const centerY = y + 40;
-    const radius = 35;
 
-    if (pieData.length === 1) {
-        // 100% Case: Draw a single solid circle (The robust fix)
-        const color = pieColors[0];
-        doc.setFillColor(...color);
-        doc.setDrawColor(255, 255, 255);
-        doc.setLineWidth(2);
-        
-        // Draw the filled circle
-        doc.circle(centerX, centerY, radius, 'F'); 
-        
-        // Draw the white outline
-        doc.circle(centerX, centerY, radius, 'S');
+    // Create a temporary canvas to draw the pie
+    const canvas = document.createElement('canvas');
+    const canvasSize = 200; // Adjust size as needed
+    canvas.width = canvasSize;
+    canvas.height = canvasSize;
+    const ctx = canvas.getContext('2d');
 
-        // Add the percentage label to the center
-        doc.setFontSize(10);
-        doc.setTextColor(255, 255, 255);
-        doc.setFont('helvetica', 'bold');
-        doc.text(pieData[0].percent + '%', centerX, centerY, { align: 'center', baseline: 'middle' });
+    // Center and radius for pie on canvas
+    const centerX = canvasSize / 2;
+    const centerY = canvasSize / 2;
+    const radius = canvasSize / 2 - 10; // Padding
 
-    } else {
-    // MULTIPLE SOURCES — 100% safe version
     let startAngle = 0;
 
     pieData.forEach((slice, i) => {
-        const sliceAngle = (slice.value / data.totalGross) * 360;
+        const sliceAngle = (slice.value / data.totalGross) * 2 * Math.PI;
         const endAngle = startAngle + sliceAngle;
 
-        // Safety: if slice is too tiny (<0.5%), skip drawing to avoid jsPDF bugs
-        if (sliceAngle < 1.8) {
+        // Skip tiny slices if needed
+        if (sliceAngle < 0.01) { // ~0.5 degrees
             startAngle = endAngle;
             return;
         }
 
-        try {
-            // Fill
-            doc.setFillColor(...(pieColors[i % pieColors.length]));
-            doc.pieSlice(centerX, centerY, radius, startAngle, endAngle, 'F');
+        // Draw slice
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+        ctx.closePath();
+        ctx.fillStyle = `rgb(${pieColors[i % pieColors.length].join(',')})`;
+        ctx.fill();
 
-            // White border
-            doc.setDrawColor(255, 255, 255);
-            doc.setLineWidth(2.5);
-            doc.pieSlice(centerX, centerY, radius, startAngle, endAngle, 'S');
+        // White border
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 2;
+        ctx.stroke();
 
-            // Label only if big enough
-            if (sliceAngle > 15) {
-                const midRad = degToRad(startAngle + sliceAngle / 2);
-                const labelX = centerX + radius * 0.65 * Math.cos(midRad);
-                const labelY = centerY + radius * 0.65 * Math.sin(midRad);
-
-                doc.setTextColor(255, 255, 255);
-                doc.setFontSize(9);
-                doc.setFont('helvetica', 'bold');
-                doc.text(`${slice.percent}%`, labelX, labelY, { align: 'center', baseline: 'middle' });
-            }
-        } catch (e) {
-            console.warn('Failed to draw slice, skipping', e);
+        // Label if big enough
+        if (sliceAngle > Math.PI / 12) { // >15 degrees
+            const midAngle = startAngle + sliceAngle / 2;
+            const labelX = centerX + (radius * 0.65) * Math.cos(midAngle);
+            const labelY = centerY + (radius * 0.65) * Math.sin(midAngle);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 9px Helvetica';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(`${slice.percent}%`, labelX, labelY);
         }
 
         startAngle = endAngle;
     });
-}
+
+    // For single slice (100%)
+    if (pieData.length === 1) {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 10px Helvetica';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`${pieData[0].percent}%`, centerX, centerY);
+    }
+
+    // Add the canvas image to PDF (centered)
+    const pdfCenterX = pageWidth / 2 - (canvasSize / 2) / (72 / 25.4); // Convert px to mm (~2.835 px per mm)
+    const pdfCenterY = y; // Current y
+    doc.addImage(canvas.toDataURL('image/png'), 'PNG', pdfCenterX, pdfCenterY, canvasSize / (72 / 25.4), canvasSize / (72 / 25.4));
+
+    // Update y after chart
+    y = pdfCenterY + canvasSize / (72 / 25.4) + 10;
 
     // === LEGEND (Below pie chart) ===
-    y = centerY + radius + 15; // Set y position after the chart
-
     doc.setFontSize(10);
     doc.setTextColor(0);
     pieData.forEach((slice, i) => {
