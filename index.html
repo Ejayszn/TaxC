@@ -1288,11 +1288,11 @@ footer {
        style="color: #28A745; font-weight: 600; text-decoration: underline; cursor: pointer;">
         PDF report
     </a> 
-    for only ₦500:
+    for only ₦900:
 </p>
 
 <div class="input-group-inline">
-  <button id="paystack-btn" class="report-btn">Pay ₦500 & Download PDF</button>
+  <button id="paystack-btn" class="report-btn">Pay ₦900 & Download PDF</button>
 </div>
         </div>
     </div>
@@ -1460,7 +1460,7 @@ const Ada = {
     "what is withholding tax": "Withholding Tax (WHT) is a tax deducted at source on certain incomes, like rental income (10%), or investment income (10%). TaxC lets you input WHT paid or applies default rates, which are credited against your final tax liability to avoid double taxation.",
     "is my data safe": "Yes, TaxC prioritizes your privacy. We don’t store sensitive payment information—payments are securely handled by Paystack. Your input data is used only for calculations and report generation, and we adhere to strict data protection standards.",
     "what’s included in the pdf report": "The PDF report includes a step-by-step breakdown of your tax calculation, deduction summary (pension, rent relief, etc), tax band details, and filing guidance tailored to your state’s IRS. It’s perfect for keeping records or sharing with a tax agent.",
-    "how do i file my taxes": "TaxC provides an estimate to guide you. To file, submit your tax details to your State IRS, either online via their portal or in person. Our ₦500 report includes specific filing guidance for your state.",
+    "how do i file my taxes": "TaxC provides an estimate to guide you. To file, submit your tax details to your State IRS, either online via their portal or in person. Our ₦900 report includes specific filing guidance for your state.",
     "can taxc help with business taxes": "Currently, TaxC focuses on Personal Income Tax for individuals. For business or corporate taxes, consult a tax professional or contact your State IRS. Our eBooks may offer additional resources for business owners."
   },
 
@@ -2972,7 +2972,7 @@ document.getElementById('msg').innerHTML = 'Premium report downloaded! Your cust
 
     // Reset PDF button to original state
     if (pdfButton) {
-        pdfButton.textContent = "Pay ₦500 & Download PDF";
+        pdfButton.textContent = "Pay ₦900 & Download PDF";
         pdfButton.onclick = payWithPaystack;
         pdfButton.disabled = false;
     }
@@ -3194,7 +3194,7 @@ function payWithPaystack() {
     if (!email || !email.includes('@') || !email.includes('.')) {
         alert("Please enter a valid email address");
         btn.disabled = false;
-        btn.textContent = "Pay ₦500 & Download PDF";
+        btn.textContent = "Pay ₦900 & Download PDF";
         paymentInProgress = false;
         return;
     }
@@ -3203,7 +3203,7 @@ function payWithPaystack() {
     const handler = PaystackPop.setup({
         key: PAYSTACK_PUBLIC_KEY,
         email: email,
-        amount: 50000, // ₦500 in kobo
+        amount: 90000, // ₦900 in kobo
         currency: "NGN",
         ref: 'TAXC_' + Math.random().toString(36).substring(2, 15) + Date.now(),
 
@@ -3213,7 +3213,7 @@ function payWithPaystack() {
 
         onClose: function() {
             btn.disabled = false;
-            btn.textContent = "Pay ₦500 & Download PDF";
+            btn.textContent = "Pay ₦900 & Download PDF";
             document.getElementById('msg').innerHTML = 'Payment was cancelled.';
             paymentInProgress = false;
         }
