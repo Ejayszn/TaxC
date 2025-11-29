@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1449,122 +1448,9 @@ footer {
 </footer>
 
     <script>
-        
-// === ADA v6.0 — HACKATHON DEMO GOD MODE (Fixed Everything) ===
-const Ada = {
-  memory: { name: "" },
-  faqs: {
-    "what taxes does taxc calculate": "TaxC calculates your Personal Income Tax (PIT) based on Nigeria’s 2025/2026 Nigerian Tax Act (NTA) rules. This includes income from salary, self-employment, rental, investments, and other sources, factoring in allowable deductions like pension contributions and rent relief (up to ₦500,000).",
-    "who needs to pay personal income tax": "Every Nigerian resident earning income above ₦800,000 annually (after deductions) is required to pay Personal Income Tax to their State Internal Revenue Service (IRS). This includes salaried employees, self-employed individuals, and those with rental or investment income.",
-    "how does taxc handle deductions": "TaxC allows you to input pension contributions and annual rent paid. For salaried or self-employed individuals, rent relief is calculated as 20% of your rent, capped at ₦500,000. These deductions reduce your taxable income, lowering your tax liability. Other deductions may include life insurance, NHF, etc.",
-    "what is withholding tax": "Withholding Tax (WHT) is a tax deducted at source on certain incomes, like rental income (10%), or investment income (10%). TaxC lets you input WHT paid or applies default rates, which are credited against your final tax liability to avoid double taxation.",
-    "is my data safe": "Yes, TaxC prioritizes your privacy. We don’t store sensitive payment information—payments are securely handled by Paystack. Your input data is used only for calculations and report generation, and we adhere to strict data protection standards.",
-    "what’s included in the pdf report": "The PDF report includes a step-by-step breakdown of your tax calculation, deduction summary (pension, rent relief, etc), tax band details, and filing guidance tailored to your state’s IRS. It’s perfect for keeping records or sharing with a tax agent.",
-    "how do i file my taxes": "TaxC provides an estimate to guide you. To file, submit your tax details to your State IRS, either online via their portal or in person. Our ₦900 report includes specific filing guidance for your state.",
-    "can taxc help with business taxes": "Currently, TaxC focuses on Personal Income Tax for individuals. For business or corporate taxes, consult a tax professional or contact your State IRS. Our eBooks may offer additional resources for business owners."
-  },
+const GEMINI_URL = "https://us-central1-taxc-ebooks.cloudfunctions.net/chatWithAda";
 
-  init() {
-    const saved = localStorage.getItem('taxc_user_name');
-    if (saved) this.memory.name = saved;
-  },
-
-  saveName(name) {
-    this.memory.name = name;
-    localStorage.setItem('taxc_user_name', name);
-  },
-
-  greet() {
-    return this.memory.name ? `Welcome back, ${this.memory.name}! ` : "";
-  },
-
-  respond(input) {
-  const l = input.toLowerCase().trim();
-
-  // === 1. GREETINGS ===
-  if (/^(hi|hello|hey|howfar|hi ada|hello ada)/i.test(input)) {
-    return `Howfar! Wetin you wan know about tax?`;
-  }
-
-  // === 2. NAME ===
-  if (l.includes("my name is") || l.includes("call me") || l.includes("i am")) {
-    const match = input.match(/(?:my name is|call me|i am) ([\w\s]+)/i);
-    if (match) {
-      this.saveName(match[1].trim());
-      return `Got it, ${match[1].trim()}! No wahala, I dey your back. Wetin you wan calculate?`;
-    }
-  }
-
-  // === 3. DIRECT FAQ — FULL ANSWERS WITH <br> SPACING ===
-
-  // ---- "calculate tax" ----
-  if (l.includes("calculate") && l.includes("tax") || l.includes("how much") && l.includes("tax") || l.includes("owe")) {
-    return `
-      Let’s calculate your tax in **3 steps**:<br><br>
-      1. <strong>Add income</strong> → Salary, rent, investments, etc.<br>
-      2. <strong>Enter deductions</strong> → Pension, rent (up to ₦500k relief)<br>
-      3. <strong>Pick your state</strong> → Click **Calculate!**<br><br>
-
-      <button class="chat-btn" onclick="location.href='index.html#calculator'">Go to Calculator</button>
-    `;
-  }
-
-  // ---- "who pays tax" ----
-  if (l.includes("who") && l.includes("pay") && l.includes("tax") || l.includes("who needs to pay")) {
-    return `
-      Every Nigerian earning above ₦800,000 per year (after deductions) must pay Personal Income Tax (PIT) to their State Internal Revenue Service (IRS).<br><br>
-
-      This includes:<br>
-      • Salaried employees<br>
-      • Self-employed individuals<br>
-      • Landlords with rental income<br>
-      • Investors with dividends, interest, etc.<br><br>
-
-      <em>Even if your employer deducts PAYE, you still file annually to reconcile.</em><br><br>
-
-      Want to check if you owe? Let’s calculate → 
-      <button class="chat-btn" onclick="location.href='index.html#calculator'">Go to Calculator</button>
-    `;
-  }
-
-  // === 4. FAQ (fallback) ===
-  for (const [key, answer] of Object.entries(this.faqs)) {
-    const keywords = key.split(' ').filter(w => w.length > 3);
-    if (keywords.some(k => l.includes(k))) {
-      return `${answer} <br><br><em>You dey pay tax? No wahala, I go help you!</em>`;
-    }
-  }
-
-  // === 5. FREE EBOOKS ===
-  if (l.includes("free") || l.includes("ebook") || l.includes("download") || l.includes("book")) {
-    return `
-      I get **3 FREE eBooks** for you:
-      <ul>
-        <li>Who Pays Tax in Nigeria?</li>
-        <li>What is P.I.T.?</li>
-        <li>Am I Tax Eligible? (Quiz)</li>
-      </ul>
-      <button class="chat-btn" onclick="location.href='ebooks.html#free'">View All Ebooks</button>
-    `;
-  }
-
-  // === 6. DEFAULT ===
-  return `
-    ${this.greet()}I fit help you with:
-    <ul>
-      <li>Who dey pay tax?</li>
-      <li>How to file?</li>
-      <li>Free eBooks</li>
-      <li>Calculate tax</li>
-    </ul>
-    Just ask!
-    <br><br>
-    <button class="chat-btn" onclick="location.href='mailto:support@taxc.com.ng'">Contact Support</button>
-  `;
-}
-};
-
-// === CHAT UI ===
+// === CHAT UI ONLY — NO MORE STATIC MOCK RESPONSES ===
 let hasNewMessage = false;
 
 function toggleChat() {
@@ -1574,16 +1460,12 @@ function toggleChat() {
   if (win.style.display === 'flex') {
     hasNewMessage = false;
     launcher.classList.remove('has-notification');
-    // ⭐ NEW: Clear the unread status when the chat is opened/read
-    localStorage.removeItem('taxc_ai_has_unread'); 
-
+    localStorage.removeItem('taxc_ai_has_unread');
     setTimeout(() => document.getElementById('chat-input')?.focus(), 300);
   }
 }
 
-// -------------------------------------------------
-// SAVE CHAT HISTORY TO LOCALSTORAGE
-// -------------------------------------------------
+// Save & load chat history
 function saveChat() {
   const messages = [];
   document.querySelectorAll('#chat-body .message').forEach(msg => {
@@ -1604,33 +1486,28 @@ function addMessage(text, type, isInitialLoad = false) {
   body.scrollTop = body.scrollHeight;
   saveChat();
 
-  // === PLAY SOUND ONLY FOR ADA'S REAL REPLY (not loading dots) ===
+  // Play sound only for real AI replies
   if (type === 'ai' && window.adaSound && !text.includes('typing')) {
     window.adaSound.currentTime = 0;
     window.adaSound.play().catch(() => {});
   }
 
-  // === NOTIFICATION BUBBLE (when chat is closed) ===
-  // Trigger only if it's an AI message, NOT an initial load, and the chat is closed
+  // Notification badge when chat is closed
   if (type === 'ai' && !isInitialLoad && document.getElementById('chat-window').style.display !== 'flex') {
     hasNewMessage = true;
     document.querySelector('.chat-launcher').classList.add('has-notification');
-    // ⭐ NEW: Persist the unread status in localStorage
-    localStorage.setItem('taxc_ai_has_unread', 'true'); 
+    localStorage.setItem('taxc_ai_has_unread', 'true');
   }
 }
 
-// -------------------------------------------------
-// CLEAR CHAT + CONFIRM
-// -------------------------------------------------
 function clearChat() {
-  if (confirm("Are you sure you want to clear chat?")) {
+  if (confirm("Clear all messages?")) {
     document.getElementById('chat-body').innerHTML = '';
     localStorage.removeItem('taxc_chat_history');
   }
 }
 
-function sendMessage() {
+async function sendMessage() {
   const input = document.getElementById('chat-input');
   const text = input.value.trim();
   if (!text) return;
@@ -1639,122 +1516,74 @@ function sendMessage() {
   input.value = '';
   addMessage('<i class="typing">•••</i>', 'ai');
 
-  setTimeout(() => {
-    const messages = document.querySelectorAll('.message');
-    if (messages.length > 0) messages[messages.length - 1].remove();
-    addMessage(Ada.respond(text), 'ai');
-  }, 1000);
+  try {
+    const res = await fetch(GEMINI_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userMessage: text })
+    });
+    const data = await res.json();
+
+    document.querySelectorAll('.message').forEach(m => {
+      if (m.innerHTML.includes('typing')) m.remove();
+    });
+
+    const reply = data.message || "Ada no hear well, try again o!";
+    addMessage(reply, 'ai');
+
+  } catch (e) {
+    document.querySelectorAll('.message').forEach(m => {
+      if (m.innerHTML.includes('typing')) m.remove();
+    });
+    addMessage("Network no gree today. Check your connection and try again.", 'ai');
+  }
 }
 
+// === PAGE LOAD: Restore history, sound, notification, welcome ===
 document.addEventListener('DOMContentLoaded', () => {
-  Ada.init();
-  
-  // ⭐ NEW: Check and apply saved notification status immediately on page load
-  const launcher = document.querySelector('.chat-launcher');
+  // Restore notification badge if user closed chat with unread message
   if (localStorage.getItem('taxc_ai_has_unread') === 'true') {
-    launcher.classList.add('has-notification');
+    document.querySelector('.chat-launcher').classList.add('has-notification');
   }
 
-  // ==== LOAD PREVIOUS CHAT ====
-  const savedChat = localStorage.getItem('taxc_chat_history');
-  if (savedChat) {
-    const messages = JSON.parse(savedChat);
-    // Pass 'true' to ensure history re-load doesn't re-trigger notification
-    messages.forEach(msg => addMessage(msg.text, msg.type, true)); 
+  // Load previous chat
+  const saved = localStorage.getItem('taxc_chat_history');
+  if (saved) {
+    JSON.parse(saved).forEach(msg => addMessage(msg.text, msg.type, true));
   }
 
-  // === INIT ADA SOUND ===
-  const adaSound = document.getElementById('ada-message-sound');
-  if (adaSound) {
-    adaSound.volume = 0.6;
-    window.adaSound = adaSound;
+  // Sound
+  const sound = document.getElementById('ada-message-sound');
+  if (sound) {
+    sound.volume = 0.6;
+    window.adaSound = sound;
   }
 
-  // ==== FIRST-TIME WELCOME (if no name & no chat) ====
-  if (!Ada.memory.name && !savedChat) {
-    // Pass 'true' to prevent this greeting from triggering a notification
-    addMessage("Hi! I'm <strong>Ada</strong>, your personal tax assistant. Ask me anything about taxes, filing, or ebooks!", 'ai', true); 
-  }
-
-  // === ONLY SHOW "WELCOME BACK" IF NO CHAT HISTORY ===
-  if (Ada.memory.name) {
-    const hasChat = localStorage.getItem('taxc_chat_history') && 
-                    JSON.parse(localStorage.getItem('taxc_chat_history')).length > 0;
-    
-    if (!hasChat) {
-      setTimeout(() => {
-        // Pass 'true' to prevent this greeting from triggering a notification
-        addMessage(`Welcome back, ${Ada.memory.name}! Howfar today?`, 'ai', true); 
-      }, 800);
-    }
+  // First-time welcome (only if no chat history)
+  if (!saved) {
+    addMessage("Hi! I'm <strong>Ada</strong>, your TaxC AI assistant.<br>Ask me anything about Nigerian taxes, filing, deductions, or the calculator!", 'ai', true);
   }
 });
 
-// === CSS: Notification Badge + Clean Numbers ===
+// === STYLING: Buttons, typing dots, notification badge ===
 const style = document.createElement('style');
 style.textContent = `
   .chat-btn {
     background: #28A745; color: white; border: none; padding: 10px 18px;
     border-radius: 8px; cursor: pointer; font-weight: 600; margin: 8px 0;
     display: inline-block; font-size: 0.95rem; box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-    transition: all 0.2s;
   }
   .chat-btn:hover { background: #218838; transform: translateY(-1px); }
 
   .typing { animation: blink 1s infinite; }
   @keyframes blink { 0%,100% { opacity: 1 } 50% { opacity: 0.3 } }
 
-  /* === FIXED: Clean Numbering === */
-  .message ol {
-    counter-reset: item;
-    padding-left: 0;
-    margin: 12px 0;
-  }
-  .message ol li {
-    display: block;
-    margin: 10px 0;
-    padding-left: 30px;
-    position: relative;
-    line-height: 1.5;
-  }
-  .message ol li:before {
-    content: counter(item);
-    counter-increment: item;
-    position: absolute;
-    left: 0;
-    background: #28A745;
-    color: white;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 0.85rem;
-  }
-
-  /* === NOTIFICATION BADGE === */
-  .chat-launcher {
-    position: relative;
-  }
   .chat-launcher.has-notification::after {
-    content: '';
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 12px;
-    height: 12px;
-    background: #ff3b30;
-    border-radius: 50%;
-    border: 2px solid white;
-    animation: pulse-badge 2s infinite;
+    content: ''; position: absolute; top: 8px; right: 8px;
+    width: 12px; height: 12px; background: #ff3b30; border-radius: 50%;
+    border: 2px solid white; animation: pulse-badge 2s infinite;
   }
-  @keyframes pulse-badge {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.3); }
-    100% { transform: scale(1); }
-  }
+  @keyframes pulse-badge { 0%,100% { transform: scale(1) } 50% { transform: scale(1.3) } }
 `;
 document.head.appendChild(style);
 
