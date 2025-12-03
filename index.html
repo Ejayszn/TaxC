@@ -1964,7 +1964,7 @@ document.head.appendChild(style);
             }
             
                         if (!validationPassed) {
-    document.getElementById('msg').textContent = '🔴 Please fill the above';
+    document.getElementById('msg').textContent = '👆 Please fill the above';
     document.getElementById('taxSummary').innerHTML = '';
     document.getElementById('default-report-message').style.display = 'block';
     document.getElementById('output').style.display = 'block';
@@ -2031,7 +2031,7 @@ function calculateTax() {
 
     // 2. NOW check state → only if income is valid
     if (!state) {
-        document.getElementById('msg').innerHTML = '🔴 Please select your State of Residence to proceed with the tax calculation.';
+        document.getElementById('msg').innerHTML = '👆 Please select your State of Residence to proceed with the tax calculation.';
         document.getElementById('taxSummary').innerHTML = '';
         document.getElementById('default-report-message').style.display = 'block';
         document.getElementById('output').style.display = 'block';
@@ -3019,7 +3019,7 @@ function payWithPaystack() {
     btn.disabled = true;
     btn.textContent = "Opening Paystack...";
 
-    const email = prompt("Enter your email for receipt & PDF delivery:", "");
+    const email = prompt("Enter your email for receipt:", "");
     if (!email || !email.includes('@') || !email.includes('.')) {
         alert("Please enter a valid email address");
         btn.disabled = false;
