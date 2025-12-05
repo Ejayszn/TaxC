@@ -1,0 +1,111 @@
+[debug] [2025-12-03T16:14:23.096Z] ----------------------------------------------------------------------
+[debug] [2025-12-03T16:14:23.101Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\emmyo\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only functions --debug
+[debug] [2025-12-03T16:14:23.101Z] CLI Version:   14.26.0
+[debug] [2025-12-03T16:14:23.101Z] Platform:      win32
+[debug] [2025-12-03T16:14:23.102Z] Node Version:  v24.11.1
+[debug] [2025-12-03T16:14:23.102Z] Time:          Wed Dec 03 2025 17:14:23 GMT+0100 (West Africa Standard Time)
+[debug] [2025-12-03T16:14:23.102Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-12-03T16:14:23.551Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-03T16:14:23.554Z] > authorizing via signed-in user (emmyogs007@gmail.com)
+[debug] [2025-12-03T16:14:23.556Z] [iam] checking project taxc-ebooks for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2025-12-03T16:14:23.560Z] Checked if tokens are valid: true, expires at: 1764780082104
+[debug] [2025-12-03T16:14:23.561Z] Checked if tokens are valid: true, expires at: 1764780082104
+[debug] [2025-12-03T16:14:23.564Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/taxc-ebooks:testIamPermissions [none]
+[debug] [2025-12-03T16:14:23.565Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/taxc-ebooks:testIamPermissions x-goog-quota-user=projects/taxc-ebooks
+[debug] [2025-12-03T16:14:23.566Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/taxc-ebooks:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2025-12-03T16:14:30.795Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/taxc-ebooks:testIamPermissions 200
+[debug] [2025-12-03T16:14:30.796Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/taxc-ebooks:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2025-12-03T16:14:30.798Z] Checked if tokens are valid: true, expires at: 1764780082104
+[debug] [2025-12-03T16:14:30.799Z] Checked if tokens are valid: true, expires at: 1764780082104
+[debug] [2025-12-03T16:14:30.802Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/taxc-ebooks/serviceAccounts/taxc-ebooks@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2025-12-03T16:14:30.803Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/taxc-ebooks/serviceAccounts/taxc-ebooks@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2025-12-03T16:14:35.360Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/taxc-ebooks/serviceAccounts/taxc-ebooks@appspot.gserviceaccount.com:testIamPermissions 200
+[debug] [2025-12-03T16:14:35.364Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/taxc-ebooks/serviceAccounts/taxc-ebooks@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[info] 
+[info] === Deploying to 'taxc-ebooks'...
+[info] 
+[info] i  deploying functions 
+[debug] [2025-12-03T16:14:35.373Z] Checked if tokens are valid: true, expires at: 1764780082104
+[debug] [2025-12-03T16:14:35.377Z] Checked if tokens are valid: true, expires at: 1764780082104
+[debug] [2025-12-03T16:14:35.379Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/taxc-ebooks [none]
+[debug] [2025-12-03T16:14:36.187Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/taxc-ebooks 200
+[debug] [2025-12-03T16:14:36.188Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/taxc-ebooks {"projectNumber":"542476707940","projectId":"taxc-ebooks","lifecycleState":"ACTIVE","name":"taxc-ebooks","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-11-15T07:33:29.748706Z"}
+[info] i  functions: preparing codebase default for deployment 
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2025-12-03T16:14:36.194Z] Checked if tokens are valid: true, expires at: 1764780082104
+[debug] [2025-12-03T16:14:36.196Z] Checked if tokens are valid: true, expires at: 1764780082104
+[debug] [2025-12-03T16:14:36.198Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/taxc-ebooks/adminSdkConfig [none]
+[debug] [2025-12-03T16:14:40.613Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/taxc-ebooks/adminSdkConfig 200
+[debug] [2025-12-03T16:14:40.614Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/taxc-ebooks/adminSdkConfig {"projectId":"taxc-ebooks","storageBucket":"taxc-ebooks.firebasestorage.app"}
+[debug] [2025-12-03T16:14:40.616Z] Checked if tokens are valid: true, expires at: 1764780082104
+[debug] [2025-12-03T16:14:40.616Z] Checked if tokens are valid: true, expires at: 1764780082104
+[debug] [2025-12-03T16:14:40.618Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/taxc-ebooks/configs [none]
+[debug] [2025-12-03T16:14:45.173Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/taxc-ebooks/configs 200
+[debug] [2025-12-03T16:14:45.173Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/taxc-ebooks/configs {}
+[debug] [2025-12-03T16:14:45.177Z] Validating nodejs source
+[warn] !  functions: Couldn't find firebase-functions package in your source code. Have you run 'npm install'? 
+[debug] [2025-12-03T16:14:45.180Z] getFunctionsSDKVersion encountered error: Cannot find module 'firebase-functions'
+Require stack:
+- C:\Users\emmyo\AppData\Roaming\npm\node_modules\firebase-tools\lib\deploy\functions\runtimes\node\versioning.js
+- C:\Users\emmyo\AppData\Roaming\npm\node_modules\firebase-tools\lib\deploy\functions\runtimes\node\index.js
+- C:\Users\emmyo\AppData\Roaming\npm\node_modules\firebase-tools\lib\deploy\functions\runtimes\index.js
+- C:\Users\emmyo\AppData\Roaming\npm\node_modules\firebase-tools\lib\deploy\functions\prepare.js
+- C:\Users\emmyo\AppData\Roaming\npm\node_modules\firebase-tools\lib\emulator\functionsEmulatorShared.js
+- C:\Users\emmyo\AppData\Roaming\npm\node_modules\firebase-tools\lib\emulator\functionsEmulator.js
+- C:\Users\emmyo\AppData\Roaming\npm\node_modules\firebase-tools\lib\emulator\controller.js
+- C:\Users\emmyo\AppData\Roaming\npm\node_modules\firebase-tools\lib\emulator\commandUtils.js
+- C:\Users\emmyo\AppData\Roaming\npm\node_modules\firebase-tools\lib\commands\database-get.js
+- C:\Users\emmyo\AppData\Roaming\npm\node_modules\firebase-tools\lib\commands\index.js
+- C:\Users\emmyo\AppData\Roaming\npm\node_modules\firebase-tools\lib\index.js
+- C:\Users\emmyo\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\cli.js
+- C:\Users\emmyo\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js {"code":"MODULE_NOT_FOUND","requireStack":["C:\\Users\\emmyo\\AppData\\Roaming\\npm\\node_modules\\firebase-tools\\lib\\deploy\\functions\\runtimes\\node\\versioning.js","C:\\Users\\emmyo\\AppData\\Roaming\\npm\\node_modules\\firebase-tools\\lib\\deploy\\functions\\runtimes\\node\\index.js","C:\\Users\\emmyo\\AppData\\Roaming\\npm\\node_modules\\firebase-tools\\lib\\deploy\\functions\\runtimes\\index.js","C:\\Users\\emmyo\\AppData\\Roaming\\npm\\node_modules\\firebase-tools\\lib\\deploy\\functions\\prepare.js","C:\\Users\\emmyo\\AppData\\Roaming\\npm\\node_modules\\firebase-tools\\lib\\emulator\\functionsEmulatorShared.js","C:\\Users\\emmyo\\AppData\\Roaming\\npm\\node_modules\\firebase-tools\\lib\\emulator\\functionsEmulator.js","C:\\Users\\emmyo\\AppData\\Roaming\\npm\\node_modules\\firebase-tools\\lib\\emulator\\controller.js","C:\\Users\\emmyo\\AppData\\Roaming\\npm\\node_modules\\firebase-tools\\lib\\emulator\\commandUtils.js","C:\\Users\\emmyo\\AppData\\Roaming\\npm\\node_modules\\firebase-tools\\lib\\commands\\database-get.js","C:\\Users\\emmyo\\AppData\\Roaming\\npm\\node_modules\\firebase-tools\\lib\\commands\\index.js","C:\\Users\\emmyo\\AppData\\Roaming\\npm\\node_modules\\firebase-tools\\lib\\index.js","C:\\Users\\emmyo\\AppData\\Roaming\\npm\\node_modules\\firebase-tools\\lib\\bin\\cli.js","C:\\Users\\emmyo\\AppData\\Roaming\\npm\\node_modules\\firebase-tools\\lib\\bin\\firebase.js"]}
+[debug] [2025-12-03T16:14:45.195Z] checkFunctionsSDKVersion encountered error: Invalid Version:  {}
+[debug] [2025-12-03T16:14:45.197Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "lint": "eslint .",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "24"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "cors": "^2.8.5",
+    "firebase-admin": "^13.6.0",
+    "firebase-functions": "^7.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.15.0",
+    "eslint-config-google": "^0.14.0",
+    "firebase-functions-test": "^3.4.1"
+  },
+  "private": true,
+  "type": "module"
+}
+[debug] [2025-12-03T16:14:45.212Z] Building nodejs source
+[info] i  functions: Loading and analyzing source code for codebase default to determine what to deploy 
+[debug] [2025-12-03T16:14:45.214Z] Could not parse firebase-functions version '' into semver. Falling back to parseTriggers.
+[error] 
+[error] Error: Error occurred while parsing your function triggers.
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'firebase-functions' imported from C:\Users\emmyo\Desktop\TaxC\functions\index.js
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:316:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:858:18)
+    at defaultResolve (node:internal/modules/esm/resolve:990:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:737:20)
+    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:773:38)
+    at ModuleLoader.resolveSync (node:internal/modules/esm/loader:796:52)
+    at #cachedResolveSync (node:internal/modules/esm/loader:756:25)
+    at ModuleLoader.getModuleJobForRequire (node:internal/modules/esm/loader:450:50)
+    at #link (node:internal/modules/esm/module_job:447:34)
