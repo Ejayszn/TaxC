@@ -3179,8 +3179,8 @@ if (userGreeting) {
 </script>
 
 <script>
-// ==================== PAYSTACK INTEGRATION – WORKING 2025 VERSION ====================
-const PAYSTACK_PUBLIC_KEY = "pk_test_bc9c09e6d51c4e025bb44c6c57ad1c1144386b55";
+// ==================== PAYSTACK V2 INTEGRATION – FULLY UPDATED FOR 2025 ====================
+const PAYSTACK_PUBLIC_KEY = "pk_test_bc9c09e6d51c4e025bb44c6c57ad1c1144386b55"; // Use your live key in prod
 let paymentInProgress = false;
 
 function payWithPaystack() {
@@ -3188,14 +3188,11 @@ function payWithPaystack() {
         document.getElementById('msg').textContent = 'Please calculate your tax first.';
         return;
     }
-
     if (paymentInProgress) return;
     paymentInProgress = true;
-
     const btn = document.querySelector('.report-btn');
     btn.disabled = true;
     btn.textContent = "Opening Paystack...";
-
     const email = prompt("Enter your email for receipt:", "");
     if (!email || !email.includes('@') || !email.includes('.')) {
         alert("Please enter a valid email address");
@@ -3205,19 +3202,21 @@ function payWithPaystack() {
         return;
     }
 
-    // NEW CORRECT v2 SYNTAX
-    const handler = PaystackPop.setup({
+    // V2 INITIALIZATION: Use new PaystackPop() constructor
+    const paystack = new PaystackPop(); // This is the V2 way — no more setup()
+
+    // Start the transaction with newTransaction() — this RETURNS a function to open the popup
+    const onOpenTransaction = paystack.newTransaction({
         key: PAYSTACK_PUBLIC_KEY,
         email: email,
         amount: 90000, // ₦900 in kobo
         currency: "NGN",
         ref: 'TAXC_' + Math.random().toString(36).substring(2, 15) + Date.now(),
-
         callback: function(response) {
+            // Payment success — verify and generate PDF
             verifyPaystackPayment(response.reference, email);
         },
-
-        onClose: function() {
+        onCancel: function() { // V2 uses onCancel() instead of onClose()
             btn.disabled = false;
             btn.textContent = "Pay ₦900 & Download PDF";
             document.getElementById('msg').innerHTML = 'Payment was cancelled.';
@@ -3225,9 +3224,11 @@ function payWithPaystack() {
         }
     });
 
-    handler.openIframe(); // THIS is the correct method in v2
+    // CALL the returned function to open the popup — this is what triggers it in V2
+    onOpenTransaction(); // Boom — popup opens reliably
 }
 
+// Verification stays the same (your Cloud Function endpoint)
 async function verifyPaystackPayment(reference, email) {
     const btn = document.querySelector('.report-btn');
     btn.textContent = "Verifying payment...";
@@ -3243,12 +3244,12 @@ async function verifyPaystackPayment(reference, email) {
             btn.textContent = "Download PDF Again";
             btn.onclick = generatePDFReport;
             try {
-                generatePDFReport();  // Call the PDF gen inside try-catch
+                generatePDFReport(); // Auto-generate PDF
             } catch (err) {
-                console.error('PDF Gen Error:', err);  // Log to console for debugging
+                console.error('PDF Gen Error:', err);
                 document.getElementById('msg').innerHTML = 'Report gen failed! Try again or contact support.';
+                btn.onclick = payWithPaystack; // Reset on error
             }
-            setTimeout(() => {}, 800);  // Optional: Keep delay if needed, but not for gen
         } else {
             throw new Error("Verification failed");
         }
@@ -3263,7 +3264,7 @@ async function verifyPaystackPayment(reference, email) {
     }
 }
 
-// Attach the handler
+// Attach the handler to the button
 document.querySelector('.report-btn').onclick = payWithPaystack;
 </script>
 <script>
