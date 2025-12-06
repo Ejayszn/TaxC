@@ -1067,11 +1067,124 @@ input:focus, select:focus {
   }
 }
 
+/* ==== FOOTER ==== */
 footer {
             margin-top: 24px; padding: 20px; text-align: center; color: var(--muted);
             border-top: 1px solid #eee;
         }
 
+/* ==== HAMBURGER ATTENTION BADGE + PULSE ==== */
+.hamburger-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 10px;
+  height: 10px;
+  background: #ff3b30;
+  border: 2px solid white;
+  border-radius: 50%;
+  animation: pulse-badge 2s infinite;
+}
+.hamburger.is-new::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 14px;
+  height: 14px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: pulse-glow 2s infinite;
+  pointer-events: none;
+}
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.4); }
+}
+
+.user-greeting {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--green);
+  font-size: 1rem;
+  cursor: pointer;
+  margin-left: 20px;
+}
+.user-avatar {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--green);
+}
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.online-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background: #28A745;
+  border: 2px solid white;
+  border-radius: 50%;
+}
+.dropdown-arrow {
+  font-size: 0.7em;
+  transition: transform 0.2s;
+}
+
+/* Mobile: make it smaller */
+@media (max-width: 480px) {
+  .user-greeting { font-size: 0.95rem; margin-left: 10px; }
+  .user-avatar { width: 28px; height: 28px; }
+}
+
+/* Hide login buttons when user is logged in */
+.auth-btn-hidden {
+  display: none !important;
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  min-width: 160px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  padding: 8px 0;
+  display: none;
+  z-index: 1000;
+  border: 1px solid #eee;
+  margin-top: 8px;
+}
+.profile-dropdown a {
+  display: block;
+  padding: 12px 20px;
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+}
+.profile-dropdown a:hover {
+  background: #f8fff8;
+  color: var(--green);
+}
+.profile-dropdown {
+  display: none;
+}
+/* Mobile fix — tap works */
+@media (max-width: 768px) {
+  .user-greeting:active .profile-dropdown {
+    display: block;
+  }
+}
 
 </style>
 </head>
@@ -1087,7 +1200,21 @@ footer {
     <img src="./favicon.ico" alt="TaxC Logo" class="logo-icon">
     TaxC
   </a>
-  <span id="userDisplay" style="display:none; color:#28A745; font-weight:600; margin-left:15px; font-size:1rem;"></span>
+
+  <!-- This whole block only shows when logged in -->
+  <div id="user-greeting" class="user-greeting" style="display:none;">
+    <div class="user-avatar">
+      <img id="user-photo" src="" alt="Profile">
+      <span class="online-dot"></span>
+    </div>
+    <span id="userDisplay">Hi, Name!</span>
+    <span class="dropdown-arrow">▼</span>
+
+    <!-- Dropdown MUST be inside user-greeting -->
+    <div class="profile-dropdown">
+      <a href="#" id="logout-link">Logout</a>
+    </div>
+  </div>
 </div>
         
         <!-- DESKTOP NAV -->
@@ -1117,9 +1244,13 @@ footer {
             <button class="cta-small" id="auth-button"></button>
         </nav>
 
-        <button id="hamburger" class="hamburger" onclick="toggleMobileMenu()" type="button">
-            <span class="hamburger-box"><span class="hamburger-inner"></span></span>
-        </button>
+        <button id="hamburger" class="hamburger is-new" onclick="toggleMobileMenu()" type="button" aria-label="Menu">
+  <span class="hamburger-box">
+    <span class="hamburger-inner"></span>
+  </span>
+  <!-- This little dot only shows the first time -->
+  <span class="hamburger-badge"></span>
+</button>
 
         <!-- MOBILE MENU -->
         <nav id="menu" class="mobile-menu nav-dropdown-menu">
@@ -1443,8 +1574,17 @@ footer {
   </div>
 </div>
 
-    <footer class="fade-in">
-    &copy; 2025 TaxC — Made with care. | <a href="mailto:support@taxc.com.ng">support@taxc.com.ng</a>
+    <footer class="main-footer fade-in">
+  <div class="footer-links">
+    <a href="index.html#calculator">Calculator</a>
+    <a href="faq.html">FAQ</a>
+    <a href="ebooks.html">Ebooks & Guides</a>
+    <a href="index.html">Connect with a Tax Agent</a>
+    <a href="mailto:support@taxc.com.ng">support@taxc.com.ng</a>
+  </div>
+  <div class="footer-copyright">
+    © 2025 TaxC — Made with care.
+  </div>
 </footer>
 
     <script>
@@ -2960,7 +3100,8 @@ window.addEventListener('beforeunload', saveChat);
 
         </script>
         <script src="scripts/scroll-animation.js"></script>
-        <script type="module">
+  
+  <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
@@ -2976,31 +3117,67 @@ window.addEventListener('beforeunload', saveChat);
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
-  const $ = id => document.getElementById(id);
-
   onAuthStateChanged(auth, user => {
-    const loginBtns = document.querySelectorAll('#auth-button, #auth-button-mobile');
-    const userDisplay = $('userDisplay');
+    const greeting     = document.getElementById('user-greeting');
+    const userDisplay  = document.getElementById('userDisplay');
+    const userPhoto    = document.getElementById('user-photo');
+    const loginButtons = document.querySelectorAll('#auth-button, #auth-button-mobile');
 
     if (user && user.displayName) {
+      // LOGGED IN → show avatar + name, hide login buttons
       const firstName = user.displayName.split(' ')[0];
       userDisplay.textContent = `Hi, ${firstName}!`;
-      userDisplay.style.display = 'inline';
+      userPhoto.src = user.photoURL || `https://ui-avatars.com/api/?name=${firstName}&background=28A745&color=fff&bold=true&size=64`;
+      greeting.style.display = 'flex';
+      loginButtons.forEach(btn => btn.classList.add('auth-btn-hidden'));
     } else {
-      userDisplay.style.display = 'none';
-    }
-
-    loginBtns.forEach(btn => {
-      if (user) {
-        btn.innerHTML = 'Logout';
-        btn.onclick = () => signOut(auth).then(() => location.reload());
-      } else {
+      // NOT LOGGED IN → hide greeting, show login buttons
+      greeting.style.display = 'none';
+      loginButtons.forEach(btn => {
+        btn.classList.remove('auth-btn-hidden');
         btn.innerHTML = 'Login';
         btn.onclick = () => location.href = 'login.html?redirect=' + encodeURIComponent(location.href);
-      }
-    });
+      });
+    }
+  });
+
+  // Logout from the profile dropdown only
+  document.getElementById('logout-link')?.addEventListener('click', e => {
+    e.preventDefault();
+    signOut(auth).then(() => location.reload());
   });
 </script>
+<script>
+// FINAL: Click-to-toggle dropdown + arrow rotation (ONE script only!)
+const userGreeting = document.getElementById('user-greeting');
+
+if (userGreeting) {
+  const dropdown = userGreeting.querySelector('.profile-dropdown');
+  const arrow    = userGreeting.querySelector('.dropdown-arrow');
+
+  userGreeting.addEventListener('click', function(e) {
+    const isOpen = dropdown.style.display === 'block';
+    dropdown.style.display = isOpen ? 'none' : 'block';
+    arrow.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+    e.stopPropagation();
+  });
+
+  // Close + reset arrow when clicking outside
+  document.addEventListener('click', () => {
+    dropdown.style.display = 'none';
+    arrow.style.transform = 'rotate(0deg)';
+  });
+
+  // Optional: close with Escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      dropdown.style.display = 'none';
+      arrow.style.transform = 'rotate(0deg)';
+    }
+  });
+}
+</script>
+
 <script>
 // ==================== PAYSTACK INTEGRATION – WORKING 2025 VERSION ====================
 const PAYSTACK_PUBLIC_KEY = "pk_test_bc9c09e6d51c4e025bb44c6c57ad1c1144386b55";
@@ -3088,6 +3265,18 @@ async function verifyPaystackPayment(reference, email) {
 
 // Attach the handler
 document.querySelector('.report-btn').onclick = payWithPaystack;
+</script>
+<script>
+// Remove the "new visitor" badge after they open the menu once
+document.getElementById('hamburger')?.addEventListener('click', function() {
+  this.classList.remove('is-new');
+  // Optional: remember they’ve seen it (so it doesn’t come back on refresh)
+  localStorage.setItem('taxc_menu_seen', 'true');
+});
+// Hide the badge if they already opened the menu before
+if (localStorage.getItem('taxc_menu_seen') === 'true') {
+  document.getElementById('hamburger')?.classList.remove('is-new');
+}
 </script>
     </body>
 </html>
