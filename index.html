@@ -1186,13 +1186,9 @@ footer {
   }
 }
 
-.pdf-tooltip {
-  cursor: help;
-  position: relative;
-  display: inline-block;
-}
-
 .pdf-tooltip .tooltip-icon {
+  cursor: pointer;
+  position: relative;
   display: inline-block;
   width: 20px;
   height: 20px;
@@ -1205,60 +1201,58 @@ footer {
   line-height: 20px;
   margin-left: 6px;
   margin-right: 4px;
-  transition: all 0.2s;
+
+  /* ←←← SUPERCHARGED GLOW STARTS HERE ←←← */
+  box-shadow: 
+    0 0 12px rgba(40, 167, 69, 0.9),
+    0 0 24px rgba(40, 167, 69, 0.6),
+    inset 0 0 8px rgba(255,255,255,0.2);   /* tiny inner shine */
+  animation: strongPulse 2.4s infinite ease-in-out;
+  transition: all 0.25s;
+  border: 1px solid rgba(40, 167, 69, 0.4); /* subtle border for extra pop */
 }
 
-.pdf-tooltip:hover .tooltip-icon {
+.pdf-tooltip .tooltip-icon:hover,
+.pdf-tooltip .tooltip-icon:active {
   background: #218838;
-  transform: scale(1.15);
+  box-shadow: 
+    0 0 20px rgba(40, 167, 69, 1),
+    0 0 40px rgba(40, 167, 69, 0.8),
+    0 0 60px rgba(40, 167, 69, 0.4);
+  transform: scale(1.25);
+  animation: none; /* stop pulsing while hovered so it feels responsive */
 }
 
-.pdf-tooltip .tooltiptext {
-  visibility: hidden;
-  width: 320px;
-  background-color: #1a1a1a;
-  color: #fff;
-  text-align: left;
-  border-radius: 8px;
-  padding: 14px 16px;
-  position: absolute;
-  z-index: 1000;
-  bottom: 140%;
-  left: 50%;
-  margin-left: -160px;
-  opacity: 0;
-  transition: opacity 0.3s;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-  border: 1px solid #333;
-}
-
-.pdf-tooltip .tooltiptext::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -8px;
-  border: 8px solid transparent;
-  border-top-color: #1a1a1a;
-}
-
-.pdf-tooltip:hover .tooltiptext {
-  visibility: visible;
-  opacity: 1;
-}
-
-/* Mobile: Make tooltip appear on tap */
-@media (max-width: 768px) {
-  .pdf-tooltip .tooltiptext {
-    width: 86vw;          /* slightly thinner than 90vw */
-    max-width: 300px;     /* optional: caps it so it never gets too wide */
-    left: 50%;
-    margin-left: -43vw;   /* half of 86vw */
-    font-size: 1rem;
+/* Stronger, faster pulse — really grabs attention */
+@keyframes strongPulse {
+  0%, 100% {
+    box-shadow: 
+      0 0 12px rgba(40, 167, 69, 0.9),
+      0 0 24px rgba(40, 167, 69, 0.6),
+      inset 0 0 8px rgba(255,255,255,0.2);
+  }
+  50% {
+    box-shadow: 
+      0 0 20px rgba(40, 167, 69, 1),
+      0 0 40px rgba(40, 167, 69, 0.9),
+      0 0 60px rgba(40, 167, 69, 0.5),
+      inset 0 0 12px rgba(255,255,255,0.3);
   }
 }
+
+/* Hide on desktop by default */
+.mobile-only-pdf-link {
+  display: none;
+}
+
+/* Show only on mobile */
+@media (max-width: 768px) {
+  .mobile-only-pdf-link {
+    display: inline;
+  }
+}
+
+
 </style>
 </head>
 <body>
@@ -1489,17 +1483,21 @@ footer {
 <div class="report-section">
   <p class="report-prompt" style="font-size:1.1rem; margin-bottom:18px;">
     Why pay ₦900
-    <span class="tooltip pdf-tooltip"> 
+    <span class="tooltip pdf-tooltip">
+      
       <span class="tooltip-icon">?</span>
       <span class="tooltiptext pdf-tooltiptext">
         <strong>What’s different from the tax summary?</strong><br><br>
         The free result shows the number.
         The detailed report explains why, how, and what to do next.<br>
         Most users give feedback that they used the detailed report to understand their taxes from scratch, and can now file confidently without hiring an accountant. 
-        <a href="#" onclick="scrollToWhyReport(event); return false;" 
-           style="color: #28A745; font-weight: 600; text-decoration: underline; cursor: pointer;">
-          PDF report content.
-        </a>
+        <a href="#" 
+   class="mobile-only-pdf-link"
+   onclick="scrollToWhyReport(event); return false;"
+   style="color: #28A745; font-weight: 600; text-decoration: underline; cursor: pointer;">
+  PDF report content.
+</a>
+
       </span>
     </span>
   </p>
