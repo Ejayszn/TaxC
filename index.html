@@ -1231,6 +1231,7 @@ footer {
                         <li>Step-by-step: How your tax was calculated (we do the math!)</li>
                         <li>How much tax you <em>really</em> owe</li>
                         <li>Monthly breakdown (so you can plan)</li>
+                        <li>Tips on legally minimizing your tax next year</li>
                         <li>Any tax already paid</li>
                         <li><strong>Direct link to pay your state IRS</strong></li>
                         <li>How & when to file your tax</li>
@@ -1266,6 +1267,7 @@ footer {
                         <li>Step-by-step: How your tax was calculated (we do the math!)</li>
                         <li>How much tax you <em>really</em> owe</li>
                         <li>Monthly breakdown (so you can plan)</li>
+                        <li>Tips on legally minimizing your tax next year</li>
                         <li>Any tax already paid</li>
                         <li><strong>Direct link to pay your state IRS</strong></li>
                         <li>How & when to file your tax</li>
@@ -2682,10 +2684,10 @@ totalWhtCredit += wht;
     };
 }
 
-function generatePDFReport() {
+async function generatePDFReport() {
     if (!window.lastCalc) {
         alert('Please calculate tax first!');
-        return;
+        return null;
     }
 
     const { jsPDF } = window.jspdf;
@@ -3270,8 +3272,10 @@ doc.text('Team TaxC (with plenty love and cactus)', margin, y);
 addFooter(6);
 
 // SAVE
-doc.save(`TaxC_Report_${new Date().toISOString().slice(0,10)}.pdf`);
-document.getElementById('msg').innerHTML = 'Premium report downloaded! Your customers go love am!';
+
+const pdfBlob = doc.output('blob');           // This creates the file in memory
+    lastGeneratedPdfBlob = pdfBlob;               // Store it globally
+    return pdfBlob;                               // Return it so the caller can download immediately
 }
 
     function resetForm() {
@@ -3544,8 +3548,20 @@ if (userGreeting) {
 </script>
 
 <script>
+function triggerDownload(blob) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `TaxC_Report_${new Date().toISOString().slice(0,10)}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
 // ==================== PAYSTACK V2 INTEGRATION – ONLY FRONTEND CODE ====================
 const PAYSTACK_PUBLIC_KEY = "pk_test_bc9c09e6d51c4e025bb44c6c57ad1c1144386b55";
+let lastGeneratedPdfBlob = null;
 let paymentInProgress = false;
 
 function payWithPaystack() {
@@ -3577,13 +3593,25 @@ function payWithPaystack() {
         amount: 90000,
         currency: "NGN",
         ref: 'TAXC_' + Math.random().toString(36).substr(2, 9) + Date.now(),
-        callback: (response) => {
-  console.log("Payment successful! Reference:", response.reference);
-  document.getElementById('msg').innerHTML = 'Payment successful! Generating report...';
-  const btn = document.querySelector('.report-btn');
-  btn.textContent = "Download PDF Again";
-  btn.onclick = generatePDFReport;
-  generatePDFReport();  // PDF DOWNLOADS IMMEDIATELY
+        callback: async (response) => {
+    console.log("Payment successful! Reference:", response.reference);
+    document.getElementById('msg').innerHTML = 'Payment successful! Generating report...';
+
+    const btn = document.querySelector('.report-btn');
+    btn.disabled = true;
+    btn.textContent = "Generating PDF...";
+
+    try {
+        const blob = await generatePDFReport();
+        if (blob) triggerDownload(blob);           // First download
+    } catch (err) {
+        console.error(err);
+        alert("Failed to generate PDF. Please try again.");
+    }
+
+    btn.textContent = "Download PDF Again";
+    btn.disabled = false;
+    btn.onclick = () => lastGeneratedPdfBlob && triggerDownload(lastGeneratedPdfBlob);
 },
     });
 
@@ -3620,8 +3648,10 @@ async function verifyPaystackPayment(reference) {
         if (data.status === true) {
             document.getElementById('msg').innerHTML = 'Payment successful! Generating report...';
             btn.textContent = "Download PDF Again";
-            btn.onclick = generatePDFReport;
-            generatePDFReport();
+btn.disabled = false;
+btn.onclick = () => lastGeneratedPdfBlob && triggerDownload(lastGeneratedPdfBlob);
+await generatePDFReport(); // still generate once for immediate download
+if (lastGeneratedPdfBlob) triggerDownload(lastGeneratedPdfBlob);
         } else {
             throw new Error(data.message || "Payment not verified");
         }
