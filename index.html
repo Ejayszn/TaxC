@@ -1186,6 +1186,79 @@ footer {
   }
 }
 
+.pdf-tooltip {
+  cursor: help;
+  position: relative;
+  display: inline-block;
+}
+
+.pdf-tooltip .tooltip-icon {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background: #28A745;
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 20px;
+  margin-left: 6px;
+  margin-right: 4px;
+  transition: all 0.2s;
+}
+
+.pdf-tooltip:hover .tooltip-icon {
+  background: #218838;
+  transform: scale(1.15);
+}
+
+.pdf-tooltip .tooltiptext {
+  visibility: hidden;
+  width: 320px;
+  background-color: #1a1a1a;
+  color: #fff;
+  text-align: left;
+  border-radius: 8px;
+  padding: 14px 16px;
+  position: absolute;
+  z-index: 1000;
+  bottom: 140%;
+  left: 50%;
+  margin-left: -160px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  border: 1px solid #333;
+}
+
+.pdf-tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -8px;
+  border: 8px solid transparent;
+  border-top-color: #1a1a1a;
+}
+
+.pdf-tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Mobile: Make tooltip appear on tap */
+@media (max-width: 768px) {
+  .pdf-tooltip .tooltiptext {
+    width: 90vw;
+    left: 50%;
+    margin-left: -45vw;
+    font-size: 1rem;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1413,20 +1486,28 @@ footer {
             When you calculate your tax, the detailed summary and breakdown of your estimated annual tax would appear here.
         </div>
         <div id="taxSummary"></div>
-        <div class="report-section">
-            <p class="report-prompt">
-    Get a detailed 
-    <a href="#" onclick="scrollToWhyReport(event); return false;" 
+            <div class="report-section">
+  <p class="report-prompt" style="font-size:1.1rem; margin-bottom:18px;">
+    Why pay
+    <span class="tooltip pdf-tooltip">
+      ₦900
+      <span class="tooltip-icon">?</span>
+      <span class="tooltiptext pdf-tooltiptext">
+        <strong>What’s different from the tax summary?</strong><br><br>
+        The free result shows the number.
+The detailed report explains why, how, and what to do next.<br>
+Most users give feedback that they used the detailed report to understand their taxes from scratch, and can now file confidently without hiring an accountant. <a href="#" onclick="scrollToWhyReport(event); return false;" 
        style="color: #28A745; font-weight: 600; text-decoration: underline; cursor: pointer;">
-        PDF report
-    </a> 
-    for only ₦900:
-</p>
+        PDF report content.
+    </a>
+      </span>
+    </span>
+  </p>
 
-<div class="input-group-inline">
-  <button id="paystack-btn" class="report-btn">Pay ₦900 & Download PDF</button>
+  <div class="input-group-inline">
+    <button id="paystack-btn" class="report-btn">Pay ₦900 & Download PDF</button>
+  </div>
 </div>
-        </div>
     </div>
 </section>
     </main>
@@ -1475,14 +1556,16 @@ footer {
         <label>Gross Monthly Income Breakdown (₦)</label>
         <div class="monthly-income-row">
           <!-- JAN -->
-          <div class="input-group">
-            <label for="jan_INDEX">Jan</label>
-            <input type="text" id="jan_INDEX" data-month="Jan"
-                   oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
-            <div class="clickable-tooltip">
-              <div class="tooltip-popup">Total income earned per month before taxes and deductions.</div>
-            </div>
-          </div>
+      <div class="input-group">
+        <label for="jan_INDEX">Jan</label>
+        <div class="tooltip">
+          <input type="text" 
+                 id="jan_INDEX" 
+                 data-month="Jan"
+                 oninput="updateFormattedValue(this); updateMonthlyTotal(this); markManualEdit(this)">
+          <span class="tooltiptext">Total income earned in January before taxes and deductions.</span>
+        </div>
+      </div>
           <!-- FEB -->
           <div class="input-group">
             <label for="feb_INDEX">Feb</label>
