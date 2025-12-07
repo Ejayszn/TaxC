@@ -1252,13 +1252,13 @@ footer {
 /* Mobile: Make tooltip appear on tap */
 @media (max-width: 768px) {
   .pdf-tooltip .tooltiptext {
-    width: 90vw;
+    width: 86vw;          /* slightly thinner than 90vw */
+    max-width: 300px;     /* optional: caps it so it never gets too wide */
     left: 50%;
-    margin-left: -45vw;
+    margin-left: -43vw;   /* half of 86vw */
     font-size: 1rem;
   }
 }
-
 </style>
 </head>
 <body>
@@ -1486,20 +1486,20 @@ footer {
             When you calculate your tax, the detailed summary and breakdown of your estimated annual tax would appear here.
         </div>
         <div id="taxSummary"></div>
-            <div class="report-section">
+<div class="report-section">
   <p class="report-prompt" style="font-size:1.1rem; margin-bottom:18px;">
-    Why pay
-    <span class="tooltip pdf-tooltip">
-      ₦900
+    Why pay ₦900
+    <span class="tooltip pdf-tooltip"> 
       <span class="tooltip-icon">?</span>
       <span class="tooltiptext pdf-tooltiptext">
         <strong>What’s different from the tax summary?</strong><br><br>
         The free result shows the number.
-The detailed report explains why, how, and what to do next.<br>
-Most users give feedback that they used the detailed report to understand their taxes from scratch, and can now file confidently without hiring an accountant. <a href="#" onclick="scrollToWhyReport(event); return false;" 
-       style="color: #28A745; font-weight: 600; text-decoration: underline; cursor: pointer;">
-        PDF report content.
-    </a>
+        The detailed report explains why, how, and what to do next.<br>
+        Most users give feedback that they used the detailed report to understand their taxes from scratch, and can now file confidently without hiring an accountant. 
+        <a href="#" onclick="scrollToWhyReport(event); return false;" 
+           style="color: #28A745; font-weight: 600; text-decoration: underline; cursor: pointer;">
+          PDF report content.
+        </a>
       </span>
     </span>
   </p>
