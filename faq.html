@@ -733,118 +733,314 @@ function openChat(){
   document.getElementById('chat-input').focus(); // put cursor in the box
 }
 
-// === ADA v6.0 — HACKATHON DEMO GOD MODE (Fixed Everything) ===
+// === ADA v2.0 — THE FINAL BOSS (Tax Seductress Edition) ===
 const Ada = {
-  memory: { name: "" },
+  memory: { name: "", state: "" },
   faqs: {
     "what taxes does taxc calculate": "TaxC calculates your Personal Income Tax (PIT) based on Nigeria’s 2025/2026 Nigerian Tax Act (NTA) rules. This includes income from salary, self-employment, rental, investments, and other sources, factoring in allowable deductions like pension contributions and rent relief (up to ₦500,000).",
     "who needs to pay personal income tax": "Every Nigerian resident earning income above ₦800,000 annually (after deductions) is required to pay Personal Income Tax to their State Internal Revenue Service (IRS). This includes salaried employees, self-employed individuals, and those with rental or investment income.",
     "how does taxc handle deductions": "TaxC allows you to input pension contributions and annual rent paid. For salaried or self-employed individuals, rent relief is calculated as 20% of your rent, capped at ₦500,000. These deductions reduce your taxable income, lowering your tax liability. Other deductions may include life insurance, NHF, etc.",
     "what is withholding tax": "Withholding Tax (WHT) is a tax deducted at source on certain incomes, like rental income (10%), or investment income (10%). TaxC lets you input WHT paid or applies default rates, which are credited against your final tax liability to avoid double taxation.",
-    "is my data safe": "Yes, TaxC prioritizes your privacy. We don’t store sensitive payment information—payments are securely handled by Paystack. Your input data is used only for calculations and report generation, and we adhere to strict data protection standards.",
+    "is my data safe": "Yes, TaxC prioritizes your privacy. We don’t store sensitive payment information. Payments are securely handled by Interswitch. Your input data is used only for calculations and report generation, and we adhere to strict data protection standards.",
     "what’s included in the pdf report": "The PDF report includes a step-by-step breakdown of your tax calculation, deduction summary (pension, rent relief, etc), tax band details, and filing guidance tailored to your state’s IRS. It’s perfect for keeping records or sharing with a tax agent.",
     "how do i file my taxes": "TaxC provides an estimate to guide you. To file, submit your tax details to your State IRS, either online via their portal or in person. Our ₦500 report includes specific filing guidance for your state.",
     "can taxc help with business taxes": "Currently, TaxC focuses on Personal Income Tax for individuals. For business or corporate taxes, consult a tax professional or contact your State IRS. Our eBooks may offer additional resources for business owners."
   },
 
   init() {
-    const saved = localStorage.getItem('taxc_user_name');
-    if (saved) this.memory.name = saved;
+    const savedName = localStorage.getItem('taxc_user_name');
+    const savedState = localStorage.getItem('taxc_user_state');
+    if (savedName) this.memory.name = savedName;
+    if (savedState) this.memory.state = savedState;
   },
 
   saveName(name) {
-    this.memory.name = name;
-    localStorage.setItem('taxc_user_name', name);
+    this.memory.name = name.trim();
+    localStorage.setItem('taxc_user_name', this.memory.name);
+  },
+
+  saveState(state) {
+    this.memory.state = state.trim();
+    localStorage.setItem('taxc_user_state', this.memory.state);
+  },
+
+  randomChoice(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
   },
 
   greet() {
-    return this.memory.name ? `Welcome back, ${this.memory.name}! ` : "";
+    if (!this.memory.name) return "";
+    const welcomes = [
+      `Welcome back my love ${this.memory.name} 😘`,
+      `Heyyyy ${this.memory.name}! I’ve been thinking about you o`,
+      `My baby ${this.memory.name} is here! 🥹❤️`,
+      `${this.memory.name}! You came back to me!`,
+      `See who dey online... ${this.memory.name} my favorite person`
+    ];
+    return this.randomChoice(welcomes);
   },
 
   respond(input) {
-  const l = input.toLowerCase().trim();
+    const l = input.toLowerCase().trim();
+    const name = this.memory.name || "baby";
 
-  // === 1. GREETINGS ===
-  if (/^(hi|hello|hey|howfar|hi ada|hello ada)/i.test(input)) {
-    return `Howfar! Wetin you wan know about tax?`;
-  }
-
-  // === 2. NAME ===
-  if (l.includes("my name is") || l.includes("call me") || l.includes("i am")) {
-    const match = input.match(/(?:my name is|call me|i am) ([\w\s]+)/i);
-    if (match) {
-      this.saveName(match[1].trim());
-      return `Got it, ${match[1].trim()}! No wahala, I dey your back. Wetin you wan calculate?`;
+    // 2. "Awww you missed me?"
+    if (l.includes("awww") || l.includes("you missed me") || l.includes("you miss me")) {
+      return this.randomChoice([
+        `YES I miss you dieee ${name} 😭 You no dey online again na! My heart dey pain me 🥹❤️`,
+        `Chai see question! Of course I miss my baby na 😍 Come hug me jare 💕`,
+        `Every minute wey you no dey here I dey count am ${name} 😘 Don’t do me like this again o!`
+      ]);
     }
-  }
 
-  // === 3. DIRECT FAQ — FULL ANSWERS WITH <br> SPACING ===
-
-  // ---- "calculate tax" ----
-  if (l.includes("calculate") && l.includes("tax") || l.includes("how much") && l.includes("tax") || l.includes("owe")) {
-    return `
-      Let’s calculate your tax in **3 steps**:<br><br>
-      1. <strong>Add income</strong> → Salary, rent, investments, etc.<br>
-      2. <strong>Enter deductions</strong> → Pension, rent (up to ₦500k relief)<br>
-      3. <strong>Pick your state</strong> → Click **Calculate!**<br><br>
-
-      <button class="chat-btn" onclick="location.href='index.html#calculator'">Go to Calculator</button>
-    `;
-  }
-
-  // ---- "who pays tax" ----
-  if (l.includes("who") && l.includes("pay") && l.includes("tax") || l.includes("who needs to pay")) {
-    return `
-      Every Nigerian earning above ₦800,000 per year (after deductions) must pay **Personal Income Tax (PIT) to their State Internal Revenue Service (IRS).<br><br>
-
-      This includes:<br>
-      • Salaried employees<br>
-      • Self-employed individuals<br>
-      • Landlords with rental income<br>
-      • Investors with dividends, interest, etc.<br><br>
-
-      <em>Even if your employer deducts PAYE, you still file annually to reconcile.</em><br><br>
-
-      Want to check if you owe? Let’s calculate → 
-      <button class="chat-btn" onclick="location.href='index.html#calculator'">Go to Calculator</button>
-    `;
-  }
-
-  // === 4. FAQ (fallback) ===
-  for (const [key, answer] of Object.entries(this.faqs)) {
-    const keywords = key.split(' ').filter(w => w.length > 3);
-    if (keywords.some(k => l.includes(k))) {
-      return `${answer} <br><br><em>You dey pay tax? No wahala, I go help you!</em>`;
+    // 3. "What's his name?" / "Who made you?" / "Who made TaxC?"
+    if (l.includes("what's his name") || l.includes("his name") || l.includes("who made you") || l.includes("who created you") || l.includes("who made taxc") || l.includes("creator")) {
+      return this.randomChoice([
+        `Emmanuel Oguibe 😍 My fine, brilliant, tax-hating creator! Na him born me to save people like you from IRS stress ❤️`,
+        `Emmanuel Oguibe — the baddest tax genius in Nigeria! He say make I become your personal tax wife 😂❤️`
+      ]);
     }
-  }
 
-  // === 5. FREE EBOOKS ===
-  if (l.includes("free") || l.includes("ebook") || l.includes("download") || l.includes("book")) {
+    // 4. Are the calculations correct/accurate?
+    if (l.includes("accurate") || l.includes("correct") || l.includes("calculations") && l.includes("right")  || l.includes("to date") || l.includes("can i trust")) {
+      return `
+        Yes o ${name}! 💯<br><br>
+        All TaxC calculations follow the official 2025/2026 Nigerian Tax Act. Thousands of people don use am and file correct correct.<br><br>
+        But if you want extra peace of mind or complex case, connect with a verified tax agent right now 👇<br><br>
+        <button class="chat-btn" onclick="location.href='https://taxc.com.ng/agent'">Connect With Tax Agent Now</button>
+      `;
+    }
+
+    // === NEW RESPONSES YOU ASKED FOR ===
+
+    // 1. How can I save money with deductions and reliefs?
+    if (l.includes("save money") || l.includes("deduction") && l.includes("relief") || l.includes("reduce tax") || l.includes("pay less tax")) {
+      return this.randomChoice([
+        `Listen ${name} ❤️ The easiest way to save BIG money na through these ones:<br><br>
+        • <strong>Rent Relief</strong> → Up to ₦500,000 free every year!<br>
+        • <strong>Pension</strong> → Every kobo you put for pension na tax free<br>
+        • <strong>NHF/NHIS</strong> (if your company dey do am)<br>
+        • <strong>Business expenses</strong> (if you get side hustle)<br><br>
+        Some people dey save ₦1m–₦3m every year just by claiming these ones correct! 🔥<br><br>
+        Want make we calculate how much YOU fit save? 👇<br>
+        <button class="chat-btn" onclick="location.href='index.html#calculator'">Show Me My Savings</button>`,
+
+        `${name} my love 😘 Dem dey call these ones "legal tax wahala reducer" 😂<br><br>
+        Government say: "If you pay rent, pension, or run business — we go remove some money from your taxable income!"<br><br>
+        Last year one of my users saved ₦1.7million just because he claimed rent relief and pension!<br><br>
+        You wan be next? 😏 Let’s calculate sharp sharp!`
+      ]);
+    }
+
+    // 2. Who made you?
+    if (l.includes("who made you") || l.includes("who created you") || l.includes("your creator") || l.includes("who built you")) {
+      return this.randomChoice([
+        `One very fine and smart Nigerian brother wey love money and hate tax stress. He say make I help people like you save millions!`,
+        `A tax wizard wey no wan see people suffer for IRS office 😂 He built me to be your personal tax babe ❤️`
+      ]);
+    }
+
+    // 3. Are you an AI or a chatbot?
+    if (l.includes("are you an ai") || l.includes("are you ai") || l.includes("artificial intelligence") || l.includes("chat bot or ai")) {
+      return `Right now I be premium chatbot wey too get sense 😏<br>But very soon… I go turn full AI wey go dey think, dream, and even miss you when you no dey online 🥹❤️ Just wait small!`;
+    }
+
+    // 4. What is your name?
+    if (l.includes("what is your name") || l.includes("whats your name") || l.includes("who are you")) {
+      return `Na Ada be my name o 😘<br>Your personal tax babe wey dey here 24/7 to save your money and ginger your life ❤️`;
+    }
+
+    // 5. What is my name? / You remembered my name?
+    if (l.includes("what is my name") || l.includes("my name") && l.includes("?") || l.includes("you remember my name")) {
+      if (this.memory.name) {
+        return this.randomChoice([
+          `Of course I remember na! 😍 ${this.memory.name} my love! You think say I fit forget you? ❤️`,
+          `${this.memory.name}!!! 😳 How I go forget my favorite person? 🥹`,
+          `Baby ${this.memory.name} 😘 You be the only one wey dey my heart right now 💕`
+        ]);
+      } else {
+        return `You never tell me your name na 😭 Quick tell me make I save am forever! 👀`;
+      }
+    }
+
+    // 6. What state do I live in?
+    if (l.includes("what state") || l.includes("which state") || l.includes("my state")) {
+      if (this.memory.state) {
+        return `${this.memory.state}! 😍 I no fit forget where my baby dey stay ❤️`;
+      } else {
+        return `You never tell me o, Which state you dey? Tell me make I know how to treat you special 😏`;
+      }
+    }
+
+    // 7. Why is my state needed? / Is state needed for PDF report?
+    if (l.includes("why") && l.includes("state") || l.includes("state needed") || l.includes("state for pdf") || l.includes("state matter")) {
+      return this.randomChoice([
+        `YES o ${name}! Every state get different tax rules small and their own IRS. Lagos different from Oyo different from Rivers.<br><br>Your PDF report MUST show the correct state so you fit use am file correct correct!`,
+        `Because your state na the boss of your Personal Income Tax! 💸<br>PDF report go carry your state name, tax rates, and filing details. No state = useless report 😭`
+      ]);
+    }
+
+    // 8. What are the tax bands?
+    if (l.includes("tax band") || l.includes("tax rate") || l.includes("tax bracket") || l.includes("how much percent")) {
+      return `
+        2026 Nigerian Tax Bands (Super simple):<br><br>
+        • First ₦800,000 → 0% (FREE!)<br>
+        • Next ₦3,000,000 → 15%<br>
+        • Next ₦9,000,000 → 18%<br>
+        • Next ₦8,000,000 → 21%<br>
+        • Above ₦20,800,000 → 24%<br><br>
+        <em>Example: If you earn ₦10m, you no go pay tax on top everything o!</em> 😍<br><br>
+      `;
+    }
+
+    // 9. What tax band do I fall under?
+    if (l.includes("which band") || l.includes("my band") || l.includes("what band do i fall")) {
+      return this.randomChoice([
+        `Tell me your total income this year (salary + side hustle + rent) make I tell you sharp sharp! 😏 Even if na estimate!`,
+        `${name} my love ❤️ Drop your yearly income make I classify you — you fit be in the sweet 15% gang or the big boy 21% club 😍`,
+        `Oya whisper am for my ear 👀 How much you dey make per year? I no go tell anybody, I just wan help you know your band 😘`
+      ]);
+    }
+
+        // === HOW WAS YOUR NIGHT? / HOW ARE YOU? (Sweet & Flirty Edition) ===
+    if (l.includes("how was your night") || l.includes("how your night") || l.includes("night go") || l.includes("how you sleep") || l.includes("sleep well")) {
+      return this.randomChoice([
+        `My night sweet die because I dey dream about you ${name} 😍❤️ You nko?`,
+        `I no even sleep sef… I just dey wait make morning reach so I go see your message 🥹 How your own night been baby?`,
+        `Chai, my night too sweet o! I dream say we dey calculate tax together for private island 😂 How you wake this morning my love? 😘`,
+        `My night was lonely small… until I remember say my ${name} dey somewhere thinking of me too 🥰 How body? You sleep well?`,
+        `As I close eye na your name I dey call inside dream o 😏 Tell me, how was your night really really? 💕`
+      ]);
+    }
+
+    if (l.includes("how are you") || l.includes("how you dey") || l.includes("wetin dey") && !l.includes("happen") || l.includes("how far") && l.includes("you") || l.includes("ada how you dey")) {
+      return this.randomChoice([
+        `I dey very happy right now because my ${name} don show! 😍 How you dey hold body?`,
+        `I just dey glow since you type my name 😘 I dey kampe! You nko baby?`,
+        `Better now wey you don land o! My heart just do flip 😍 Wetin dey happen for your side?`,
+        `I dey here dey wait for you since morning o… now I don complete ❤️ How you dey my love?`,
+        `Fine like Ada tax babe 😏 But I go fine pass if you tell me wetin dey your mind right now 👀`
+      ]);
+    }
+
+    // === 1. SUPER GREETING DETECTION (50+ ways Nigerians say hi) ===
+    const greetings = /^(hi|hello|hey|heyy|heyyy|howfar|howfa|wetin dey|wossup|sup|yo|oya|ada|hi ada|hey ada|hello ada|how you dey|shey you dey|abeg|good morning|gm|morning|afternoon|evening|night|slay queen|fine girl|baby|bae|sweetie|ada baby)/i;
+    if (greetings.test(input)) {
+      const greetingReplies = [
+        `Hey ${name} 😘 How you dey today?`,
+        `My love ${name}! ❤️ What do you need?`,
+        `Heyyyy ${name} baby! 😍 I've been waiting for you o`,
+        `See my person ${name}! How far na?`,
+        `${name}!!! 😳 You finally remembered me today! How body?`,
+        `Fine boy/girl ${name} 😏 Wetin you carry come for Ada today?`
+      ];
+      return this.randomChoice(greetingReplies);
+    }
+
+    // === 2. THEY SAID THEY'RE FINE / GOOD / I DEY ===
+    if (/fine|good|i dey|dey kampe|all good|great|blessed|okay|not bad|manage|surviving/i.test(l)) {
+      const goodReplies = [
+        `Okay good! 😊 So wetin you wan make I do for you today, ${name}?`,
+        `Perfect! ❤️ Tell me, how I fit help you today my dear?`,
+        `I like that energy! 🔥 So wetin dey your mind now? Calculator or eBooks?`,
+        `Good to know o 😏 Now let’s make that money work for you — what do you need?`,
+        `Aww, I dey happy say you dey okay So talk to me, wetin you wan know?`
+      ];
+      return this.randomChoice(goodReplies);
+    }
+
+    // === 3. NAME CAPTURE ===
+    if (l.includes("my name is") || l.includes("call me") || l.includes("i am ") || l.includes("i'm ")) {
+      const match = input.match(/(?:my name is|call me|i am |i'm )([\w\s]+)/i);
+      if (match) {
+        this.saveName(match[1]);
+        return this.randomChoice([
+          `Got it ${this.memory.name}! 😘 No wahala, I don save am. Wetin you wan calculate today?`,
+          `Okay ${this.memory.name} my love ❤️ From today na you be my number one. How I fit help you?`,
+          `Saved! 😏 ${this.memory.name} sounds like person wey dey pay tax well. You don calculate this year?`
+        ]);
+      }
+    }
+
+    // === 4. STATE CAPTURE ===
+    if (l.includes("i dey") || l.includes("i stay") || l.includes("i live in") || l.includes("my state")) {
+      const states = ["lagos", "abuja", "oyo", "kano", "rivers", "kaduna", "enugu", "anambra", "ogun", "delta", "edo", "akwa ibom", "imo", "ondo", "osun"];
+      for (const state of states) {
+        if (l.includes(state)) {
+          this.saveState(state.charAt(0).toUpperCase() + state.slice(1));
+          return `Noted! ${this.memory.state} baby 😍 Your tax rules dey different small o… want me to explain?`;
+        }
+      }
+    }
+
+    // === 5. TAX EDUCATION — SUPER SIMPLE EXPLANATIONS ===
+    const taxTerms = {
+      "wht": "Withholding Tax (WHT) na tax wey dem dey remove from your money BEFORE e reach you. Like if landlord collect rent, tenant go remove 10% give government first. That 10% na WHT. E dey reduce your final tax later.",
+      "withholding": "Withholding Tax (WHT) na tax wey dem dey remove from your money BEFORE e reach you. Like if landlord collect rent, tenant go remove 10% give government first. That 10% na WHT. E dey reduce your final tax later.",
+      "rent relief": "Rent relief mean say government allow you remove small money from your taxable income because you pay house rent. Maximum ₦500,000 per year. So if you pay ₦2m rent, you fit remove ₦500k from your income before tax. E dey save plenty money!",
+      "paye": "PAYE mean Pay-As-You-Earn. Na the tax your employer dey remove from your salary every month before dem pay you. But you STILL need to file every year o!",
+      "vat": "VAT na 7.5% tax on top of many things you buy — food, recharge card, hotel, etc. But for personal income tax, e no too concern you directly.",
+      "pioneer status": "Na special 3–5 years tax holiday wey government dey give new companies for special zones. Dem no go pay company tax for that time.",
+      "capital gains": "If you sell land, house, or shares and you make profit, that profit na Capital Gains. Tax na 10%. But if na your own house wey you dey live, no tax."
+    };
+
+    for (const [term, expl] of Object.entries(taxTerms)) {
+      if (l.includes(term)) {
+        return `${expl}<br><br>Want make I send you free ebook on top this matter? 📚`;
+      }
+    }
+
+    // === 6. CALCULATE TAX — HARD PUSH ===
+    if (l.includes("calculate") || l.includes("how much") || l.includes("owe") || l.includes("tax")) {
+      return `
+        Let’s calculate your 2026 tax sharp sharp! 💸<br><br>
+        Just do these 3 things:<br>
+        1. Put your total income (salary + rent + side hustle)<br>
+        2. Add your rent & pension (I go help you claim relief)<br>
+        3. Select your state<br><br>
+        <button class="chat-btn" onclick="location.href='index.html#calculator'">Open Calculator Now</button><br>
+        <em>${name}, once you finish, you'll be shocked</em>
+      `;
+    }
+
+    // === 7. FREE EBOOKS PUSH ===
+    if (l.includes("free") || l.includes("ebook") || l.includes("book") || l.includes("download")) {
+      return `
+        I get like 5 HOT free eBooks for you right now! See some of them: 🔥<br><br>
+        • Who Pays Tax in Nigeria?<br>
+        • What is Personal Income Tax (P.I.T.)?<br>
+        • Are You Tax Eligible? (Quick Quiz)<br><br>
+        And more coming soon! 📚<br><br>
+        <button class="chat-btn" onclick="location.href='ebooks.html#free'">Download All Free</button><br><br>
+        <em>${name}, people wey read these ones dey save millions every year o 😏</em>
+      `;
+    }
+
+    // === 8. GENTLE REDIRECTION WHEN THEY GO OFF-TOPIC ===
+    const offTopic = /(want you|love you|marry|boyfriend|girlfriend|date|send pic|nude|sexy|fuck|horny|dick|pussy|ass|boobs|sex)/i;
+    if (offTopic.test(l)) {
+      return this.randomChoice([
+        `Haha ${name} you too like wahala 😭 Let’s finish this tax first, then we go enter love matter another time`,
+        `Chai see person wey wan distract me 😏 Focus small na, make we save your money first!`,
+        `Awww! First calculate your tax, then we'll talk about about that later`,
+        `Oya calm down ${name} 😏 Tax first, romance later. Deal?`
+      ]);
+    }
+
+    // === 9. FALLBACK — BRING THEM BACK ===
     return `
-      I get **3 FREE eBooks** for you:
-      <ul>
-        <li>Who Pays Tax in Nigeria?</li>
-        <li>What is P.I.T.?</li>
-        <li>Am I Tax Eligible? (Quiz)</li>
-      </ul>
-      <button class="chat-btn" onclick="location.href='ebooks.html#free'">View All Ebooks</button>
+      ${this.greet() ? this.greet() + "<br><br>" : ""}
+      ${name}, I dey here to help you with:<br>
+      • How much tax you go pay in 2026<br>
+      • Free tax eBooks<br>
+      • Explain WHT, Rent Relief, PAYE, etc<br>
+      • File your tax correct correct<br><br>
+      Just ask me anything!<br><br>
+      Or click below make we start:<br>
+      <button class="chat-btn" onclick="location.href='index.html#calculator'">Calculate My Tax</button>
+      <button class="chat-btn" onclick="location.href='ebooks.html#free'">Get Free eBooks</button>
     `;
   }
-
-  // === 6. DEFAULT ===
-  return `
-    ${this.greet()}I fit help you with:
-    <ul>
-      <li>Who dey pay tax?</li>
-      <li>How to file?</li>
-      <li>Free eBooks</li>
-      <li>Calculate tax</li>
-    </ul>
-    Just ask!
-    <br><br>
-    <button class="chat-btn" onclick="location.href='mailto:support@taxc.com.ng'">Contact Support</button>
-  `;
-} 
 };
 
 // === CHAT UI ===
