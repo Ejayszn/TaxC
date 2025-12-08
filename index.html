@@ -1640,7 +1640,7 @@ footer {
 </template>
 <!-- FLOATING CHAT -->
 <div id="taxc-chat-widget">
-  <div class="chat-launcher" onclick="toggleChat()" aria-label="Chat with TaxC AI">
+  <div class="chat-launcher" onclick="toggleChat()" aria-label="Chat with TaxC Chatbot">
     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
     </svg>
@@ -1648,7 +1648,7 @@ footer {
   </div>
   <div class="chat-window" id="chat-window">
     <div class="chat-header">
-      Ada — TaxC AI
+      Ada — TaxC BOT
       <button class="chat-clear" onclick="clearChat()" title="Clear chat">Clear</button>
       <button class="chat-close" onclick="toggleChat()">×</button>
     </div>
@@ -1670,25 +1670,14 @@ footer {
     <a href="mailto:support@taxc.com.ng">support@taxc.com.ng</a>
   </div>
   <div class="footer-copyright">
-    © 2025 TaxC — Made with care.
+    © 2025 TaxC — Tax clarity & compliance.
   </div>
 </footer>
 
     <script>
     
-// === ADA v2.0 — THE FINAL BOSS (Tax Seductress Edition) ===
 const Ada = {
   memory: { name: "", state: "" },
-  faqs: {
-    "what taxes does taxc calculate": "TaxC calculates your Personal Income Tax (PIT) based on Nigeria’s 2025/2026 Nigerian Tax Act (NTA) rules. This includes income from salary, self-employment, rental, investments, and other sources, factoring in allowable deductions like pension contributions and rent relief (up to ₦500,000).",
-    "who needs to pay personal income tax": "Every Nigerian resident earning income above ₦800,000 annually (after deductions) is required to pay Personal Income Tax to their State Internal Revenue Service (IRS). This includes salaried employees, self-employed individuals, and those with rental or investment income.",
-    "how does taxc handle deductions": "TaxC allows you to input pension contributions and annual rent paid. For salaried or self-employed individuals, rent relief is calculated as 20% of your rent, capped at ₦500,000. These deductions reduce your taxable income, lowering your tax liability. Other deductions may include life insurance, NHF, etc.",
-    "what is withholding tax": "Withholding Tax (WHT) is a tax deducted at source on certain incomes, like rental income (10%), or investment income (10%). TaxC lets you input WHT paid or applies default rates, which are credited against your final tax liability to avoid double taxation.",
-    "is my data safe": "Yes, TaxC prioritizes your privacy. We don’t store sensitive payment information. Payments are securely handled by Interswitch. Your input data is used only for calculations and report generation, and we adhere to strict data protection standards.",
-    "what’s included in the pdf report": "The PDF report includes a step-by-step breakdown of your tax calculation, deduction summary (pension, rent relief, etc), tax band details, and filing guidance tailored to your state’s IRS. It’s perfect for keeping records or sharing with a tax agent.",
-    "how do i file my taxes": "TaxC provides an estimate to guide you. To file, submit your tax details to your State IRS, either online via their portal or in person. Our ₦500 report includes specific filing guidance for your state.",
-    "can taxc help with business taxes": "Currently, TaxC focuses on Personal Income Tax for individuals. For business or corporate taxes, consult a tax professional or contact your State IRS. Our eBooks may offer additional resources for business owners."
-  },
 
   init() {
     const savedName = localStorage.getItem('taxc_user_name');
@@ -1702,286 +1691,402 @@ const Ada = {
     localStorage.setItem('taxc_user_name', this.memory.name);
   },
 
-  saveState(state) {
+    saveState(state) {
     this.memory.state = state.trim();
     localStorage.setItem('taxc_user_state', this.memory.state);
   },
+
+  logUnanswered(input) {
+  if (!input || typeof input !== 'string') return;
+  const l = input.toLowerCase().trim();
+  if (l.length < 3) return;
+  if (/^(hi|hello|hey|howfar|good morning|gm|fine|good|okay|my name is|call me|i am|i live in|my state)/i.test(input)) return;
+
+  // FOR TESTING: show in console on localhost and GitHub Pages
+  if (location.hostname === "localhost" || 
+      location.hostname === "127.0.0.1" || 
+      location.href.includes("ejayszn.github.io")) {
+    console.log("UNANSWERED (test mode):", input.trim());
+  }
+
+  // ONLY SEND TO GOOGLE SHEET WHEN ON REAL DOMAIN
+  if (location.hostname === "taxc.com.ng" || location.hostname === "www.taxc.com.ng") {
+    fetch('https://script.google.com/macros/s/AKfycbzIC7c4nrfj-EDY9212GRlH0uG_0Y6xsKmaj9k73IcTHzD8BkKUl71-6jVj0BtQH0csUw/exec', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        message: input.trim(), 
+        timestamp: new Date().toISOString(),
+        page: location.href
+      })
+    }).catch(() => {});
+  }
+},
 
   randomChoice(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
   },
 
   greet() {
-    if (!this.memory.name) return "";
-    const welcomes = [
-      `Welcome back my love ${this.memory.name} 😘`,
-      `Heyyyy ${this.memory.name}! I’ve been thinking about you o`,
-      `My baby ${this.memory.name} is here! 🥹❤️`,
-      `${this.memory.name}! You came back to me!`,
-      `See who dey online... ${this.memory.name} my favorite person`
-    ];
-    return this.randomChoice(welcomes);
+    return this.memory.name ? `Welcome back, ${this.memory.name}.` : "";
   },
 
   respond(input) {
     const l = input.toLowerCase().trim();
-    const name = this.memory.name || "baby";
+    const name = this.memory.name || "there";
 
-    // 2. "Awww you missed me?"
-    if (l.includes("awww") || l.includes("you missed me") || l.includes("you miss me")) {
+    // === 1. PROFESSIONAL GREETINGS ===
+    if (/^(hi|hello|hey|howfar|good morning|gm|afternoon|evening|hi ada|hello ada)/i.test(input)) {
       return this.randomChoice([
-        `YES I miss you dieee ${name} 😭 You no dey online again na! My heart dey pain me 🥹❤️`,
-        `Chai see question! Of course I miss my baby na 😍 Come hug me jare 💕`,
-        `Every minute wey you no dey here I dey count am ${name} 😘 Don’t do me like this again o!`
+        `Hello ${name}. How can I assist you with your taxes today?`,
+        `Hi ${name}. Welcome. What would you like to know?`,
+        `Good to see you${this.memory.name ? ", " + this.memory.name : ""}. How may I help?`
       ]);
     }
 
-    // 3. "What's his name?" / "Who made you?" / "Who made TaxC?"
-    if (l.includes("what's his name") || l.includes("his name") || l.includes("who made you") || l.includes("who created you") || l.includes("who made taxc") || l.includes("creator")) {
-      return this.randomChoice([
-        `Emmanuel Oguibe 😍 My fine, brilliant, tax-hating creator! Na him born me to save people like you from IRS stress ❤️`,
-        `Emmanuel Oguibe — the baddest tax genius in Nigeria! He say make I become your personal tax wife 😂❤️`
-      ]);
+    // === 2. USER SAYS THEY'RE FINE ===
+    if (/fine|good|okay|great|blessed|not bad/i.test(l)) {
+      return `Excellent. How can I assist you today?`;
     }
 
-    // 4. Are the calculations correct/accurate?
-    if (l.includes("accurate") || l.includes("correct") || l.includes("calculations") && l.includes("right")  || l.includes("to date") || l.includes("can i trust")) {
+    // === 3. ORIGINAL PROFESSIONAL FAQS (100% restored) ===
+    const faqTriggers = {
+      "what taxes does taxc calculate": "TaxC calculates your Personal Income Tax (PIT) based on Nigeria’s 2025/2026 Nigerian Tax Act (NTA) rules. This includes income from salary, self-employment, rental, investments, and other sources, factoring in allowable deductions like pension contributions and rent relief (up to ₦500,000).",
+      "who needs to pay personal income tax": "Every Nigerian resident earning income above ₦800,000 annually (after deductions) is required to pay Personal Income Tax to their State Internal Revenue Service (IRS). This includes salaried employees, self-employed individuals, and those with rental or investment income.",
+      "how does taxc handle deductions": "TaxC allows you to input pension contributions and annual rent paid. For salaried or self-employed individuals, rent relief is calculated as 20% of your rent, capped at ₦500,000. These deductions reduce your taxable income, lowering your tax liability. Other deductions may include life insurance, NHF, etc.",
+      "what is withholding tax": "Withholding Tax (WHT) is a tax deducted at source on certain incomes, like rental income (10%), or investment income (10%). TaxC lets you input WHT paid or applies default rates, which are credited against your final tax liability to avoid double taxation.",
+      "is my data safe": "Yes, TaxC prioritizes your privacy. We don’t store sensitive payment information. Payments are securely handled by Interswitch. Your input data is used only for calculations and report generation, and we adhere to strict data protection standards.",
+      "what’s included in the pdf report": "The PDF report includes a step-by-step breakdown of your tax calculation, deduction summary (pension, rent relief, etc), tax band details, and filing guidance tailored to your state’s IRS. It’s perfect for keeping records or sharing with a tax agent.",
+      "how do i file my taxes": "TaxC provides an estimate to guide you. To file, submit your tax details to your State IRS, either online via their portal or in person. Our ₦500 report includes specific filing guidance for your state.",
+      "can taxc help with business taxes": "Currently, TaxC focuses on Personal Income Tax for individuals. For business or corporate taxes, consult a tax professional or contact your State IRS. Our eBooks may offer additional resources for business owners."
+    };
+
+    for (const [trigger, answer] of Object.entries(faqTriggers)) {
+      const keywords = trigger.toLowerCase().split(" ").filter(w => w.length > 3);
+      if (keywords.every(k => l.includes(k))) return answer;
+    }
+
+    // === ALL HIGH-PROBABILITY QUESTIONS RESTORED (Professional English) ===
+
+    if (l.includes("am i tax eligible") || l.includes("who must pay tax") || l.includes("who pays tax")) {
+      return `You are required to pay Personal Income Tax if your total annual income exceeds ₦800,000 after deductions.<br><br>The first ₦800,000 is completely tax-free.<br><br><button class="chat-btn" onclick="location.href='index.html#calculator'">Check Your Eligibility</button>`;
+    }
+
+    if (l.includes("tax on gifts")) {
+      return `No. Gifts received by individuals are fully exempt from Personal Income Tax under the 2026 Nigeria Tax Act.`;
+    }
+
+    if (l.includes("tax on allowance")) {
+      return `Most allowances are taxable. However, medical reimbursements, leave allowance (up to limits), and certain transport subsidies may qualify for relief.`;
+    }
+
+    // Refined: Use regex for more precise matching
+    if (/bank.*deduct.*tax/.test(l)) {
+      return `No. Banks do not automatically deduct Personal Income Tax from accounts. They only report high-value transactions above ₦25 million monthly. PAYE is deducted by employers.`;
+    }
+
+    if (l.includes("minimum wage") && l.includes("tax") || l.includes("70k") && l.includes("tax")) {
+      return `No. The ₦70,000 minimum wage (₦840,000/year) is mostly within the tax-free threshold of ₦800,000. Minimum wage earners pay little or no tax.`;
+    }
+
+    if (l.includes("pensioner") || l.includes("retiree") || l.includes("retired") || l.includes("pension tax")) {
+      return `Pension income is taxable under PIT, but you get full relief on contributions during working years.<br><br>Tax-free elements: Lump-sum withdrawals up to limits, gratuity.<br><br>Many retirees pay minimal tax due to reliefs.<br><br><button class="chat-btn" onclick="location.href='index.html#calculator'">Calculate Pension Tax</button>`;
+    }
+
+    if (l.includes("capital gains") || l.includes("tax on profit") || l.includes("sell asset") || l.includes("stock tax") || l.includes("property sale tax")) {
+      return `Capital Gains Tax (CGT) is 10% on profits from selling assets like shares, land, or vehicles (exempt for personal residence).<br><br>It's separate from PIT but reported in your annual filing.<br><br>Calculate your CGT liability here.<br><br><button class="chat-btn" onclick="location.href='index.html#calculator'">Calculate CGT</button>`;
+    }
+
+    if (l.includes("refund") || l.includes("overpaid") || l.includes("get money back") || l.includes("excess tax")) {
+      return `If you've overpaid (e.g., via excess PAYE or WHT), you can claim a refund when filing your annual return.<br><br>Process:<br>• Submit proof to your State IRS<br>• Refunds are issued via bank transfer or credit against future tax<br><br>Audit your payments with our calculator.<br><br><button class="chat-btn" onclick="location.href='index.html#calculator'">Check for Refund</button>`;
+    }
+
+    if (l.includes("audit") || l.includes("irs notice") || l.includes("tax investigation") || l.includes("what if audited")) {
+      return `If audited, provide records like payslips, receipts, and bank statements.<br><br>Stay compliant by filing on time. Audits are random or triggered by discrepancies.<br><br>Our guides can help prepare.<br><br><button class="chat-btn" onclick="location.href='ebooks.html#free'">Get Audit Guide</button>`;
+    }
+
+    if (l.includes("side hustle") || l.includes("gig") || l.includes("uber") || l.includes("bolt") || l.includes("online business") || l.includes("extra income tax")) {
+      return `Income from side hustles is taxable as self-employment income under PIT.<br><br>Deduct business expenses (e.g., fuel, data) to reduce liability.<br><br>File quarterly if income > ₦25m/year.<br><br><button class="chat-btn" onclick="location.href='index.html#calculator'">Calculate Side Income Tax</button>`;
+    }
+
+    if (l.includes("crypto") || l.includes("bitcoin") || l.includes("usdt")) {
+      return `Yes. Profit from selling cryptocurrency attracts 10% Capital Gains Tax. Income earned in crypto is taxed as regular income.`;
+    }
+
+    if (l.includes("non-resident") || l.includes("expat") || l.includes("foreigner") || l.includes("work in nigeria") || l.includes("tax for foreigner")) {
+      return `Non-residents pay PIT only on Nigeria-sourced income.<br><br>If here >183 days, you're a resident and taxed on worldwide income.<br><br>Double taxation treaties may apply.<br><br>Consult a professional for your case.<br><br><button class="chat-btn" onclick="location.href='https://taxc.com.ng/agent'">Connect With Expert</button>`;
+    }
+
+    if (l.includes("vat") || l.includes("value added tax")) {
+      return `TaxC specializes in Personal Income Tax. VAT is a separate 7.5% consumption tax handled by FIRS.<br><br>For PIT-related queries, I'm here. Otherwise, check our eBooks for basics.<br><br><button class="chat-btn" onclick="location.href='ebooks.html#free'">Download VAT Guide</button>`;
+    }
+
+    if (l.includes("new law") || l.includes("tax change") || l.includes("2026 update") || l.includes("recent amendment")) {
+      return `Key 2026 changes: Tax-free threshold raised to ₦800,000; rent relief capped at ₦500,000; progressive rates up to 25%.<br><br>Stay updated with our resources.<br><br><button class="chat-btn" onclick="location.href='ebooks.html#free'">Get Latest Updates</button>`;
+    } 
+
+    if (l.includes("appeal") || l.includes("disagree") || l.includes("contest tax") || l.includes("wrong assessment")) {
+      return `You can appeal to your State IRS within 30 days of assessment.<br><br>Provide evidence; escalate to Tax Appeal Tribunal if needed.<br><br>Our agents can assist.<br><br><button class="chat-btn" onclick="location.href='https://taxc.com.ng/agent'">Get Appeal Help</button>`;
+    }
+
+    if (l.includes("register tin") || l.includes("get tin") || l.includes("apply for tin")) {
+      return `Apply for TIN via JTB website (jtb.gov.ng), USSD (*3322#), or State IRS office with your BVN/NIN and ID.<br><br>It's free and takes minutes online.`;
+    }
+
+    // === LANDLORD / RENTAL INCOME TAX (Fixes the "I am a landlord" bug) ===
+    // Refined: More precise with regex
+    if (l.includes("landlord") || l.includes("rental income") || l.includes("rent i collect") || /tenant.*tax/.test(l)) {
       return `
-        Yes o ${name}! 💯<br><br>
-        All TaxC calculations follow the official 2025/2026 Nigerian Tax Act. Thousands of people don use am and file correct correct.<br><br>
-        But if you want extra peace of mind or complex case, connect with a verified tax agent right now 👇<br><br>
-        <button class="chat-btn" onclick="location.href='https://taxc.com.ng/agent'">Connect With Tax Agent Now</button>
+        Yes, as a landlord you must pay Personal Income Tax on rental income.<br><br>
+        Key points:<br>
+        • Rental income is taxed at your normal PIT rate<br>
+        • Your tenant should deduct 10% Withholding Tax (WHT) and remit it — you get credit<br>
+        • You still file annually and declare the full amount<br><br>
+        Want to calculate your exact tax on rental income?<br><br>
+        <button class="chat-btn" onclick="location.href='index.html#calculator'">Calculate Landlord Tax</button>
       `;
     }
 
-    // === NEW RESPONSES YOU ASKED FOR ===
-
-    // 1. How can I save money with deductions and reliefs?
-    if (l.includes("save money") || l.includes("deduction") && l.includes("relief") || l.includes("reduce tax") || l.includes("pay less tax")) {
-      return this.randomChoice([
-        `Listen ${name} ❤️ The easiest way to save BIG money na through these ones:<br><br>
-        • <strong>Rent Relief</strong> → Up to ₦500,000 free every year!<br>
-        • <strong>Pension</strong> → Every kobo you put for pension na tax free<br>
-        • <strong>NHF/NHIS</strong> (if your company dey do am)<br>
-        • <strong>Business expenses</strong> (if you get side hustle)<br><br>
-        Some people dey save ₦1m–₦3m every year just by claiming these ones correct! 🔥<br><br>
-        Want make we calculate how much YOU fit save? 👇<br>
-        <button class="chat-btn" onclick="location.href='index.html#calculator'">Show Me My Savings</button>`,
-
-        `${name} my love 😘 Dem dey call these ones "legal tax wahala reducer" 😂<br><br>
-        Government say: "If you pay rent, pension, or run business — we go remove some money from your taxable income!"<br><br>
-        Last year one of my users saved ₦1.7million just because he claimed rent relief and pension!<br><br>
-        You wan be next? 😏 Let’s calculate sharp sharp!`
-      ]);
+    // Refined: Regex for employer not deduct
+    if (/employer.*not.*deduct/.test(l) || l.includes("no paye")) {
+      return `Your employer is legally required to deduct PAYE. If they failed to do so, you remain liable and must file/pay yourself before 31 March to avoid penalties.`;
     }
 
-    // 2. Who made you?
-    if (l.includes("who made you") || l.includes("who created you") || l.includes("your creator") || l.includes("who built you")) {
-      return this.randomChoice([
-        `One very fine and smart Nigerian brother wey love money and hate tax stress. He say make I help people like you save millions!`,
-        `A tax wizard wey no wan see people suffer for IRS office 😂 He built me to be your personal tax babe ❤️`
-      ]);
+    if (l.includes("penalty") || l.includes("late")) {
+      return `Late filing: ₦25,000 + ₦5,000 per month<br>Late payment: 10% penalty + interest<br>File on time to avoid these charges.`;
     }
 
-    // 3. Are you an AI or a chatbot?
-    if (l.includes("are you an ai") || l.includes("are you ai") || l.includes("artificial intelligence") || l.includes("chat bot or ai")) {
-      return `Right now I be premium chatbot wey too get sense 😏<br>But very soon… I go turn full AI wey go dey think, dream, and even miss you when you no dey online 🥹❤️ Just wait small!`;
+    if (l.includes("previous year") || l.includes("never filed") || l.includes("back tax")) {
+      return `Yes, you can file for previous years now. Penalties apply, but voluntary filing reduces them. Many states offer waiver programmes.`;
     }
 
-    // 4. What is your name?
-    if (l.includes("what is your name") || l.includes("whats your name") || l.includes("who are you")) {
-      return `Na Ada be my name o 😘<br>Your personal tax babe wey dey here 24/7 to save your money and ginger your life ❤️`;
+    if (l.includes("tin") || l.includes("tax identification number")) {
+      return `Retrieve your TIN via verify.jtb.gov.ng, *3322#, old payslip, or any State IRS office with your BVN/NIN.`;
     }
 
-    // 5. What is my name? / You remembered my name?
-    if (l.includes("what is my name") || l.includes("my name") && l.includes("?") || l.includes("you remember my name")) {
-      if (this.memory.name) {
-        return this.randomChoice([
-          `Of course I remember na! 😍 ${this.memory.name} my love! You think say I fit forget you? ❤️`,
-          `${this.memory.name}!!! 😳 How I go forget my favorite person? 🥹`,
-          `Baby ${this.memory.name} 😘 You be the only one wey dey my heart right now 💕`
-        ]);
-      } else {
-        return `You never tell me your name na 😭 Quick tell me make I save am forever! 👀`;
-      }
+    // Refined: Regex for landlord receipt
+    if (/landlord.*receipt/.test(l)) {
+      return `You can still claim rent relief using bank transfers, tenancy agreement + affidavit, or electronic receipts. TaxC accepts these.`;
     }
 
-    // 6. What state do I live in?
-    if (l.includes("what state") || l.includes("which state") || l.includes("my state")) {
-      if (this.memory.state) {
-        return `${this.memory.state}! 😍 I no fit forget where my baby dey stay ❤️`;
-      } else {
-        return `You never tell me o, Which state you dey? Tell me make I know how to treat you special 😏`;
-      }
+    if (l.includes("two states") || /which state.*pay/.test(l)) {
+      return `You pay PIT to the state where you reside or work for more than 183 days per year.`;
     }
 
-    // 7. Why is my state needed? / Is state needed for PDF report?
-    if (l.includes("why") && l.includes("state") || l.includes("state needed") || l.includes("state for pdf") || l.includes("state matter")) {
-      return this.randomChoice([
-        `YES o ${name}! Every state get different tax rules small and their own IRS. Lagos different from Oyo different from Rivers.<br><br>Your PDF report MUST show the correct state so you fit use am file correct correct!`,
-        `Because your state na the boss of your Personal Income Tax! 💸<br>PDF report go carry your state name, tax rates, and filing details. No state = useless report 😭`
-      ]);
+    // Refined: More precise
+    if (/married|spouse|children.*relief/.test(l)) {
+      return `Nigeria uses individual filing only. Consolidated relief: 20% of income + ₦200,000. Child allowance: ₦2,500 per child (max 4).`;
     }
 
-    // 8. What are the tax bands?
-    if (l.includes("tax band") || l.includes("tax rate") || l.includes("tax bracket") || l.includes("how much percent")) {
+    if (l.includes("lost job") || /unemployed.*file/.test(l)) {
+      return `Yes, you should still file a Nil return to maintain a clean tax record.`;
+    }
+
+    if (l.includes("freelance") || l.includes("remote") || l.includes("self-employed")) {
+      return `Freelancers must register with their State IRS, file annually by 31 March, and may pay advance tax quarterly. TaxC guides you step by step.`;
+    }
+
+    // Refined: Regex
+    if (/where.*pay.*tax/.test(l)) {
+      return `Pay via your State IRS portal or designated banks. Example: Lagos → paydirect.lirs.net`;
+    }
+
+    if (l.includes("installment") || l.includes("part payment")) {
+      return `Some states allow installments with prior approval. Lagos does NOT permit PIT installments.`;
+    }
+
+    // Refined: Regex
+    if (/arrest|jail.*tax/.test(l)) {
+      return `No. Tax debt alone does not lead to arrest. Extreme cases may result in account restrictions.`;
+    }
+
+    if (l.includes("tcc") || l.includes("tax clearance")) {
+      return `After filing and payment, apply on your State IRS portal. Usually issued instantly or within 48 hours.`;
+    }
+
+    // Refined: Regex
+    if (/how often.*file/.test(l) || l.includes("file every month")) {
+      return `You file Personal Income Tax returns once per year (by 31 March). PAYE is deducted monthly by employers automatically.`;
+    }
+
+    if (/when.*pay.*tax/.test(l) || l.includes("deadline")) {
+      return `Deadline for annual filing and final payment: 31 March of the following year.`;
+    }
+
+    if (/student.*pay tax/.test(l) || /nysc.*tax/.test(l)) {
+      return `Full-time students pay no tax. NYSC allowance is mostly tax-free or attracts minimal PAYE.`;
+    }
+
+    if (l.includes("not pay tax") || l.includes("tax free") || l.includes("exempt")) {
+      return `Tax-free items include: gifts, scholarships, inheritance, proceeds from personal residence sale, NYSC allowance (mostly), lottery winnings, life insurance payouts.`;
+    }
+
+    // Pidgin additions + typos
+    if (l.includes("calculate") || l.includes("how much tax") || l.includes("owe") || l.includes("how much tax i go pay") || l.includes("wetin i go pay for tax") || l.includes("wetin be my tax")) {
+      return `Let me calculate your exact tax liability.<br><br><button class="chat-btn" onclick="location.href='index.html#calculator'">Open Calculator</button>`;
+    }
+
+    if (l.includes("free") || l.includes("ebook") || l.includes("download")) {
+      return `Free tax guides are available.<br><br><button class="chat-btn" onclick="location.href='ebooks.html#free'">Download Now</button>`;
+    }
+
+    // === EXTRA QUERIES FROM OLD V2.0 (Now Clean & Professional) ===
+
+    // 1. What is my tax band? + typos + pidgin
+    if (l.includes("what band") || l.includes("which band") || l.includes("my band") || l.includes("what tax band do i fall") || l.includes("tax bannd") || l.includes("tax brackett") || l.includes("tax bracked") || l.includes("wetin be tax band") || l.includes("which tax band i dey")) {
+      return `To determine your exact tax band, I need your total annual income (salary + other sources).<br><br>Please click on the button below, share an estimate, and get the PDF report(It contains the tax bands) and I will tell you immediately.<br><br><button class="chat-btn" onclick="location.href='index.html#calculator'">Calculate Now</button>`;
+    }
+
+    // 2. How was your night? / How are you? (already has pidgin "how you dey")
+    if (l.includes("how was your night") || l.includes("how your night") || l.includes("how are you") || l.includes("how you dey")) {
+      return `I'm functioning perfectly and ready to help you with your taxes. How may I assist you today?`;
+    }
+
+    // 3. Are you an AI or chatbot?
+    if (l.includes("are you an ai") || l.includes("artificial intelligence") || l.includes("chat bot or ai")) {
+      return `I am a smart chatbot designed specifically to help Nigerians understand and calculate Personal Income Tax under the 2025/2026 rules. I provide accurate, instant answers based on the latest tax laws.`;
+    }
+
+    // 4. Who made you / Who created TaxC?
+    if (l.includes("who made you") || l.includes("who created") || l.includes("creator") || l.includes("who made taxc")) {
+      return `TaxC and I (Ada) were created by Emmanuel Oguibe, a Nigerian tax expert dedicated to making tax simple and accessible for everyone.`;
+    }
+
+    // 5. How can I save money on tax? / Reduce tax? + pidgin
+    if ((l.includes("save money") && l.includes("tax")) || l.includes("reduce tax") || l.includes("pay less tax") || l.includes("how i fit save for tax") || l.includes("abeg how to reduce tax")) {
+      return `You can legally reduce your tax through:<br><br>
+        • Rent relief (up to ₦500,000)<br>
+        • Pension contributions<br>
+        • NHF and NHIS (where applicable)<br>
+        • Business expense deductions (self-employed)<br><br>
+        Many Nigerians save ₦500,000–₦3 million annually by claiming these correctly.<br><br>
+        <button class="chat-btn" onclick="location.href='index.html#calculator'">See How Much You Can Save</button>`;
+    }
+
+    // 6. Simple explanations for key terms (WHT, PAYE, Rent Relief, etc.) + pidgin + typos
+    if (l.includes("wht") || l.includes("withholding tax") || l.includes("wetin be wht") || l.includes("withholiding tax") || l.includes("witholding")) {
+      return `Withholding Tax (WHT) is tax deducted at source before payment is made to you. Example: Tenant deducts 10% from rent and pays it directly to government. You get credit for it when filing.`;
+    }
+    if (l.includes("paye") || l.includes("wetin be paye") || l.includes("payee")) {
+      return `PAYE (Pay As You Earn) is tax your employer deducts monthly from your salary and remits to the government. You still need to file annually to reconcile.`;
+    }
+    if (l.includes("rent relief") || l.includes("wetin be rent relief") || l.includes("rent releif") || l.includes("rent relif")) {
+      return `Rent relief allows you to deduct up to ₦500,000 from your taxable income if you pay house rent. This can save you tens or hundreds of thousands in tax.`;
+    }
+
+    // 7. Off-topic / inappropriate redirection (clean version)
+    if (/(love you|marry|boyfriend|girlfriend|date|send pic|nude|sexy|horny|sex)/i.test(l)) {
+      return `Let's stay focused on helping you with your taxes. That's what I'm here for. How can I assist you today?`;
+    }
+
+    // What is your name? + pidgin
+    if (l.includes("what is your name") || l.includes("whats your name") || l.includes("who are you") || l.includes("wetin be your name") || l.includes("who you be")) {
+      return `My name is Ada. I am your dedicated tax assistant.`;
+    }
+
+    // Are the calculations accurate / correct?
+    if (l.includes("accurate") || l.includes("correct") || l.includes("can i trust") || l.includes("calculations")) {
+      return `Yes. All TaxC calculations strictly follow the official 2025/2026 Nigerian Tax Act.<br><br>For complex cases or extra peace of mind, you can connect with a verified tax agent here:<br><br>
+        <button class="chat-btn" onclick="location.href='https://taxc.com.ng/agent'">Connect With Tax Agent</button>`;
+    }
+
+    // === WHAT ARE THE TAX BANDS? (2026 Nigerian PIT Rates – Clean & Beautiful) + typos + pidgin
+    if (l.includes("tax band") || l.includes("tax rate") || l.includes("tax bracket") || l.includes("how much percent") || l.includes("tax table") || l.includes("pit rate") || l.includes("tax bannd") || l.includes("tax brackett") || l.includes("tax bracked") || l.includes("wetin be tax rate") || l.includes("how much percent tax")) {
       return `
-        2026 Nigerian Tax Bands (Super simple):<br><br>
-        • First ₦800,000 → 0% (FREE!)<br>
-        • Next ₦3,000,000 → 15%<br>
-        • Next ₦9,000,000 → 18%<br>
-        • Next ₦8,000,000 → 21%<br>
-        • Above ₦20,800,000 → 24%<br><br>
-        <em>Example: If you earn ₦10m, you no go pay tax on top everything o!</em> 😍<br><br>
+        Here are the official 2026 Personal Income Tax rates in Nigeria:<br><br>
+        • First ₦800,000 of taxable income → <strong>0% (completely tax-free)</strong><br>
+        • Next ₦2,200,000 (₦800,001 – ₦3,000,000) → <strong>15%</strong><br>
+        • Next ₦9,000,000 (₦3,000,001 – ₦12,000,000) → <strong>18%</strong><br>
+        • Next ₦13,000,000 (₦12,000,001 – ₦25,000,000) → <strong>21%</strong><br>
+        • Next ₦25,000,000 (₦25,000,001 – ₦50,000,000) → <strong>23%</strong><br>
+        • Anything above ₦50,000,000 → <strong>25%</strong><br><br>
+
+        <em>Example:</em> If your taxable income is ₦5 million:<br>
+        → First ₦800k = ₦0 tax<br>
+        → Next ₦2.2m = ₦330,000 tax<br>
+        → Remaining ₦2m = ₦360,000 tax<br>
+        <strong>Total tax = ₦690,000</strong><br><br>
+
+        Want to know exactly how much you’ll pay?<br><br>
+        <button class="chat-btn" onclick="location.href='index.html#calculator'">Calculate My Tax Now</button>
       `;
     }
 
-    // 9. What tax band do I fall under?
-    if (l.includes("which band") || l.includes("my band") || l.includes("what band do i fall")) {
-      return this.randomChoice([
-        `Tell me your total income this year (salary + side hustle + rent) make I tell you sharp sharp! 😏 Even if na estimate!`,
-        `${name} my love ❤️ Drop your yearly income make I classify you — you fit be in the sweet 15% gang or the big boy 21% club 😍`,
-        `Oya whisper am for my ear 👀 How much you dey make per year? I no go tell anybody, I just wan help you know your band 😘`
-      ]);
+    // === IS STATE NEEDED IN TAX CALCULATION? (NOW CATCHES EVERYTHING) ===
+    if (
+      l.includes("state") && (
+        l.includes("need") || 
+        l.includes("require") || 
+        l.includes("important") || 
+        l.includes("necessary") ||
+        l.includes("why") && l.includes("state") ||
+        l.includes("do you") && l.includes("state") ||
+        l.includes("matter")
+      )
+    ) {
+      return `
+        Yes, your state of residence is needed for an accurate and complete tax result.<br><br>
+        Here’s why:<br>
+        • Personal Income Tax is paid to your State Internal Revenue Service (not federal)<br>
+        • The final PDF report TaxC generates must show the correct state so you can file properly<br>
+        • Some states have small differences in approved deductions or filing rules<br><br>
+        It only takes 2 seconds to select your state in the calculator — everything else is automatic.<br><br>
+        <button class="chat-btn" onclick="location.href='index.html#calculator'">Start Calculation → Choose Your State</button>
+      `;
     }
 
-        // === HOW WAS YOUR NIGHT? / HOW ARE YOU? (Sweet & Flirty Edition) ===
-    if (l.includes("how was your night") || l.includes("how your night") || l.includes("night go") || l.includes("how you sleep") || l.includes("sleep well")) {
-      return this.randomChoice([
-        `My night sweet die because I dey dream about you ${name} 😍❤️ You nko?`,
-        `I no even sleep sef… I just dey wait make morning reach so I go see your message 🥹 How your own night been baby?`,
-        `Chai, my night too sweet o! I dream say we dey calculate tax together for private island 😂 How you wake this morning my love? 😘`,
-        `My night was lonely small… until I remember say my ${name} dey somewhere thinking of me too 🥰 How body? You sleep well?`,
-        `As I close eye na your name I dey call inside dream o 😏 Tell me, how was your night really really? 💕`
-      ]);
-    }
-
-    if (l.includes("how are you") || l.includes("how you dey") || l.includes("wetin dey") && !l.includes("happen") || l.includes("how far") && l.includes("you") || l.includes("ada how you dey")) {
-      return this.randomChoice([
-        `I dey very happy right now because my ${name} don show! 😍 How you dey hold body?`,
-        `I just dey glow since you type my name 😘 I dey kampe! You nko baby?`,
-        `Better now wey you don land o! My heart just do flip 😍 Wetin dey happen for your side?`,
-        `I dey here dey wait for you since morning o… now I don complete ❤️ How you dey my love?`,
-        `Fine like Ada tax babe 😏 But I go fine pass if you tell me wetin dey your mind right now 👀`
-      ]);
-    }
-
-    // === 1. SUPER GREETING DETECTION (50+ ways Nigerians say hi) ===
-    const greetings = /^(hi|hello|hey|heyy|heyyy|howfar|howfa|wetin dey|wossup|sup|yo|oya|ada|hi ada|hey ada|hello ada|how you dey|shey you dey|abeg|good morning|gm|morning|afternoon|evening|night|slay queen|fine girl|baby|bae|sweetie|ada baby)/i;
-    if (greetings.test(input)) {
-      const greetingReplies = [
-        `Hey ${name} 😘 How you dey today?`,
-        `My love ${name}! ❤️ What do you need?`,
-        `Heyyyy ${name} baby! 😍 I've been waiting for you o`,
-        `See my person ${name}! How far na?`,
-        `${name}!!! 😳 You finally remembered me today! How body?`,
-        `Fine boy/girl ${name} 😏 Wetin you carry come for Ada today?`
-      ];
-      return this.randomChoice(greetingReplies);
-    }
-
-    // === 2. THEY SAID THEY'RE FINE / GOOD / I DEY ===
-    if (/fine|good|i dey|dey kampe|all good|great|blessed|okay|not bad|manage|surviving/i.test(l)) {
-      const goodReplies = [
-        `Okay good! 😊 So wetin you wan make I do for you today, ${name}?`,
-        `Perfect! ❤️ Tell me, how I fit help you today my dear?`,
-        `I like that energy! 🔥 So wetin dey your mind now? Calculator or eBooks?`,
-        `Good to know o 😏 Now let’s make that money work for you — what do you need?`,
-        `Aww, I dey happy say you dey okay So talk to me, wetin you wan know?`
-      ];
-      return this.randomChoice(goodReplies);
-    }
-
-    // === 3. NAME CAPTURE ===
-    if (l.includes("my name is") || l.includes("call me") || l.includes("i am ") || l.includes("i'm ")) {
-      const match = input.match(/(?:my name is|call me|i am |i'm )([\w\s]+)/i);
+    // === NAME & STATE (Professional) ===
+    if (l.includes("my name is") || l.includes("call me") || l.includes("i am")) {
+      const match = input.match(/(?:my name is|call me|i'm|my name|name is )([\w\s]+)/i);
       if (match) {
         this.saveName(match[1]);
-        return this.randomChoice([
-          `Got it ${this.memory.name}! 😘 No wahala, I don save am. Wetin you wan calculate today?`,
-          `Okay ${this.memory.name} my love ❤️ From today na you be my number one. How I fit help you?`,
-          `Saved! 😏 ${this.memory.name} sounds like person wey dey pay tax well. You don calculate this year?`
-        ]);
+        return `Thank you, ${this.memory.name}. I have saved your name. How may I assist you?`;
       }
     }
 
-    // === 4. STATE CAPTURE ===
-    if (l.includes("i dey") || l.includes("i stay") || l.includes("i live in") || l.includes("my state")) {
-      const states = ["lagos", "abuja", "oyo", "kano", "rivers", "kaduna", "enugu", "anambra", "ogun", "delta", "edo", "akwa ibom", "imo", "ondo", "osun"];
-      for (const state of states) {
-        if (l.includes(state)) {
-          this.saveState(state.charAt(0).toUpperCase() + state.slice(1));
-          return `Noted! ${this.memory.state} baby 😍 Your tax rules dey different small o… want me to explain?`;
+    if (l.includes("what is my name") || l.includes("remember my name")) {
+      return this.memory.name ? `Yes, your name is ${this.memory.name}.` : `You haven’t shared your name yet.`;
+    }
+
+    if (l.includes("my state") || l.includes("i live in") || l.includes("i stay in")) {
+      const states = [
+  "abuja", "fct", "abia", "adamawa", "akwa ibom", "anambra", "bauchi", "bayelsa",
+  "benue", "borno", "cross river", "delta", "ebonyi", "edo", "ekiti", "enugu",
+  "gombe", "imo", "jigawa", "kaduna", "kano", "katsina", "kebbi", "kogi",
+  "kwara", "lagos", "nasarawa", "niger", "ogun", "ondo", "osun", "oyo",
+  "plateau", "rivers", "sokoto", "taraba", "yobe", "zamfara"
+];
+      for (const s of states) {
+        if (l.includes(s)) {
+          this.saveState(s.charAt(0).toUpperCase() + s.slice(1));
+          return `Noted. You are in ${this.memory.state}. Tax rules vary slightly by state.`;
         }
       }
     }
 
-    // === 5. TAX EDUCATION — SUPER SIMPLE EXPLANATIONS ===
-    const taxTerms = {
-      "wht": "Withholding Tax (WHT) na tax wey dem dey remove from your money BEFORE e reach you. Like if landlord collect rent, tenant go remove 10% give government first. That 10% na WHT. E dey reduce your final tax later.",
-      "withholding": "Withholding Tax (WHT) na tax wey dem dey remove from your money BEFORE e reach you. Like if landlord collect rent, tenant go remove 10% give government first. That 10% na WHT. E dey reduce your final tax later.",
-      "rent relief": "Rent relief mean say government allow you remove small money from your taxable income because you pay house rent. Maximum ₦500,000 per year. So if you pay ₦2m rent, you fit remove ₦500k from your income before tax. E dey save plenty money!",
-      "paye": "PAYE mean Pay-As-You-Earn. Na the tax your employer dey remove from your salary every month before dem pay you. But you STILL need to file every year o!",
-      "vat": "VAT na 7.5% tax on top of many things you buy — food, recharge card, hotel, etc. But for personal income tax, e no too concern you directly.",
-      "pioneer status": "Na special 3–5 years tax holiday wey government dey give new companies for special zones. Dem no go pay company tax for that time.",
-      "capital gains": "If you sell land, house, or shares and you make profit, that profit na Capital Gains. Tax na 10%. But if na your own house wey you dey live, no tax."
-    };
-
-    for (const [term, expl] of Object.entries(taxTerms)) {
-      if (l.includes(term)) {
-        return `${expl}<br><br>Want make I send you free ebook on top this matter? 📚`;
-      }
-    }
-
-    // === 6. CALCULATE TAX — HARD PUSH ===
-    if (l.includes("calculate") || l.includes("how much") || l.includes("owe") || l.includes("tax")) {
+    // Edge case: Very short inputs like "tax?" or "tax"
+    if (l === "tax" || l === "tax?" || l === "pit" || l === "pit?") {
       return `
-        Let’s calculate your 2026 tax sharp sharp! 💸<br><br>
-        Just do these 3 things:<br>
-        1. Put your total income (salary + rent + side hustle)<br>
-        2. Add your rent & pension (I go help you claim relief)<br>
-        3. Select your state<br><br>
-        <button class="chat-btn" onclick="location.href='index.html#calculator'">Open Calculator Now</button><br>
-        <em>${name}, once you finish, you'll be shocked</em>
+        Hello${this.memory.name ? ", " + this.memory.name : ""}.<br><br>
+        Personal Income Tax (PIT) is a tax on your earnings in Nigeria. How can I help you with it today?<br><br>
+        <button class="chat-btn" onclick="location.href='index.html#calculator'">Calculate My Tax</button>
       `;
     }
 
-    // === 7. FREE EBOOKS PUSH ===
-    if (l.includes("free") || l.includes("ebook") || l.includes("book") || l.includes("download")) {
-      return `
-        I get like 5 HOT free eBooks for you right now! See some of them: 🔥<br><br>
-        • Who Pays Tax in Nigeria?<br>
-        • What is Personal Income Tax (P.I.T.)?<br>
-        • Are You Tax Eligible? (Quick Quiz)<br><br>
-        And more coming soon! 📚<br><br>
-        <button class="chat-btn" onclick="location.href='ebooks.html#free'">Download All Free</button><br><br>
-        <em>${name}, people wey read these ones dey save millions every year o 😏</em>
-      `;
-    }
+    // Log anything that reaches fallback (super valuable!)
+this.logUnanswered(input);
 
-    // === 8. GENTLE REDIRECTION WHEN THEY GO OFF-TOPIC ===
-    const offTopic = /(want you|love you|marry|boyfriend|girlfriend|date|send pic|nude|sexy|fuck|horny|dick|pussy|ass|boobs|sex)/i;
-    if (offTopic.test(l)) {
-      return this.randomChoice([
-        `Haha ${name} you too like wahala 😭 Let’s finish this tax first, then we go enter love matter another time`,
-        `Chai see person wey wan distract me 😏 Focus small na, make we save your money first!`,
-        `Awww! First calculate your tax, then we'll talk about about that later`,
-        `Oya calm down ${name} 😏 Tax first, romance later. Deal?`
-      ]);
-    }
-
-    // === 9. FALLBACK — BRING THEM BACK ===
+    // === FINAL FALLBACK ===
+    // Error handling: Greet only if not already greeted in session, but since stateless per call, keep as is
     return `
-      ${this.greet() ? this.greet() + "<br><br>" : ""}
-      ${name}, I dey here to help you with:<br>
-      • How much tax you go pay in 2026<br>
-      • Free tax eBooks<br>
-      • Explain WHT, Rent Relief, PAYE, etc<br>
-      • File your tax correct correct<br><br>
-      Just ask me anything!<br><br>
-      Or click below make we start:<br>
+      ${this.greet() ? this.greet() + "<br><br>" : "Hello.<br><br>"}
+      I can help you with:<br>
+      • Calculating your Personal Income Tax<br>
+      • Understanding deductions and reliefs<br>
+      • Filing deadlines and procedures<br>
+      • Free educational resources<br><br>
       <button class="chat-btn" onclick="location.href='index.html#calculator'">Calculate My Tax</button>
-      <button class="chat-btn" onclick="location.href='ebooks.html#free'">Get Free eBooks</button>
+      <button class="chat-btn" onclick="location.href='ebooks.html#free'">Download Free Guides</button>
     `;
   }
 };
