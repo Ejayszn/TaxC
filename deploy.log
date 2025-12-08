@@ -1,0 +1,180 @@
+[2025-12-08T23:00:47.808Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[2025-12-08T23:00:47.809Z] > authorizing via signed-in user (emmyogs007@gmail.com)
+[2025-12-08T23:00:47.809Z] [iam] checking project taxc-ebooks for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[2025-12-08T23:00:47.813Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:00:47.814Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:00:47.816Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/taxc-ebooks:testIamPermissions [none]
+[2025-12-08T23:00:47.816Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/taxc-ebooks:testIamPermissions x-goog-quota-user=projects/taxc-ebooks
+[2025-12-08T23:00:47.816Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/taxc-ebooks:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[2025-12-08T23:00:49.255Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/taxc-ebooks:testIamPermissions 200
+[2025-12-08T23:00:49.256Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/taxc-ebooks:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[2025-12-08T23:00:49.257Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:00:49.257Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:00:49.258Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/taxc-ebooks/serviceAccounts/taxc-ebooks@appspot.gserviceaccount.com:testIamPermissions [none]
+[2025-12-08T23:00:49.258Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/taxc-ebooks/serviceAccounts/taxc-ebooks@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[2025-12-08T23:00:50.616Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/taxc-ebooks/serviceAccounts/taxc-ebooks@appspot.gserviceaccount.com:testIamPermissions 200
+[2025-12-08T23:00:50.617Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/taxc-ebooks/serviceAccounts/taxc-ebooks@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+
+=== Deploying to 'taxc-ebooks'...
+
+i  deploying functions 
+[2025-12-08T23:00:50.622Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:00:50.622Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:00:50.622Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/taxc-ebooks [none]
+[2025-12-08T23:00:50.939Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/taxc-ebooks 200
+[2025-12-08T23:00:50.939Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/taxc-ebooks {"projectNumber":"542476707940","projectId":"taxc-ebooks","lifecycleState":"ACTIVE","name":"taxc-ebooks","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-11-15T07:33:29.748706Z"}
+i  functions: preparing codebase default for deployment 
+i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[2025-12-08T23:00:50.950Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:00:50.951Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:00:50.951Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/taxc-ebooks/adminSdkConfig [none]
+[2025-12-08T23:00:52.054Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/taxc-ebooks/adminSdkConfig 200
+[2025-12-08T23:00:52.054Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/taxc-ebooks/adminSdkConfig {"projectId":"taxc-ebooks","storageBucket":"taxc-ebooks.firebasestorage.app"}
+[2025-12-08T23:00:52.056Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:00:52.057Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:00:52.060Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/taxc-ebooks/configs [none]
+[2025-12-08T23:00:53.283Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/taxc-ebooks/configs 200
+[2025-12-08T23:00:53.284Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/taxc-ebooks/configs {"configs":[{"name":"projects/taxc-ebooks/configs/gemini"},{"name":"projects/taxc-ebooks/configs/paystack"}]}
+[2025-12-08T23:00:53.285Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:00:53.286Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:00:53.286Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:00:53.286Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:00:53.287Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/taxc-ebooks/configs/gemini/variables [none]
+[2025-12-08T23:00:53.291Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/taxc-ebooks/configs/paystack/variables [none]
+[2025-12-08T23:00:53.615Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/taxc-ebooks/configs/gemini/variables 200
+[2025-12-08T23:00:53.616Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/taxc-ebooks/configs/gemini/variables {"variables":[{"name":"projects/taxc-ebooks/configs/gemini/variables/key","updateTime":"2025-12-03T17:52:42.821763559Z"}]}
+[2025-12-08T23:00:53.617Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:00:53.617Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:00:53.618Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/taxc-ebooks/configs/gemini/variables/key [none]
+[2025-12-08T23:00:53.951Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/taxc-ebooks/configs/paystack/variables 200
+[2025-12-08T23:00:53.952Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/taxc-ebooks/configs/paystack/variables {}
+[2025-12-08T23:00:53.964Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/taxc-ebooks/configs/gemini/variables/key 200
+[2025-12-08T23:00:53.965Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/taxc-ebooks/configs/gemini/variables/key {"name":"projects/taxc-ebooks/configs/gemini/variables/key","updateTime":"2025-12-03T17:52:42.821763559Z","text":"AIzaSyCxTwVh_TGLIN2Djbw1O_TTC6EWHOpUMQQ"}
+[2025-12-08T23:00:53.974Z] Validating nodejs source
+[2025-12-08T23:00:56.377Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "lint": "eslint .",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "24"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "cors": "^2.8.5",
+    "firebase-admin": "^13.6.0",
+    "firebase-functions": "^7.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.15.0",
+    "eslint-config-google": "^0.14.0",
+    "firebase-functions-test": "^3.4.1"
+  },
+  "private": true,
+  "type": "module"
+}
+[2025-12-08T23:00:56.378Z] Building nodejs source
+i  functions: Loading and analyzing source code for codebase default to determine what to deploy 
+[2025-12-08T23:00:56.381Z] Could not find functions.yaml. Must use http discovery
+[2025-12-08T23:00:56.402Z] Found firebase-functions binary at 'C:\Users\emmyo\Desktop\TaxC\functions\node_modules\.bin\firebase-functions'
+Serving at port 8020
+
+[2025-12-08T23:00:58.185Z] Got response from /__/functions.yaml {"endpoints":{"chatWithAda":{"availableMemoryMb":256,"timeoutSeconds":60,"minInstances":null,"maxInstances":10,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"chatWithAda"},"verifyPayment":{"availableMemoryMb":256,"timeoutSeconds":60,"minInstances":null,"maxInstances":10,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"verifyPayment"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+i  extensions: ensuring required API firebaseextensions.googleapis.com is enabled... 
+[2025-12-08T23:01:02.306Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[2025-12-08T23:01:02.306Z] > authorizing via signed-in user (emmyogs007@gmail.com)
+[2025-12-08T23:01:02.307Z] [iam] checking project taxc-ebooks for permissions ["firebase.projects.get","firebaseextensions.instances.list"]
+[2025-12-08T23:01:02.307Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:01:02.307Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:01:02.307Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/taxc-ebooks:testIamPermissions [none]
+[2025-12-08T23:01:02.307Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/taxc-ebooks:testIamPermissions x-goog-quota-user=projects/taxc-ebooks
+[2025-12-08T23:01:02.307Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/taxc-ebooks:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[2025-12-08T23:01:03.453Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/taxc-ebooks:testIamPermissions 200
+[2025-12-08T23:01:03.453Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/taxc-ebooks:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[2025-12-08T23:01:03.454Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:01:03.455Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:01:03.456Z] >>> [apiv2][query] GET https://firebaseextensions.googleapis.com/v1beta/projects/taxc-ebooks/instances pageSize=100&pageToken=
+[2025-12-08T23:01:04.881Z] <<< [apiv2][status] GET https://firebaseextensions.googleapis.com/v1beta/projects/taxc-ebooks/instances 200
+[2025-12-08T23:01:04.881Z] <<< [apiv2][body] GET https://firebaseextensions.googleapis.com/v1beta/projects/taxc-ebooks/instances {}
+i  functions: preparing functions directory for uploading... 
+i  functions: packaged C:\Users\emmyo\Desktop\TaxC\functions (78.29 KB) for uploading 
+[2025-12-08T23:01:04.984Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:01:04.985Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:01:04.985Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v1/projects/taxc-ebooks/locations/-/functions [none]
+[2025-12-08T23:01:06.190Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v1/projects/taxc-ebooks/locations/-/functions 200
+[2025-12-08T23:01:06.190Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v1/projects/taxc-ebooks/locations/-/functions {}
+[2025-12-08T23:01:06.190Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:01:06.191Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:01:06.191Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/taxc-ebooks/locations/-/functions filter=environment%3D%22GEN_2%22
+[2025-12-08T23:01:07.304Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v2/projects/taxc-ebooks/locations/-/functions 200
+[2025-12-08T23:01:07.305Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v2/projects/taxc-ebooks/locations/-/functions {"functions":[{"name":"projects/taxc-ebooks/locations/us-central1/functions/chatWithAda","buildConfig":{"build":"projects/542476707940/locations/us-central1/builds/d6876470-0140-4bff-b86a-d66a8241b177","runtime":"nodejs24","entryPoint":"chatWithAda","source":{"storageSource":{"bucket":"gcf-v2-sources-542476707940-us-central1","object":"chatWithAda/function-source.zip","generation":"1765231840572619"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/taxc-ebooks/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-542476707940-us-central1","object":"chatWithAda/function-source.zip","generation":"1765231840572619"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/taxc-ebooks/serviceAccounts/542476707940-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/taxc-ebooks/locations/us-central1/services/chatwithada","timeoutSeconds":60,"environmentVariables":{"FIREBASE_CONFIG":"{\"projectId\":\"taxc-ebooks\",\"storageBucket\":\"taxc-ebooks.firebasestorage.app\"}","GCLOUD_PROJECT":"taxc-ebooks","EVENTARC_CLOUD_EVENT_SOURCE":"projects/taxc-ebooks/locations/us-central1/services/chatWithAda","FUNCTION_TARGET":"chatWithAda","LOG_EXECUTION_ID":"true"},"maxInstanceCount":10,"ingressSettings":"ALLOW_ALL","uri":"https://chatwithada-p5mmys2agq-uc.a.run.app","serviceAccountEmail":"542476707940-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"chatwithada-00001-qeq","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","updateTime":"2025-12-08T22:11:51.155663905Z","labels":{"deployment-tool":"cli-firebase","firebase-functions-hash":"0a5b4320e381881c600633a69f403a9833d87d7c"},"environment":"GEN_2","url":"https://us-central1-taxc-ebooks.cloudfunctions.net/chatWithAda","createTime":"2025-12-08T22:10:40.867092112Z","satisfiesPzi":true},{"name":"projects/taxc-ebooks/locations/us-central1/functions/verifyPayment","buildConfig":{"build":"projects/542476707940/locations/us-central1/builds/d6876470-0140-4bff-b86a-d66a8241b177","runtime":"nodejs24","entryPoint":"verifyPayment","source":{"storageSource":{"bucket":"gcf-v2-sources-542476707940-us-central1","object":"verifyPayment/function-source.zip","generation":"1765231904438936"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/taxc-ebooks/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-542476707940-us-central1","object":"verifyPayment/function-source.zip","generation":"1765231904438936"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/taxc-ebooks/serviceAccounts/542476707940-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/taxc-ebooks/locations/us-central1/services/verifypayment","timeoutSeconds":60,"environmentVariables":{"FIREBASE_CONFIG":"{\"projectId\":\"taxc-ebooks\",\"storageBucket\":\"taxc-ebooks.firebasestorage.app\"}","GCLOUD_PROJECT":"taxc-ebooks","EVENTARC_CLOUD_EVENT_SOURCE":"projects/taxc-ebooks/locations/us-central1/services/verifyPayment","FUNCTION_TARGET":"verifyPayment","LOG_EXECUTION_ID":"true","FUNCTION_SIGNATURE_TYPE":"http"},"maxInstanceCount":10,"ingressSettings":"ALLOW_ALL","uri":"https://verifypayment-p5mmys2agq-uc.a.run.app","serviceAccountEmail":"542476707940-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"verifypayment-00011-wos","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","updateTime":"2025-12-08T22:11:52.155982882Z","labels":{"deployment-tool":"cli-firebase","firebase-functions-hash":"0a5b4320e381881c600633a69f403a9833d87d7c"},"environment":"GEN_2","url":"https://us-central1-taxc-ebooks.cloudfunctions.net/verifyPayment","createTime":"2025-12-07T22:48:06.819428867Z","satisfiesPzi":true}]}
+i  functions: ensuring required API run.googleapis.com is enabled... 
+i  functions: ensuring required API eventarc.googleapis.com is enabled... 
+i  functions: ensuring required API pubsub.googleapis.com is enabled... 
+i  functions: ensuring required API storage.googleapis.com is enabled... 
+i  functions: generating the service identity for pubsub.googleapis.com... 
+[2025-12-08T23:01:07.325Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:01:07.325Z] Checked if tokens are valid: true, expires at: 1765238112113
+i  functions: generating the service identity for eventarc.googleapis.com... 
+[2025-12-08T23:01:07.328Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:01:07.329Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:01:07.330Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1beta1/projects/542476707940/services/pubsub.googleapis.com:generateServiceIdentity [none]
+[2025-12-08T23:01:07.330Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1beta1/projects/542476707940/services/pubsub.googleapis.com:generateServiceIdentity x-goog-quota-user=projects/542476707940
+[2025-12-08T23:01:07.331Z] >>> [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/542476707940/services/pubsub.googleapis.com:generateServiceIdentity {}
+[2025-12-08T23:01:07.335Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1beta1/projects/542476707940/services/eventarc.googleapis.com:generateServiceIdentity [none]
+[2025-12-08T23:01:07.336Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1beta1/projects/542476707940/services/eventarc.googleapis.com:generateServiceIdentity x-goog-quota-user=projects/542476707940
+[2025-12-08T23:01:07.336Z] >>> [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/542476707940/services/eventarc.googleapis.com:generateServiceIdentity {}
+[2025-12-08T23:01:09.215Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1beta1/projects/542476707940/services/pubsub.googleapis.com:generateServiceIdentity 200
+[2025-12-08T23:01:09.216Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/542476707940/services/pubsub.googleapis.com:generateServiceIdentity {"name":"operations/finished.DONE_OPERATION","done":true,"response":{"@type":"type.googleapis.com/google.api.serviceusage.v1beta1.ServiceIdentity","email":"service-542476707940@gcp-sa-pubsub.iam.gserviceaccount.com","uniqueId":"109732696195506211313"}}
+[2025-12-08T23:01:09.281Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1beta1/projects/542476707940/services/eventarc.googleapis.com:generateServiceIdentity 200
+[2025-12-08T23:01:09.282Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/542476707940/services/eventarc.googleapis.com:generateServiceIdentity {"name":"operations/finished.DONE_OPERATION","done":true,"response":{"@type":"type.googleapis.com/google.api.serviceusage.v1beta1.ServiceIdentity","email":"service-542476707940@gcp-sa-eventarc.iam.gserviceaccount.com","uniqueId":"113429979942842159677"}}
+[2025-12-08T23:01:09.290Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:01:09.290Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:01:09.291Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/taxc-ebooks [none]
+[2025-12-08T23:01:09.863Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/taxc-ebooks 200
+[2025-12-08T23:01:09.864Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/taxc-ebooks {"projectNumber":"542476707940","projectId":"taxc-ebooks","lifecycleState":"ACTIVE","name":"taxc-ebooks","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-11-15T07:33:29.748706Z"}
+[2025-12-08T23:01:09.865Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:01:09.865Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:01:09.866Z] >>> [apiv2][query] GET https://compute.googleapis.com/compute/v1/projects/542476707940 [none]
+[2025-12-08T23:01:10.562Z] <<< [apiv2][status] GET https://compute.googleapis.com/compute/v1/projects/542476707940 403
+[2025-12-08T23:01:10.563Z] <<< [apiv2][body] GET https://compute.googleapis.com/compute/v1/projects/542476707940 {"error":{"code":403,"message":"Compute Engine API has not been used in project 542476707940 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=542476707940 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","errors":[{"message":"Compute Engine API has not been used in project 542476707940 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=542476707940 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","domain":"usageLimits","reason":"accessNotConfigured","extendedHelp":"https://console.developers.google.com"}],"status":"PERMISSION_DENIED","details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"SERVICE_DISABLED","domain":"googleapis.com","metadata":{"activationUrl":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=542476707940","containerInfo":"542476707940","consumer":"projects/542476707940","serviceTitle":"Compute Engine API","service":"compute.googleapis.com"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"Compute Engine API has not been used in project 542476707940 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=542476707940 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Google developers console API activation","url":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=542476707940"}]}]}}
+[2025-12-08T23:01:10.564Z] unable to look up default compute service account. Falling back to 542476707940-compute@developer.gserviceaccount.com. Error: {"name":"FirebaseError","children":[],"context":{"body":{"error":{"code":403,"message":"Compute Engine API has not been used in project 542476707940 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=542476707940 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","errors":[{"message":"Compute Engine API has not been used in project 542476707940 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=542476707940 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","domain":"usageLimits","reason":"accessNotConfigured","extendedHelp":"https://console.developers.google.com"}],"status":"PERMISSION_DENIED","details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"SERVICE_DISABLED","domain":"googleapis.com","metadata":{"activationUrl":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=542476707940","containerInfo":"542476707940","consumer":"projects/542476707940","serviceTitle":"Compute Engine API","service":"compute.googleapis.com"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"Compute Engine API has not been used in project 542476707940 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=542476707940 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Google developers console API activation","url":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=542476707940"}]}]}},"response":{"statusCode":403}},"exit":1,"message":"Request to https://compute.googleapis.com/compute/v1/projects/542476707940 had HTTP Error: 403, Compute Engine API has not been used in project 542476707940 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=542476707940 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","status":403}
+[2025-12-08T23:01:10.564Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:01:10.564Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:01:10.565Z] >>> [apiv2][query] GET https://compute.googleapis.com/compute/v1/projects/542476707940 [none]
+[2025-12-08T23:01:10.853Z] <<< [apiv2][status] GET https://compute.googleapis.com/compute/v1/projects/542476707940 403
+[2025-12-08T23:01:10.853Z] <<< [apiv2][body] GET https://compute.googleapis.com/compute/v1/projects/542476707940 {"error":{"code":403,"message":"Compute Engine API has not been used in project 542476707940 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=542476707940 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","errors":[{"message":"Compute Engine API has not been used in project 542476707940 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=542476707940 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","domain":"usageLimits","reason":"accessNotConfigured","extendedHelp":"https://console.developers.google.com"}],"status":"PERMISSION_DENIED","details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"SERVICE_DISABLED","domain":"googleapis.com","metadata":{"service":"compute.googleapis.com","consumer":"projects/542476707940","serviceTitle":"Compute Engine API","containerInfo":"542476707940","activationUrl":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=542476707940"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"Compute Engine API has not been used in project 542476707940 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=542476707940 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Google developers console API activation","url":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=542476707940"}]}]}}
+[2025-12-08T23:01:10.854Z] unable to look up default compute service account. Falling back to 542476707940-compute@developer.gserviceaccount.com. Error: {"name":"FirebaseError","children":[],"context":{"body":{"error":{"code":403,"message":"Compute Engine API has not been used in project 542476707940 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=542476707940 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","errors":[{"message":"Compute Engine API has not been used in project 542476707940 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=542476707940 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","domain":"usageLimits","reason":"accessNotConfigured","extendedHelp":"https://console.developers.google.com"}],"status":"PERMISSION_DENIED","details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"SERVICE_DISABLED","domain":"googleapis.com","metadata":{"service":"compute.googleapis.com","consumer":"projects/542476707940","serviceTitle":"Compute Engine API","containerInfo":"542476707940","activationUrl":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=542476707940"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"Compute Engine API has not been used in project 542476707940 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=542476707940 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Google developers console API activation","url":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=542476707940"}]}]}},"response":{"statusCode":403}},"exit":1,"message":"Request to https://compute.googleapis.com/compute/v1/projects/542476707940 had HTTP Error: 403, Compute Engine API has not been used in project 542476707940 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=542476707940 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","status":403}
+[2025-12-08T23:01:10.863Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:01:10.863Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:01:10.863Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/taxc-ebooks/billingInfo [none]
+[2025-12-08T23:01:11.842Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/taxc-ebooks/billingInfo 200
+[2025-12-08T23:01:11.843Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/taxc-ebooks/billingInfo {"name":"projects/taxc-ebooks/billingInfo","projectId":"taxc-ebooks","billingAccountName":"billingAccounts/01293D-CA662A-DFA6A4","billingEnabled":true}
+i  functions: Skipping the deploy of unchanged functions. 
++  functions[chatWithAda(us-central1)] Skipped (No changes detected) 
++  functions[verifyPayment(us-central1)] Skipped (No changes detected) 
+[2025-12-08T23:01:11.862Z] Total Function Deployment time: 6
+[2025-12-08T23:01:11.863Z] 0 Functions Deployed
+[2025-12-08T23:01:11.863Z] 0 Functions Errored
+[2025-12-08T23:01:11.863Z] 0 Function Deployments Aborted
+[2025-12-08T23:01:11.863Z] Average Function Deployment time: NaN
+[2025-12-08T23:01:11.864Z] Not printing URL for HTTPS function. Typically this means it didn't match a filter or we failed deployment
+[2025-12-08T23:01:11.865Z] Not printing URL for HTTPS function. Typically this means it didn't match a filter or we failed deployment
+[2025-12-08T23:01:11.866Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:01:11.867Z] Checked if tokens are valid: true, expires at: 1765238112113
+[2025-12-08T23:01:11.867Z] >>> [apiv2][query] GET https://artifactregistry.googleapis.com/v1/projects/taxc-ebooks/locations/us-central1/repositories/gcf-artifacts [none]
+[2025-12-08T23:01:13.283Z] <<< [apiv2][status] GET https://artifactregistry.googleapis.com/v1/projects/taxc-ebooks/locations/us-central1/repositories/gcf-artifacts 200
+[2025-12-08T23:01:13.283Z] <<< [apiv2][body] GET https://artifactregistry.googleapis.com/v1/projects/taxc-ebooks/locations/us-central1/repositories/gcf-artifacts {"name":"projects/taxc-ebooks/locations/us-central1/repositories/gcf-artifacts","format":"DOCKER","description":"This repository is created and used by Cloud Functions for storing function docker images.","labels":{"goog-managed-by":"cloudfunctions"},"createTime":"2025-11-22T17:47:34.449610Z","updateTime":"2025-12-08T22:11:27.545824Z","mode":"STANDARD_REPOSITORY","cleanupPolicies":{"firebase-functions-cleanup":{"id":"firebase-functions-cleanup","action":"DELETE","condition":{"tagState":"ANY","olderThan":"2592000s"}}},"sizeBytes":"329814092","vulnerabilityScanningConfig":{"lastEnableTime":"2025-11-22T17:47:26.310799149Z","enablementState":"SCANNING_DISABLED","enablementStateReason":"API containerscanning.googleapis.com is not enabled."},"satisfiesPzi":true,"registryUri":"us-central1-docker.pkg.dev/taxc-ebooks/gcf-artifacts"}
+
++  Deploy complete! 
+
+Project Console: https://console.firebase.google.com/project/taxc-ebooks/overview

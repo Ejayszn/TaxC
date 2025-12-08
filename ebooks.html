@@ -1851,42 +1851,62 @@ document.head.appendChild(style);
   }
 
   // === BUY EBOOK ===
-function buyEbook() {
-  if (!currentEbook) {
-    alert("Error: No ebook selected.");
+// REPLACE your current buyEbook() with this:
+
+async function buyEbook() {
+  if (!currentEbook) return;
+
+  const user = window.auth.currentUser;
+  if (!user?.email) {
+    alert("Login required");
     return;
   }
 
-  const user = auth.currentUser;  // ← This is the correct way now!
+  const btn = document.querySelector('#paidModal .ebook-btn');
+  const original = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = "Opening Paystack...";
 
-  if (!user || !user.email) {
-    alert("Please log in to purchase this ebook.");
-    closeModal('paidModal');
-    return;
-  }
+  const reference = `EBK_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
 
   const handler = PaystackPop.setup({
-    key: 'pk_test_bc9c09e6d51c4e025bb44c6c57ad1c1144386b55', // ← Put your real test key here
+    key: 'pk_test_bc9c09e6d51c4e025bb44c6c57ad1c1144386b55',
     email: user.email,
     amount: currentEbook.price * 100,
-    currency: 'NGN',
-    ref: 'EBK_' + Date.now() + '_' + Math.floor(Math.random() * 10000),
-    metadata: {
-      custom_fields: [
-        { display_name: "Customer", variable_name: "customer", value: user.displayName || user.email },
-        { display_name: "Ebook", variable_name: "ebook", value: currentEbook.title }
-      ]
-    },
-    callback: function(response) {
-      addToLibrary(currentEbook);
+    ref: reference,
+    callback: async function(response) {
+      btn.textContent = "Verifying...";
+
+      try {
+        const res = await fetch('https://us-central1-taxc-ebooks.cloudfunctions.net/generateEbookDownload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reference: response.reference, file: currentEbook.file })
+        });
+
+        const result = await res.json();
+
+        if (result.success && result.downloadUrl) {
+          alert("Payment verified! Download starting...");
+          window.open(result.downloadUrl, '_blank');
+          addToLibrary(currentEbook);
+        } else {
+          alert("Payment failed: " + (result.message || "Try again"));
+        }
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+
+      btn.textContent = original;
+      btn.disabled = false;
       closeModal('paidModal');
-      alert(`Payment successful!\n"${currentEbook.title}" has been added to your library.`);
-      console.log('Paystack ref:', response.reference);
     },
-    onClose: function() {
-      alert('Payment cancelled. You can try again anytime.');
+    onClose: () => {
+      btn.textContent = original;
+      btn.disabled = false;
     }
   });
+
   handler.openIframe();
 }
 
@@ -2047,25 +2067,35 @@ window.addEventListener('beforeunload', saveChat);
 </script>
 <script src="scripts/scroll-animation.js"></script>
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+  import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-functions.js"; // <-- KEEP THIS NEW IMPORT
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyD59PBKVQ_ocfAxWHsMsG0a3SE143Yp5zo",
-    authDomain: "taxc-ebooks.firebaseapp.com",
-    projectId: "taxc-ebooks",
-    storageBucket: "taxc-ebooks.firebasestorage.app",
-    messagingSenderId: "542476707940",
-    appId: "1:542476707940:web:591fd5d3d6fd51eff95771"
-  };
+  const firebaseConfig = {
+    apiKey: "AIzaSyD59PBKVQ_ocfAxWHsMsG0a3SE143Yp5zo",
+    authDomain: "taxc-ebooks.firebaseapp.com",
+    projectId: "taxc-ebooks",
+    storageBucket: "taxc-ebooks.firebasestorage.app",
+    messagingSenderId: "542476707940",
+    appId: "1:542476707940:web:591fd5d3d6fd51eff95771"
+  };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  window.auth = auth;
-  const $ = id => document.getElementById(id);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const functions = getFunctions(app); // <-- KEEP THIS NEW INITIALIZATION
+  
+  window.auth = auth;
+  
+  // 🛑 START OF REQUIRED ADDITIONS 🛑
+  // Expose the callable function handler globally.
+  // 'verifyEbookPurchase' must match the name in index.js
+  window.verifyEbookPurchase = httpsCallable(functions, 'verifyEbookPurchase');
+  // 🛑 END OF REQUIRED ADDITIONS 🛑
+  
+  const $ = id => document.getElementById(id);
 
-  // THIS IS THE REAL PROTECTION — NOBODY FIT FAKE AM
-  onAuthStateChanged(auth, user => {
+  // THIS IS THE REAL PROTECTION — NOBODY FIT FAKE AM
+  onAuthStateChanged(auth, user => {
     if (!user) {
       // Not logged in → kick dem go login page
       const redirectTo = encodeURIComponent(location.href);
