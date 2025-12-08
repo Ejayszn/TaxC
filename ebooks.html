@@ -2089,5 +2089,93 @@ window.addEventListener('beforeunload', saveChat);
     });
   });
 </script>
+
+<script>
+const PAYSTACK_KEY = "pk_test_bc9c09e6d51c4e025bb44c6c57ad1c1144386b55"; // same as your PDF
+let paymentInProgress = false;
+
+async function verifyEbookPayment(reference) {
+  try {
+    const res = await fetch('https://us-central1-taxc-ebooks.cloudfunctions.net/verifyPayment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reference })
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      console.error("Verification failed:", err);
+      return { success: false, message: err.message || "Invalid payment" };
+    }
+    return await res.json(); // { success: true }
+  } catch (err) {
+    console.error(err);
+    return { success: false };
+  }
+}
+
+document.querySelectorAll('.ebook-buy-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    if (paymentInProgress) return;
+    
+    const title = this.dataset.title;
+    const amount = Number(this.dataset.price); // in kobo
+    const fileUrl = this.dataset.file;
+
+    const email = prompt("Enter your email for receipt & future updates:", "");
+    if (!email || !email.includes('@')) {
+      alert("Please enter a valid email");
+      return;
+ and;
+    }
+
+    paymentInProgress = true;
+    this.disabled = true;
+    this.textContent = "Opening Paystack...";
+
+    const ref = `EBOOK_${Date.now()}_${Math.random().toString(36).substr(2,6)}`;
+
+    const handler = PaystackPop.setup({
+      key: PAYSTACK_KEY,
+      email: email,
+      amount: amount,
+      currency: "NGN",
+      ref: ref,
+      metadata: { ebook_title: title },
+      callback: async function(response) {
+        btn.textContent = "Verifying payment...";
+        
+        const result = await verifyEbookPayment(response.reference);
+        
+        if (result.success) {
+          btn.textContent = "Download Ready!";
+          btn.style.background = "#28A745";
+          
+          // Trigger instant download
+          const link = btn.parentElement.querySelector('.real-download-link');
+          link.href = fileUrl;
+          link.download = fileUrl.split('/').pop();
+          link.click();
+          
+          // Optional: change button to "Download Again"
+          btn.textContent = "Download Again";
+          btn.onclick = () => link.click();
+        } else {
+          alert("Payment could not be verified. Contact support@taxc.com.ng quoting: " + response.reference);
+          btn.textContent = "Try Again";
+          btn.disabled = false;
+        }
+        paymentInProgress = false;
+      },
+      onClose: () => {
+        btn.textContent = `Download Now (₦${amount/100})`;
+        btn.disabled = false;
+        paymentInProgress = false;
+      }
+    });
+    
+    handler.openIframe();
+  });
+});
+</script>
 </body>
 </html>
