@@ -1851,7 +1851,6 @@ document.head.appendChild(style);
   }
 
   // === BUY EBOOK ===
-// REPLACE your current buyEbook() with this:
 
 async function buyEbook() {
   if (!currentEbook) return;
@@ -1881,7 +1880,10 @@ async function buyEbook() {
         const res = await fetch('https://us-central1-taxc-ebooks.cloudfunctions.net/generateEbookDownload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ reference: response.reference, file: currentEbook.file })
+          body: JSON.stringify({
+            reference: response.reference,
+            file: currentEbook.file
+          })
         });
 
         const result = await res.json();
@@ -1891,10 +1893,10 @@ async function buyEbook() {
           window.open(result.downloadUrl, '_blank');
           addToLibrary(currentEbook);
         } else {
-          alert("Payment failed: " + (result.message || "Try again"));
+          alert("Failed: " + (result.message || "Try again"));
         }
       } catch (err) {
-        alert("Error: " + err.message);
+        alert("Network error: " + err.message);
       }
 
       btn.textContent = original;
