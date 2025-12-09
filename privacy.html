@@ -4,153 +4,253 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Privacy Policy - TaxC</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" href="./favicon.ico">
   <style>
     :root {
-      --green: #28A745;
-      --dark-green: #218838;
-      --soft: #F8F9FA;
-      --muted: #6c757d;
-      --card: #ffffff;
-      --dark-text: #343A40;
+      --primary: #28A745;
+      --primary-dark: #218838;
+      --text: #212529;
+      --text-muted: #495057;
+      --border: #dee2e6;
+      --bg: #f8f9fa;
+      --white: #ffffff;
+      --shadow: 0 10px 30px rgba(0,0,0,0.06);
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Inter', sans-serif;
-      background: var(--soft);
-      color: var(--dark-text);
-      line-height: 1.6;
-      padding: 40px 20px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 16px;
     }
+
     .container {
-      max-width: 700px;
-      margin: 0 auto;
-      background: var(--card);
-      padding: 32px;
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      max-width: 800px;
+      margin: 40px auto;
+      background: var(--white);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
     }
-    h1 {
-      color: var(--green);
-      font-size: 2rem;
+
+    .header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      padding: 48px 40px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 2.4rem;
       font-weight: 700;
-      text-align: center;
-      margin-bottom: 16px;
-    }
-    .last-updated {
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.9rem;
-      margin-bottom: 32px;
-    }
-    h3 {
-      color: var(--dark-green);
-      margin: 28px 0 12px;
-      font-size: 1.3rem;
-      font-weight: 600;
-    }
-    p, li {
-      font-size: 1rem;
-      margin-bottom: 12px;
-      color: var(--dark-text);
-    }
-    ul {
-      padding-left: 20px;
-      margin-bottom: 16px;
-    }
-    ul li {
       margin-bottom: 8px;
     }
+
+    .header p {
+      font-size: 1.1rem;
+      opacity: 0.95;
+    }
+
+    .content {
+      padding: 48px 56px;
+    }
+
+    .effective-date {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 40px;
+      font-weight: 500;
+    }
+
+    h2 {
+      color: var(--primary-dark);
+      font-size: 1.5rem;
+      margin: 32px 0 16px;
+      font-weight: 600;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e8f5e8;
+    }
+
+    p {
+      margin-bottom: 16px;
+      color: #333;
+    }
+
+    ul {
+      padding-left: 24px;
+      margin: 16px 0;
+    }
+
+    ul li {
+      margin-bottom: 10px;
+    }
+
+    strong {
+      color: var(--text);
+    }
+
     a {
-      color: var(--green);
+      color: var(--primary);
       text-decoration: none;
       font-weight: 600;
     }
+
     a:hover {
       text-decoration: underline;
     }
-    .back-link {
-      display: block;
-      text-align: center;
-      margin-top: 32px;
-      font-size: 0.95rem;
-    }
-    .consent-box {
-      background: #e6ffe6;
-      border: 1px solid #b3ffb3;
+
+    .company-info {
+      background: #f1fdf4;
+      border: 1px solid #d4edda;
       border-radius: 12px;
-      padding: 16px;
-      margin: 24px 0;
+      padding: 20px;
+      margin: 32px 0;
       font-size: 0.95rem;
     }
-    .consent-box label {
+
+    .consent-section {
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 40px 0;
+      text-align: center;
+    }
+
+    .checkbox-label {
       display: flex;
       align-items: flex-start;
-      gap: 10px;
+      gap: 12px;
+      font-size: 1rem;
+      line-height: 1.5;
       cursor: pointer;
+      text-align: left;
+      max-width: 600px;
+      margin: 0 auto;
     }
-    .consent-box input[type="checkbox"] {
+
+    .checkbox-label input[type="checkbox"] {
       margin-top: 4px;
-      accent-color: var(--green);
+      width: 20px;
+      height: 20px;
+      accent-color: var(--primary);
+      flex-shrink: 0;
     }
-    @media (max-width: 480px) {
-      .container { padding: 24px; }
-      h1 { font-size: 1.8rem; }
+
+    .btn-back {
+      display: block;
+      width: fit-content;
+      margin: 40px auto 20px;
+      padding: 14px 32px;
+      background: var(--primary);
+      color: white;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1.05rem;
+      transition: background 0.3s;
+    }
+
+    .btn-back:hover {
+      background: var(--primary-dark);
+      text-decoration: none;
+    }
+
+    @media (max-width: 640px) {
+      .container { margin: 20px 16px; border-radius: 16px; }
+      .header { padding: 40px 24px; }
+      .header h1 { font-size: 2rem; }
+      .content { padding: 32px 24px; }
+      .checkbox-label { font-size: 0.95rem; }
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <h1>Privacy Policy</h1>
-    <p class="last-updated"><strong>Last updated: November 15, 2025</strong></p>
-
-    <h3>1. Data We Collect</h3>
-    <ul>
-      <li>Your <strong>email</strong> (for login & account recovery)</li>
-      <li><strong>Purchase status</strong> (eBooks unlocked?)</li>
-      <li><strong>Last login time</strong> (for security)</li>
-      <li><strong>Calculator inputs</strong> (optional, saved only if logged in)</li>
-    </ul>
-
-    <h3>2. Why We Collect It</h3>
-    <p>To let you access your eBooks and saved calculations on any device. No data is sold or shared.</p>
-
-    <h3>3. Storage & Security</h3>
-    <p>All data is securely stored in <strong>Firebase (Google Cloud)</strong> — NDPR-compliant, encrypted, and hosted in a region compliant with Nigerian data laws.</p>
-
-    <h3>4. Your Rights (NDPR)</h3>
-    <p>You have full control:</p>
-    <ul>
-      <li><strong>Access</strong> your data anytime</li>
-      <li><strong>Delete</strong> your account and all data</li>
-      <li><strong>Withdraw consent</strong> at any time</li>
-    </ul>
-    <p>Email <a href="mailto:support@taxc.com.ng">support@taxc.com.ng</a> to request deletion or access.</p>
-
-    <div class="consent-box">
-      <label>
-        <input type="checkbox" id="consent" required>
-        I have read and agree to TaxC's Privacy Policy and consent to data processing as described.
-      </label>
+    <div class="header">
+      <h1>Privacy Policy</h1>
+      <p>We take your privacy seriously at TaxC</p>
     </div>
 
-    <a href="login.html?mode=signup" class="back-link">Back to TaxC</a>
+    <div class="content">
+      <p class="effective-date">Effective Date: November 15, 2025</p>
+
+      <h2>1. Information We Collect</h2>
+<p>We collect only the data strictly necessary to deliver and improve our services:</p>
+<ul>
+  <li>Your <strong>name</strong> – to personalise your account</li>
+  <li>Your <strong>email address</strong> – for account creation, login, and communication</li>
+  <li><strong>Purchase history</strong> – records of all eBooks and detailed PDF tax reports you have bought (including titles, dates, and amounts)</li>
+  <li><strong>Last login timestamp</strong> – for security and account protection</li>
+  <li><strong>Saved calculator inputs</strong> – only if you are logged in and choose to save them</li>
+</ul>
+
+<p><strong>We do NOT collect</strong> phone numbers, BVN, bank account details, tax ID numbers (TIN), home address, or any payment card information.</p>
+
+      <h2>2. How We Use Your Data</h2>
+      <p>Your data is used exclusively to:</p>
+      <ul>
+        <li>Let you access your purchased eBooks across devices</li>
+        <li>Secure your account and prevent unauthorized access</li>
+      </ul>
+      <p>We do <strong>not</strong> sell, rent, or share your personal data with third parties for marketing purposes.</p>
+
+      <h2>3. Data Storage & Security</h2>
+      <p>All data is securely stored on <strong>Google Firebase</strong> (Google Cloud Platform) with:</p>
+      <ul>
+        <li>End-to-end encryption at rest and in transit</li>
+        <li>Compliance with Nigeria Data Protection Regulation (NDPR)</li>
+        <li>Regular security audits and penetration testing</li>
+      </ul>
+
+      <h2>4. Your Rights Under NDPR</h2>
+      <p>You have full control over your data:</p>
+      <ul>
+        <li>Right to access your personal data</li>
+        <li>Right to rectification or correction</li>
+        <li>Right to deletion ("right to be forgotten")</li>
+        <li>Right to withdraw consent at any time</li>
+      </ul>
+      <p>To exercise any of these rights, simply email us at: 
+        <a href="mailto:support@taxc.com.ng">support@taxc.com.ng</a>
+      </p>
+
+      <div class="company-info">
+  <strong>Operated by TaxC</strong><br>
+  Registered as a Business Name with the Corporate Affairs Commission (CAC), Nigeria<br>
+  Data Controller: Emmanuel Oguibe<br>
+  Contact: <a href="mailto:emmanuel@taxc.com.ng">emmanuel@taxc.com.ng</a>
+</div>
+
+      <div class="consent-section">
+        <label class="checkbox-label">
+          <input type="checkbox" id="consent" required>
+          <span>I have read and agree to TaxC's Privacy Policy and consent to the processing of my personal data as described above.</span>
+        </label>
+      </div>
+
+      <a href="login.html?mode=signup" class="btn-back">Back to TaxC</a>
+    </div>
   </div>
 
-  <!-- Auto-check consent on login page -->
   <script>
+    // Auto-check if user already consented
+    if (localStorage.getItem('taxc_privacy_consent') === 'true') {
+      const checkbox = document.getElementById('consent');
+      if (checkbox) checkbox.checked = true;
+    }
+
+    // Save consent when checked
     document.getElementById('consent')?.addEventListener('change', function() {
       if (this.checked) {
         localStorage.setItem('taxc_privacy_consent', 'true');
       }
     });
-
-    // Optional: Auto-check if already consented
-    if (localStorage.getItem('taxc_privacy_consent') === 'true') {
-      document.getElementById('consent')?.setAttribute('checked', 'true');
-    }
   </script>
 </body>
 </html>
