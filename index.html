@@ -930,11 +930,12 @@ input:focus, select:focus {
 .chat-header {
   background: #28A745;
   color: white;
-  padding: 14px;
+  padding: 14px 90px 14px 40px; /* ⬅️ extra RIGHT padding */
   font-weight: 700;
-  text-align: center;
+  text-align: left;           /* ⬅️ important */
   position: relative;
 }
+
 
 .chat-header::before {
   content: "";
@@ -1739,7 +1740,7 @@ input:focus, select:focus {
 </template>
 <!-- FLOATING CHAT -->
 <div id="taxc-chat-widget">
-  <div class="chat-launcher" onclick="toggleChat()" aria-label="Chat with TaxC Chatbot">
+  <div class="chat-launcher" onclick="toggleChat()" aria-label="Chat with TaxC Assistant">
     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
     </svg>
@@ -1747,7 +1748,7 @@ input:focus, select:focus {
   </div>
   <div class="chat-window" id="chat-window">
     <div class="chat-header">
-      Ada — TaxC BOT
+      Ada — TaxC Assistant
       <button class="chat-clear" onclick="clearChat()" title="Clear chat">Clear</button>
       <button class="chat-close" onclick="toggleChat()">×</button>
     </div>
@@ -2121,7 +2122,7 @@ const Ada = {
 
     // What is your name? + pidgin
     if (l.includes("what is your name") || l.includes("whats your name") || l.includes("who are you") || l.includes("wetin be your name") || l.includes("who you be")) {
-      return `My name is Ada. I am your dedicated tax assistant.`;
+      return `My name is Ada. I am your dedicated digital tax assistant.`;
     }
 
     // Are the calculations accurate / correct?
@@ -2177,7 +2178,7 @@ const Ada = {
 
     // === NAME & STATE (Professional) ===
     if (l.includes("my name is") || l.includes("call me") || l.includes("i am")) {
-      const match = input.match(/(?:my name is|call me|i'm|my name|name is )([\w\s]+)/i);
+      const match = input.match(/(?:my name is|call me|i'm|my name|name is|i am)([\w\s]+)/i);
       if (match) {
         this.saveName(match[1]);
         return `Thank you, ${this.memory.name}. I have saved your name. How may I assist you?`;
@@ -2185,7 +2186,7 @@ const Ada = {
     }
 
     if (l.includes("what is my name") || l.includes("remember my name")) {
-      return this.memory.name ? `Yes, your name is ${this.memory.name}.` : `You haven’t shared your name yet.`;
+      return this.memory.name ? `Your name is ${this.memory.name}.` : `You haven’t shared your name yet.`;
     }
 
     if (l.includes("my state") || l.includes("i live in") || l.includes("i stay in")) {
@@ -2341,7 +2342,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==== FIRST-TIME WELCOME (if no name & no chat) ====
   if (!Ada.memory.name && !savedChat) {
     // Pass 'true' to prevent this greeting from triggering a notification
-    addMessage("Hi! I'm <strong>Ada</strong>, your personal tax assistant. Ask me anything about taxes, filing, or ebooks!", 'ai', true); 
+    addMessage("Hi! I'm <strong>Ada</strong>, your digital tax assistant. Ask me anything about taxes, filing, or ebooks!", 'ai', true); 
   }
 
   // === WELCOME BACK MESSAGE (ONLY SHOW IF NO CHAT HISTORY) ===
