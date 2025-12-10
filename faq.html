@@ -266,7 +266,7 @@
 
 /* Mobile */
 @media (max-width: 480px) {
-  .chat-window { width: 300px; height: 480px; }
+  .chat-window { width: 306px; height: 480px; }
   .chat-launcher { width: 55px; height: 55px; }
   .chat-launcher svg { width: 24px; height: 24px; }
   .chat-tooltip { display: none; }
@@ -728,7 +728,7 @@
 </div>
         <nav class="desktop-nav">
             <a href="index.html">Home</a>
-            <a href="faq.html">Tax Agents</a>
+            <a href="faq.html">Tax Lawyer</a>
             <a href="ebooks.html">Ebooks</a>
             <a href="index.html#calculator">Calculator</a>
             <button class="cta-small" id="auth-button"></button>
@@ -740,7 +740,7 @@
         
         <nav id="mobile-menu" class="mobile-menu" role="menu">
             <a href="index.html" class="nav-link">Home</a>
-            <a href="faq.html" class="nav-link">Connect with a tax agent</a>
+            <a href="faq.html" class="nav-link">Connect with a tax lawyer</a>
             <a href="ebooks.html" class="nav-link">Ebooks</a>
             <a href="index.html#calculator">Calculator</a>
             <button class="cta-small" id="auth-button-mobile"></button>
@@ -784,7 +784,7 @@
             <details class="faq-item fade-in">
                 <summary>What’s included in the ₦500 PDF report?</summary>
                 <div class="faq-content">
-                    <p>The PDF report includes a step-by-step breakdown of your tax calculation, deduction summary (pension, rent relief, etc), tax band details, and filing guidance tailored to your state’s IRS. It’s perfect for keeping records or sharing with a tax agent.</p>
+                    <p>The PDF report includes a step-by-step breakdown of your tax calculation, deduction summary (pension, rent relief, etc), tax band details, and filing guidance tailored to your state’s IRS. It’s perfect for keeping records or sharing with a tax lawyer.</p>
                     <p><a href="index.html#calculator">Calculate now</a> to get your report!</p>
                 </div>
             </details>
@@ -820,7 +820,7 @@
       <ul>
         <li><a href="index.html#calculator">Calculator</a></li>
         <li><a href="ebooks.html">Ebooks & Guides</a></li>
-        <li><a href="index.html#agent">Connect with a Tax Agent</a></li>
+        <li><a href="index.html#lawyer">Connect with a Tax Lawyer</a></li>
       </ul>
     </div>
 
@@ -929,6 +929,8 @@ const Ada = {
   },
 
   respond(input) {
+    this.logUnanswered(input);
+    let cleanQuestion = input.trim();
     const l = input.toLowerCase().trim();
     const name = this.memory.name || "there";
 
@@ -953,7 +955,7 @@ const Ada = {
       "how does taxc handle deductions": "TaxC allows you to input pension contributions and annual rent paid. For salaried or self-employed individuals, rent relief is calculated as 20% of your rent, capped at ₦500,000. These deductions reduce your taxable income, lowering your tax liability. Other deductions may include life insurance, NHF, etc.",
       "what is withholding tax": "Withholding Tax (WHT) is a tax deducted at source on certain incomes, like rental income (10%), or investment income (10%). TaxC lets you input WHT paid or applies default rates, which are credited against your final tax liability to avoid double taxation.",
       "is my data safe": "Yes, TaxC prioritizes your privacy. We don’t store sensitive payment information. Payments are securely handled by Interswitch. Your input data is used only for calculations and report generation, and we adhere to strict data protection standards.",
-      "what’s included in the pdf report": "The PDF report includes a step-by-step breakdown of your tax calculation, deduction summary (pension, rent relief, etc), tax band details, and filing guidance tailored to your state’s IRS. It’s perfect for keeping records or sharing with a tax agent.",
+      "what’s included in the pdf report": "The PDF report includes a step-by-step breakdown of your tax calculation, deduction summary (pension, rent relief, etc), tax band details, and filing guidance tailored to your state’s IRS. It’s perfect for keeping records or sharing with a tax lawyer.",
       "how do i file my taxes": "TaxC provides an estimate to guide you. To file, submit your tax details to your State IRS, either online via their portal or in person. Our ₦500 report includes specific filing guidance for your state.",
       "can taxc help with business taxes": "Currently, TaxC focuses on Personal Income Tax for individuals. For business or corporate taxes, consult a tax professional or contact your State IRS. Our eBooks may offer additional resources for business owners."
     };
@@ -965,7 +967,7 @@ const Ada = {
 
     // === ALL HIGH-PROBABILITY QUESTIONS RESTORED (Professional English) ===
 
-    if (l.includes("am i tax eligible") || l.includes("who must pay tax") || l.includes("who pays tax")) {
+    if (l.includes("am i tax eligible") || l.includes("who must pay tax") || l.includes("who pays tax") || l.includes("personal income tax") || l.includes("do I need to pay tax in nigeria") || l.includes("unemployed")) {
       return `You are required to pay Personal Income Tax if your total annual income exceeds ₦800,000 after deductions.<br><br>The first ₦800,000 is completely tax-free.<br><br><button class="chat-btn" onclick="location.href='index.html#calculator'">Check Your Eligibility</button>`;
     }
 
@@ -1011,7 +1013,7 @@ const Ada = {
     }
 
     if (l.includes("non-resident") || l.includes("expat") || l.includes("foreigner") || l.includes("work in nigeria") || l.includes("tax for foreigner")) {
-      return `Non-residents pay PIT only on Nigeria-sourced income.<br><br>If here >183 days, you're a resident and taxed on worldwide income.<br><br>Double taxation treaties may apply.<br><br>Consult a professional for your case.<br><br><button class="chat-btn" onclick="location.href='https://taxc.com.ng/agent'">Connect With Expert</button>`;
+      return `Non-residents pay PIT only on Nigeria-sourced income.<br><br>If here >183 days, you're a resident and taxed on worldwide income.<br><br>Double taxation treaties may apply.<br><br>Consult a professional for your case.<br><br><button class="chat-btn" onclick="location.href='https://taxc.com.ng/lawyer'">Connect With Expert</button>`;
     }
 
     if (l.includes("vat") || l.includes("value added tax")) {
@@ -1023,7 +1025,7 @@ const Ada = {
     } 
 
     if (l.includes("appeal") || l.includes("disagree") || l.includes("contest tax") || l.includes("wrong assessment")) {
-      return `You can appeal to your State IRS within 30 days of assessment.<br><br>Provide evidence; escalate to Tax Appeal Tribunal if needed.<br><br>Our agents can assist.<br><br><button class="chat-btn" onclick="location.href='https://taxc.com.ng/agent'">Get Appeal Help</button>`;
+      return `You can appeal to your State IRS within 30 days of assessment.<br><br>Provide evidence; escalate to Tax Appeal Tribunal if needed.<br><br>Our lawyers can assist.<br><br><button class="chat-btn" onclick="location.href='https://taxc.com.ng/lawyer'">Get Appeal Help</button>`;
     }
 
     if (l.includes("register tin") || l.includes("get tin") || l.includes("apply for tin")) {
@@ -1045,13 +1047,17 @@ const Ada = {
     }
 
     // Refined: Regex for employer not deduct
-    if (/employer.*not.*deduct/.test(l) || l.includes("no paye")) {
-      return `Your employer is legally required to deduct PAYE. If they failed to do so, you remain liable and must file/pay yourself before 31 March to avoid penalties.`;
+    if (/employer.*(deduct|paye|tax|withhold)|deduct.*(employer|paye)|already.*(deduct|paye)/i.test(l)) {
+  return `Your employer is legally required to deduct PAYE monthly from your salary and remit it to the tax authority. If they are not doing it, you remain personally liable and must file/pay yourself before 31 March to avoid penalties.`;
+}
+
+    if (l.includes("paye") || l.includes("wetin be paye") || l.includes("payee")) {
+      return `PAYE (Pay As You Earn) is tax your employer deducts monthly from your salary and remits to the government. You still need to file annually to reconcile.`;
     }
 
-    if (l.includes("penalty") || l.includes("late")) {
-      return `Late filing: ₦25,000 + ₦5,000 per month<br>Late payment: 10% penalty + interest<br>File on time to avoid these charges.`;
-    }
+    if (/pay.*tax|tax.*pay|dont.*pay|not.*pay|fail.*pay|non.*pay|evade|avoid.*tax|consequence.*tax|what.*happen.*not.*pay/i.test(l)) {
+  return `Not paying tax in Nigeria leads to penalties: 10% of the unpaid amount + 1.25% monthly interest. Serious cases can result in fines up to ₦1 million, asset seizure, or up to 3 years in prison under NTA 2025. Pay on time to avoid!`;
+}
 
     if (l.includes("previous year") || l.includes("never filed") || l.includes("back tax")) {
       return `Yes, you can file for previous years now. Penalties apply, but voluntary filing reduces them. Many states offer waiver programmes.`;
@@ -1080,11 +1086,11 @@ const Ada = {
     }
 
     if (l.includes("freelance") || l.includes("remote") || l.includes("self-employed")) {
-      return `Freelancers must register with their State IRS, file annually by 31 March, and may pay advance tax quarterly. TaxC guides you step by step.`;
+      return `Freelancers and remote workers (basically people who do not work in a structured Nigerian organization) must register with their State IRS, file annually by 31 March, and may pay advance tax quarterly. TaxC guides you step by step.`;
     }
 
     // Refined: Regex
-    if (/where.*pay.*tax/.test(l)) {
+    if (/who.*collect.*tax|where.*pay.*tax|which.*irs|tax.*authority|fir.*state|state.*irs|tax.*collected.*(fir|state)/i.test(l)) {
       return `Pay via your State IRS portal or designated banks. Example: Lagos → paydirect.lirs.net`;
     }
 
@@ -1102,7 +1108,7 @@ const Ada = {
     }
 
     // Refined: Regex
-    if (/how often.*file/.test(l) || l.includes("file every month")) {
+    if (/how often.*file/.test(l) || l.includes("file every month") || l.includes("monthly") || l.includes("yearly")) {
       return `You file Personal Income Tax returns once per year (by 31 March). PAYE is deducted monthly by employers automatically.`;
     }
 
@@ -1111,7 +1117,7 @@ const Ada = {
     }
 
     if (/student.*pay tax/.test(l) || /nysc.*tax/.test(l)) {
-      return `Full-time students pay no tax. NYSC allowance is mostly tax-free or attracts minimal PAYE.`;
+      return `Students in Nigeria pay no tax on scholarships, bursaries, or allowances, these are fully exempt under the Personal Income Tax Act. However, if a student earns other income (for example, from freelance work, a business, or employment) that exceeds ₦800,000 per annum after applying deductions, that portion becomes taxable. In practice, the vast majority of full-time students fall below this threshold and remain completely tax-free. NYSC allowance is mostly tax-free or attracts minimal PAYE.`;
     }
 
     if (l.includes("not pay tax") || l.includes("tax free") || l.includes("exempt")) {
@@ -1119,7 +1125,7 @@ const Ada = {
     }
 
     // Pidgin additions + typos
-    if (l.includes("calculate") || l.includes("how much tax") || l.includes("owe") || l.includes("how much tax i go pay") || l.includes("wetin i go pay for tax") || l.includes("wetin be my tax")) {
+    if ((l.includes("calculate") || l.includes("how much tax") || l.includes("owe") || l.includes("how much tax i go pay") || l.includes("wetin i go pay")) && !l.includes("state")) {
       return `Let me calculate your exact tax liability.<br><br><button class="chat-btn" onclick="location.href='index.html#calculator'">Open Calculator</button>`;
     }
 
@@ -1140,7 +1146,7 @@ const Ada = {
     }
 
     // 3. Are you an AI or chatbot?
-    if (l.includes("are you an ai") || l.includes("artificial intelligence") || l.includes("chat bot or ai")) {
+    if (l.includes("are you an ai") || l.includes("artificial intelligence") || l.includes("chat bot or ai") || l.includes("are you a chat bot?") || l.includes("are you ai?") || l.includes("bot?")) {
       return `I am a smart chatbot designed specifically to help Nigerians understand and calculate Personal Income Tax under the 2025/2026 rules. I provide accurate, instant answers based on the latest tax laws.`;
     }
 
@@ -1150,7 +1156,7 @@ const Ada = {
     }
 
     // 5. How can I save money on tax? / Reduce tax? + pidgin
-    if ((l.includes("save money") && l.includes("tax")) || l.includes("reduce tax") || l.includes("pay less tax") || l.includes("how i fit save for tax") || l.includes("abeg how to reduce tax")) {
+    if ((l.includes("save money") && l.includes("tax")) || l.includes("reduce tax") || l.includes("pay less tax") || l.includes("how i fit save for tax") || l.includes("abeg how to reduce tax") || l.includes("rent reduce my")) {
       return `You can legally reduce your tax through:<br><br>
         • Rent relief (up to ₦500,000)<br>
         • Pension contributions<br>
@@ -1164,12 +1170,14 @@ const Ada = {
     if (l.includes("wht") || l.includes("withholding tax") || l.includes("wetin be wht") || l.includes("withholiding tax") || l.includes("witholding")) {
       return `Withholding Tax (WHT) is tax deducted at source before payment is made to you. Example: Tenant deducts 10% from rent and pays it directly to government. You get credit for it when filing.`;
     }
-    if (l.includes("paye") || l.includes("wetin be paye") || l.includes("payee")) {
-      return `PAYE (Pay As You Earn) is tax your employer deducts monthly from your salary and remits to the government. You still need to file annually to reconcile.`;
-    }
     if (l.includes("rent relief") || l.includes("wetin be rent relief") || l.includes("rent releif") || l.includes("rent relif")) {
       return `Rent relief allows you to deduct up to ₦500,000 from your taxable income if you pay house rent. This can save you tens or hundreds of thousands in tax.`;
     }
+
+    // Consolidated Relief Allowance
+if (/consolidated.*relief|relief.*allowance|CRA/i.test(l)) {
+  return `Under the Nigeria Tax Act 2025 (effective January 1, 2026), the Consolidated Relief Allowance (CRA) has been abolished and replaced by a rent relief: 20% of annual rent paid, capped at ₦500,000 (for renters only). Homeowners get no equivalent relief. The first ₦800,000 of income remains tax-free via the new progressive bands, so most people earning ≤ ₦800k per year pay little or no tax.`;
+}
 
     // 7. Off-topic / inappropriate redirection (clean version)
     if (/(love you|marry|boyfriend|girlfriend|date|send pic|nude|sexy|horny|sex)/i.test(l)) {
@@ -1183,8 +1191,8 @@ const Ada = {
 
     // Are the calculations accurate / correct?
     if (l.includes("accurate") || l.includes("correct") || l.includes("can i trust") || l.includes("calculations")) {
-      return `Yes. All TaxC calculations strictly follow the official 2025/2026 Nigerian Tax Act.<br><br>For complex cases or extra peace of mind, you can connect with a verified tax agent here:<br><br>
-        <button class="chat-btn" onclick="location.href='https://taxc.com.ng/agent'">Connect With Tax Agent</button>`;
+      return `Yes. All TaxC calculations strictly follow the official 2025/2026 Nigerian Tax Act.<br><br>For complex cases or extra peace of mind, you can connect with a verified tax lawyer here:<br><br>
+        <button class="chat-btn" onclick="location.href='https://taxc.com.ng/lawyer'">Connect With Tax Lawyer</button>`;
     }
 
     // === WHAT ARE THE TAX BANDS? (2026 Nigerian PIT Rates – Clean & Beautiful) + typos + pidgin
@@ -1270,22 +1278,35 @@ const Ada = {
       `;
     }
 
-    // Log anything that reaches fallback (super valuable!)
-this.logUnanswered(input);
+    // === SAFE LATE FILING / PENALTY (won’t eat normal questions anymore) ===
+if (/penalty|late.*(filing|payment|file|submission)|file.*late|overdue|miss.*deadline/i.test(l)) {
+  return `Late filing: ₦50,000 for individuals (may be ₦5,000 fine + ₦100/day depending on state/LGA)<br>Late payment: 10% penalty per annum + interest at the prevailing CBN rate<br>File on time to avoid these charges.`;
+}
 
     // === FINAL FALLBACK ===
-    // Error handling: Greet only if not already greeted in session, but since stateless per call, keep as is
+    
+    let responseText = "";
+    
+    // Check if the user asked a question (cleanQuestion is the input)
+    // 2. Access cleanQuestion, which is now defined.
+    if (cleanQuestion) { // <--- The error happens if this runs before the line above
+        // Option 1: Acknowledge the question specifically
+        responseText = `
+            Sorry, I couldn't find a direct answer to your inquiry about <strong>"${cleanQuestion}"</strong>.
+        `;
+    } else {
+        // Option 2: Generic greeting if no question was asked
+        responseText = `${this.greet() ? this.greet() : "Hello."}`;
+    }
+
+    // Now combine the custom response with the list of capabilities
     return `
-      ${this.greet() ? this.greet() + "<br><br>" : "Hello.<br><br>"}
-      I can help you with:<br>
-      • Calculating your Personal Income Tax<br>
-      • Understanding deductions and reliefs<br>
-      • Filing deadlines and procedures<br>
-      • Free educational resources<br><br>
-      <button class="chat-btn" onclick="location.href='index.html#calculator'">Calculate My Tax</button>
-      <button class="chat-btn" onclick="location.href='ebooks.html#free'">Download Free Guides</button>
-    `;
-  }
+        ${responseText}<br><br>
+        However, I can definitely help if you have any other questions like tax calculation, deductions, etc.
+        <button class="chat-btn" onclick="location.href='index.html#calculator'">Calculate My Tax</button>
+        <button class="chat-btn" onclick="location.href='ebooks.html#free'">Download Free Guides</button>
+    `;
+} 
 };
 
 // === CHAT UI ===
@@ -1302,6 +1323,7 @@ function toggleChat() {
     localStorage.removeItem('taxc_ai_has_unread'); 
 
     setTimeout(() => document.getElementById('chat-input')?.focus(), 300);
+    setTimeout(scrollToBottom, 100);
   }
 }
 
@@ -1319,14 +1341,23 @@ function saveChat() {
   localStorage.setItem('taxc_chat_history', JSON.stringify(messages));
 }
 
+function scrollToBottom() {
+  const body = document.getElementById('chat-body');
+  if (body) {
+    body.scrollTop = body.scrollHeight;
+    body.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }
+}
+
 function addMessage(text, type, isInitialLoad = false) {
-  const body = document.getElementById('chat-body');
-  const div = document.createElement('div');
-  div.className = `message ${type}`;
-  div.innerHTML = text;
-  body.appendChild(div);
-  body.scrollTop = body.scrollHeight;
-  saveChat();
+  const body = document.getElementById('chat-body');
+  const div = document.createElement('div');
+  div.className = `message ${type}`;
+  div.innerHTML = text;
+  body.appendChild(div);
+  
+  // Scroll to bottom
+  scrollToBottom();
 
   // === PLAY SOUND ONLY FOR ADA'S REAL REPLY (not loading dots) ===
   if (type === 'ai' && window.adaSound && !text.includes('typing')) {
@@ -1385,6 +1416,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const messages = JSON.parse(savedChat);
     // Pass 'true' to ensure history re-load doesn't re-trigger notification
     messages.forEach(msg => addMessage(msg.text, msg.type, true)); 
+    setTimeout(scrollToBottom, 100);
   }
 
   // === INIT ADA SOUND ===
