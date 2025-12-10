@@ -1907,9 +1907,11 @@ document.head.appendChild(style);
   }
 ];
 
-  // === LIBRARY, FILTER, MODALS, CHAT ===
-  let library = JSON.parse(localStorage.getItem('taxc_library')) || [];
+    // === LIBRARY, FILTER, MODALS, CHAT ===
+  let library = []; // Start with an empty array. The real data comes from Firestore.
   let currentEbook = null;
+  let currentUserId = null; // New variable to store the logged-in user ID
+  const DB_COLLECTION = 'userLibraries'; // Matches your Firestore rule
 
   function updateLibraryCount() {
     document.querySelector('.library-title').textContent = `My Library (${library.length})`;
@@ -1920,7 +1922,6 @@ document.head.appendChild(style);
     grid.innerHTML = '';
 
     library = library.filter(item => item && item.cover && item.file && item.title);
-    localStorage.setItem('taxc_library', JSON.stringify(library));
     updateLibraryCount();
 
     library.forEach(item => {
@@ -2054,22 +2055,55 @@ async function buyEbook() {
 }
 
   function addToLibrary(ebook) {
-    if (!library.find(i => i.file === ebook.file)) {
-      library.push(ebook);
-      localStorage.setItem('taxc_library', JSON.stringify(library));
-      updateLibraryCount();
-      renderLibrary();
-    }
-  }
+  if (!library.find(i => i.file === ebook.file)) {
+    // Only push if not already present
+    library.push(ebook);
+    
+    // Save to Firestore instead
+    saveLibraryToFirestore(); 
+    
+    updateLibraryCount();
+    renderLibrary();
+  }
+}
 
-  function addToLibrary(ebook) {
-    if (!library.find(i => i.file === ebook.file)) {
-      library.push(ebook);
-      localStorage.setItem('taxc_library', JSON.stringify(library));
-      updateLibraryCount();
-      renderLibrary();
-    }
-  }
+// Function to save the current library state to Firestore
+async function saveLibraryToFirestore() {
+  if (!currentUserId) return;
+  
+  // Only save essential data: file and title
+  const dbData = library.map(item => ({ title: item.title, file: item.file, price: item.price, cover: item.cover }));
+  
+  try {
+    const docRef = doc(window.db, DB_COLLECTION, currentUserId);
+    await setDoc(docRef, { ebooks: dbData, lastUpdated: new Date() }, { merge: true });
+    // console.log("Library saved to Firestore successfully.");
+  } catch (e) {
+    console.error("Error saving library to Firestore: ", e);
+  }
+}
+
+// Function to load the library from Firestore
+async function loadLibraryFromFirestore() {
+  if (!currentUserId) return;
+  try {
+    const docRef = doc(window.db, DB_COLLECTION, currentUserId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      library = docSnap.data().ebooks || [];
+      // Also merge any old localStorage data if this is the first time syncing on this device
+      // (Optional cleanup step: only run once)
+      
+    } else {
+      library = [];
+    }
+    renderLibrary();
+  } catch (e) {
+    console.error("Error loading library from Firestore: ", e);
+    library = [];
+  }
+}
 
   function toggleLibrary() {
     const grid = document.getElementById('libraryGrid');
@@ -2186,7 +2220,6 @@ async function buyEbook() {
   }
 
   function resetLibraryConfirm() {
-    localStorage.removeItem('taxc_library');
     library = [];
     updateLibraryCount();
     renderLibrary();
@@ -2195,24 +2228,23 @@ async function buyEbook() {
   }
 
   // === INIT ===
-  document.addEventListener('DOMContentLoaded', () => {
-    updateLibraryCount();
-    renderLibrary();
-    if (library.length > 0) {
-      document.querySelector('.library-grid').classList.add('open');
-      document.querySelector('.library-toggle').textContent = 'Close';
-    }
-    updateHeroText();
-  });
+document.addEventListener('DOMContentLoaded', () => {
+  // Library loading/rendering is now handled by the onAuthStateChanged listener
+  updateHeroText();
+});
 
 window.addEventListener('beforeunload', saveChat);
 
 </script>
 <script src="scripts/scroll-animation.js"></script>
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-  import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-functions.js"; // <-- KEEP THIS NEW IMPORT
+
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+  import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-functions.js";
+  
+  // ⭐ NEW IMPORT: Firestore
+  import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyD59PBKVQ_ocfAxWHsMsG0a3SE143Yp5zo",
@@ -2224,29 +2256,47 @@ window.addEventListener('beforeunload', saveChat);
   };
 
   const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const functions = getFunctions(app); // <-- KEEP THIS NEW INITIALIZATION
+  const auth = getAuth(app);
+  const functions = getFunctions(app);
+  
+  // ⭐ NEW INITIALIZATION: Firestore
+  const db = getFirestore(app);
   
   window.auth = auth;
+  window.db = db; // Expose db globally for your non-module script
   
   // 🛑 START OF REQUIRED ADDITIONS 🛑
   // Expose the callable function handler globally.
   // 'verifyEbookPurchase' must match the name in index.js
   window.verifyEbookPurchase = httpsCallable(functions, 'verifyEbookPurchase');
-  // 🛑 END OF REQUIRED ADDITIONS 🛑
+  // ⭐ FIX: Expose the helper functions globally so the main script can use them
+window.doc = doc;
+window.getDoc = getDoc;
+window.setDoc = setDoc;
+window.updateDoc = updateDoc; // updateDoc is good to have too, though maybe not used here
+
+// 🛑 END OF REQUIRED ADDITIONS 🛑
   
   const $ = id => document.getElementById(id);
 
   // THIS IS THE REAL PROTECTION — NOBODY FIT FAKE AM
   onAuthStateChanged(auth, user => {
-    if (!user) {
-      // Not logged in → kick dem go login page
-      const redirectTo = encodeURIComponent(location.href);
-      location.replace(`login.html?redirect=${redirectTo}`);
-      return;
-    }
+  if (!user) {
+    // Not logged in → kick them go login page
+    const redirectTo = encodeURIComponent(location.href);
+    location.replace(`login.html?redirect=${redirectTo}`);
+    
+    // ⭐ NEW: Clear state if logged out
+    currentUserId = null;
+    library = [];
+    renderLibrary();
+    return;
+  }
 
     // Logged in → show name + change button to Logout
+    // Logged in
+  currentUserId = user.uid; // ⭐ NEW: Set the user ID
+  loadLibraryFromFirestore(); // ⭐ KEY ACTION: Load library data from Firestore
     if (user.displayName) {
       const firstName = user.displayName.split(' ')[0];
       const userDisplay = $('userDisplay');
