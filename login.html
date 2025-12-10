@@ -249,7 +249,6 @@
   </div>
 
 <script type="module">
-  import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app-check.js";
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
   import { 
   getAuth, 
@@ -274,17 +273,6 @@
   };
 
   const app = initializeApp(firebaseConfig);
-
-    if (location.hostname === "127.0.0.1" || location.hostname === "localhost") {
-      self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-      console.log("Firebase App Check debug token generation enabled for localhost.");
-    }
-
-    initializeAppCheck(app, {
-      // ⭐ REPLACE THIS LINE WITH YOUR NEW SITE KEY ⭐
-      provider: new ReCaptchaEnterpriseProvider('6LcQZiYsAAAAALLnlCLU0WvvuVHfIyXwFvmCeVNB'), // <-- Use your NEW reCAPTCHA Enterprise Site Key here
-      isTokenAutoRefreshEnabled: true
-    });
 
 // THEN Auth / Firestore
 const auth = getAuth(app);
