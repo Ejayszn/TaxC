@@ -1292,6 +1292,12 @@ const Ada = {
     const name = this.memory.name || "there";
 
     // === 1. PROFESSIONAL GREETINGS ===
+
+    if (/(good ?night|gdnight|gn|night night|night o|oya sleep|sleep well|sleep tight|talk tomorrow|bye for now|later|going to bed)/i.test(l)) {
+  return `Good night!
+Sleep well and wake up refreshed. I go dey here whenever you need me tomorrow. Sweet dreams!`;
+}
+
     if (/^(hi|hello|hey|howfar|good morning|gm|afternoon|evening|hi ada|hello ada)/i.test(input)) {
       return this.randomChoice([
         `Hello ${name}. How can I assist you with your taxes today?`,
@@ -1324,8 +1330,8 @@ const Ada = {
 
     // === ALL HIGH-PROBABILITY QUESTIONS RESTORED (Professional English) ===
 
-    if (l.includes("am i tax eligible") || l.includes("who must pay tax") || l.includes("who pays tax") || l.includes("personal income tax") || l.includes("do I need to pay tax in nigeria") || l.includes("unemployed")) {
-      return `You are required to pay Personal Income Tax if your total annual income exceeds ₦800,000 after deductions.<br><br>The first ₦800,000 is completely tax-free.<br><br><button class="chat-btn" onclick="location.href='index.html#calculator'">Check Your Eligibility</button>`;
+    if (l.includes("am i tax eligible") || l.includes("who must pay tax") ||  l.includes("who pays tax") || l.includes("who then pays tax") || l.includes("personal income tax") || l.includes("do I need to pay tax in nigeria") || l.includes("unemployed")) {
+      return `You are required to pay Personal Income Tax if you are tax eligible, and your total annual income exceeds ₦800,000 after deductions.<br><br>The first ₦800,000 is completely tax-free.<br><br><button class="chat-btn" onclick="location.href='ebooks.html#free'">Check Your Eligibility</button>`;
     }
 
     if (l.includes("tax on gifts")) {
@@ -1412,11 +1418,46 @@ const Ada = {
       return `PAYE (Pay As You Earn) is tax your employer deducts monthly from your salary and remits to the government. You still need to file annually to reconcile.`;
     }
 
-    if (/student.*pay tax/.test(l) || /nysc.*tax/.test(l)) {
-      return `Students in Nigeria pay no tax on scholarships, bursaries, or allowances, these are fully exempt under the Personal Income Tax Act. However, if a student earns other income (for example, from freelance work, a business, or employment) that exceeds ₦800,000 per annum after applying deductions, that portion becomes taxable. In practice, the vast majority of full-time students fall below this threshold and remain completely tax-free. NYSC allowance is mostly tax-free or attracts minimal PAYE.`;
+    if (
+  /student.*(pay|tax)/.test(l) ||
+  /(nysc|allowance).*tax/.test(l) ||
+  /tax.*(nysc|allowance)/.test(l) ||
+  /(pay|deduct).*tax.*(nysc|allowance)/.test(l)
+) {
+  return `Students in Nigeria pay no tax on scholarships, bursaries, or allowances. These are fully exempt under the Personal Income Tax Act.<br><br>
+
+NYSC allowance is also not taxable. The Federal Government classifies it as a stipend, not employment income. Most corps members pay zero tax on their monthly allawee.<br><br>
+
+You (students, NYSC corpers, and Nigerians as a whole) only pay tax if you are tax eligible, and have separate income (business/job/freelance) that goes above ₦800,000 per year.`;
+}
+
+
+    if (/(what can you do)|(how can you help)|(capabilities|expertise|specialize)|(help me)|(menu)/.test(l)) {
+      return `I’m here to make Nigerian taxes simple for you.
+        <br><br>
+        I can explain:
+        <ul>
+            <li>PAYE (Pay-As-You-Earn)</li>
+            <li>Freelance / Self-Employed Tax Rules</li>
+            <li>Company Taxes and VAT</li>
+            <li>Tax Clearance Certificates (TCC)</li>
+            <li>Filing Deadlines and Procedures</li>
+            <li>Student & NYSC Allowance Rules</li>
+            <li>Tax implications for Side Hustles</li>
+            <li>Or literally **any** Nigerian tax question you have... all in clear, straightforward English.</li>
+        </ul>
+        <br>
+        Just ask anything!`;
     }
 
-    if (/pay.*tax|tax.*pay|dont.*pay|not.*pay|fail.*pay|non.*pay|evade|avoid.*tax|consequence.*tax|what.*happen.*not.*pay/i.test(l)) {
+    // Check age/minor questions FIRST (more specific)
+if (/(age|minimum age|age range|minor|under 18|below 18|child|kids).*?(tax|paye|pay tax|paying tax)/i.test(l) ||
+    /(tax|paye).*?(age|minimum age|age range|minor|under 18|below 18|child|kids)/i.test(l)) {
+  return `Under the new Nigeria Tax Act (NTA) 2025, effective January 1, 2026, the age range for being subject to personal income tax remains 18 and above. However, individuals are only liable for tax if their annual income exceeds a certain threshold (₦800,000).`;
+}
+
+// Then check penalties (now narrower to avoid false matches)
+if (/(dont pay|not pay|fail to pay|non-payment|evade|avoid tax|consequence|penalty|what happen if not pay|tax fine|tax jail)/i.test(l)) {
   return `Not paying tax in Nigeria leads to penalties: 10% of the unpaid amount + 1.25% monthly interest. Serious cases can result in fines up to ₦1 million, asset seizure, or up to 3 years in prison under NTA 2025. Pay on time to avoid!`;
 }
 
