@@ -216,11 +216,14 @@
         <li>Right to deletion ("right to be forgotten")</li>
         <li>Right to withdraw consent at any time</li>
       </ul>
-      <p>To exercise any of these rights, simply email us at: 
-        <a href="mailto:support@taxc.com.ng">support@taxc.com.ng</a>
-      </p>
+      <p>To exercise any of these rights, simply email us at: <a href="mailto:support@taxc.com.ng">support@taxc.com.ng</a>
+      </p>
+      
+      <p>For the rules governing the use of the TaxC service, please review our separate 
+        <a href="terms.html" target="_blank">Terms of Service</a>.
+      </p>
 
-      <div class="company-info">
+      <div class="company-info">
   <strong>Operated by TaxC</strong><br>
   Registered as a Business Name with the Corporate Affairs Commission (CAC), Nigeria<br>
   Data Controller: Emmanuel Oguibe<br>
@@ -239,18 +242,12 @@
   </div>
 
   <script>
-    // Auto-check if user already consented
-    if (localStorage.getItem('taxc_privacy_consent') === 'true') {
-      const checkbox = document.getElementById('consent');
-      if (checkbox) checkbox.checked = true;
-    }
-
-    // Save consent when checked
-    document.getElementById('consent')?.addEventListener('change', function() {
-      if (this.checked) {
-        localStorage.setItem('taxc_privacy_consent', 'true');
-      }
-    });
-  </script>
+    // Save consent when checked
+    document.getElementById('consent')?.addEventListener('change', function() {
+      if (this.checked) {
+        localStorage.setItem('taxc_privacy_consent', 'true');
+      }
+    });
+  </script>
 </body>
 </html>

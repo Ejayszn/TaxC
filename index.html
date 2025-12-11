@@ -1386,6 +1386,56 @@ input:focus, select:focus {
     }
 }
 
+/* ==================== NEW MULTI-LINE INPUT (replaces the old single-line input) ==================== */
+.chat-input {
+  display: flex;
+  align-items: end; /* keeps send button at bottom even when textarea grows */
+  gap: 8px;
+  padding: 10px;
+}
+
+.chat-input textarea {
+  flex: 1;
+  min-height: 40px;
+  max-height: 160px;           /* when it hits this height, scrollbar appears */
+  padding: 12px 14px;
+  border: 1px solid #ddd;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  line-height: 1.5;
+  resize: none;                /* no resize handle */
+  overflow-y: auto;            /* THIS IS THE KEY — enables scrolling inside */
+  box-sizing: border-box;
+  background: white;
+  field-sizing: content;       /* modern browsers: auto-grow until max-height */
+  scrollbar-width: thin;       /* Firefox nice scrollbar */
+}
+
+/* Thin beautiful scrollbar for Chrome/Edge/Safari */
+.chat-input textarea::-webkit-scrollbar {
+  width: 6px;
+}
+.chat-input textarea::-webkit-scrollbar-thumb {
+  background: rgba(40,167,69,0.5);
+  border-radius: 3px;
+}
+.chat-input textarea::-webkit-scrollbar-thumb:hover {
+  background: #28A745;
+}
+
+/* Send button stays same height as the single-line state */
+.chat-input button {
+  align-self: end; /* keeps it stuck to the bottom */
+  margin-bottom: 0;
+}
+
+/* Mobile tweaks */
+@media (max-width: 480px) {
+  .chat-input textarea {
+    font-size: 0.9rem;
+  }
+}
 
 </style>
 </head>
@@ -1789,7 +1839,12 @@ input:focus, select:focus {
     <div class="chat-body" id="chat-body">
     </div>
     <div class="chat-input">
-      <input type="text" id="chat-input" placeholder="Type here..." onkeypress="if(event.key==='Enter') sendMessage()">
+      <textarea 
+  id="chat-input" 
+  placeholder="Type here..." 
+  rows="1"
+  onkeypress="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendMessage();}"
+></textarea>
       <button onclick="sendMessage()">Send</button>
     </div>
   </div>
@@ -2053,7 +2108,7 @@ You (students, NYSC corpers, and Nigerians as a whole) only pay tax if you are t
 }
 
 
-    if (/(what can you do)|(how can you help)|(do you do)|(capabilities|expertise|specialize)|(help me)|(menu)/.test(l)) {
+    if (/(what can you do)|(how can you help)|(capabilities|expertise|specialize)|(help me)|(menu)/.test(l)) {
       return `I’m here to make Nigerian taxes simple for you.
         <br><br>
         I can explain:
@@ -2369,6 +2424,20 @@ function scrollToBottom() {
     body.scrollIntoView({ behavior: 'smooth', block: 'end' });
   }
 }
+// Auto-grow the textarea as user types, stop growing at max-height → scroll appears
+function autoResizeTextarea() {
+  const ta = document.getElementById('chat-input');
+  ta.style.height = 'auto';                    // reset
+  ta.style.height = ta.scrollHeight + 'px';    // grow to fit content
+}
+
+// Reset height after sending
+function resetTextareaHeight() {
+  const ta = document.getElementById('chat-input');
+  ta.style.height = 'auto';
+  ta.value = '';
+  autoResizeTextarea();
+}
 
 function addMessage(text, type, isInitialLoad = false) {
   const body = document.getElementById('chat-body');
@@ -2407,14 +2476,22 @@ function clearChat() {
 }
 
 function sendMessage() {
-  const input = document.getElementById('chat-input');
-  const text = input.value.trim();
+  const textarea = document.getElementById('chat-input');
+  let text = textarea.value.trim();
+
   if (!text) return;
 
-  addMessage(text, 'user');
-  input.value = '';
+  // Show user's message (preserve line breaks)
+  addMessage(text.replace(/\n/g, '<br>'), 'user');
+
+  // Clear and shrink textarea
+  textarea.value = '';
+  autoResizeTextarea();
+
+  // Show typing indicator
   addMessage('<i class="typing">•••</i>', 'ai');
 
+  // Reply after delay
   setTimeout(() => {
     const messages = document.querySelectorAll('.message');
     if (messages.length > 0) messages[messages.length - 1].remove();

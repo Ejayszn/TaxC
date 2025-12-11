@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -136,13 +135,86 @@
       color: #28A745;
     }
     .consent-box {
-      margin: 20px 0;
-      padding: 16px;
-      background: #e6ffe6;
-      border: 1px solid #b3ffb3;
-      border-radius: 12px;
-      font-size: 0.9rem;
-    }
+  margin: 24px 0 8px 0;
+  padding: 18px 20px;
+  background: linear-gradient(135deg, #f0fff4 0%, #e6f9e9 100%);
+  border: 1.5px solid #a8e6b3;
+  border-radius: 14px;
+  font-size: 0.94rem;
+  line-height: 1.5;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.08);
+}
+
+.consent-box:hover {
+  border-color: #28A745;
+  box-shadow: 0 4px 16px rgba(40, 167, 69, 0.15);
+  transform: translateY(-1px);
+}
+
+.consent-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.consent-label input[type="checkbox"] {
+  opacity: 0;
+  position: absolute;
+}
+
+.checkmark {
+  width: 22px;
+  height: 22px;
+  border: 2.4px solid #28A745;
+  border-radius: 8px;
+  background: white;
+  flex-shrink: 0;
+  margin-top: 1px;
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.consent-label input:checked ~ .checkmark {
+  background: #28A745;
+  border-color: #28A745;
+}
+
+.consent-label input:checked ~ .checkmark::after {
+  content: "✓";
+  position: absolute;
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+  top: 49%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.consent-text a {
+  color: #28A745;
+  font-weight: 700;
+  text-decoration: underline;           /* Always underlined */
+  text-underline-offset: 3px;           /* Nice breathing space under text */
+  text-decoration-thickness: 1.5px;     /* Slightly thicker for visibility */
+}
+
+.consent-text a:hover {
+  color: #1e7e34;
+  text-decoration-thickness: 2px;       /* Gets a bit bolder on hover */
+}
+
+.consent-text a:hover {
+  text-decoration: underline;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
 
     #forgotLink {
   transition: all 0.2s ease;
@@ -168,11 +240,15 @@
 
     <div class="login-body">
       <!-- ONLY SHOW IN SIGNUP -->
+<!-- NEW & IMPROVED CONSENT BOX (keeps green background, looks 10× better) -->
 <div class="consent-box" id="consentBox" style="display:none;">
-  <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
-    <input type="checkbox" id="globalConsent" required style="width:18px; height:18px; accent-color:#28A745;">
-    <span>
-      I agree to the <a href="privacy.html" target="_blank" style="color:#28A745; font-weight:600; text-decoration:underline;">Privacy Policy</a>
+  <label class="consent-label">
+    <input type="checkbox" id="globalConsent" required>
+    <span class="checkmark"></span>
+    <span class="consent-text">
+      I agree to the 
+      <a href="privacy.html" target="_blank">Privacy Policy</a> and 
+      <a href="terms.html" target="_blank">Terms of Service</a>.
     </span>
   </label>
 </div>
@@ -290,23 +366,27 @@ const db = getFirestore(app);
   // 🔥 FRIENDLY NIGERIAN ERROR MESSAGES 🔥
   // =============================================
   function showError(code, message) {
-    const friendly = {
-      'auth/wrong-password'        : "Incorrect password o! Try again.",
-      'auth/user-not-found'        : "No account with this email. Sign up instead?",
-      'auth/email-already-in-use'  : "This email don already get account. Login instead.",
-      'auth/weak-password'         : "Password too weak! Use at least 6 characters with number & symbol.",
-      'auth/invalid-email'         : "Email no correct. Check am well.",
-      'auth/invalid-credential'    : "Email or password incorrect.",
-      'auth/too-many-requests'     : "Too many attempts. Chill small, try again later.",
-      'auth/network-request-failed': "Network problem. Check your connection.",
-      'auth/popup-closed-by-user'  : "You closed the Google popup. Try again.",
-      'auth/cancelled-popup-request': "Google login cancelled."
-    };
+  const friendly = {
+    'auth/wrong-password'        : "Incorrect password! Try again.",
+    'auth/user-not-found'        : "No account with this email. Sign up instead?",
+    'auth/email-already-in-use'  : "This email don already get account. Login instead.",
+    'auth/weak-password'         : "Password too weak! Use at least 6 characters with number & symbol.",
+    'auth/invalid-email'         : "Email isn't correct. Check am well.",
+    'auth/invalid-credential'    : "Email or password incorrect.",
+    'auth/too-many-requests'     : "Too many attempts. Chill small, try again later.",
+    'auth/network-request-failed': "Network problem. Check your connection.",
+    'auth/popup-closed-by-user'  : "You closed the Google popup. Try again.",
+    'auth/cancelled-popup-request': "Google login cancelled.",
 
-    const msg = friendly[code] || message || "Something went wrong. Try again.";
-    $('errorMsg').textContent = msg;
-    $('errorMsg').style.color = '#dc3545';
-  }
+    // ADD THESE TWO LINES (super common ones people forget)
+    'auth/missing-password'      : "Password field empty! Type your password.",
+    'auth/missing-email'         : "Email field empty! Put your email first."
+  };
+
+  const msg = friendly[code] || message || "Something went wrong. Try again.";
+  $('errorMsg').textContent = msg;
+  $('errorMsg').style.color = '#dc3545';
+}
 
   function showSuccess(msg) {
     $('errorMsg').textContent = msg;
@@ -384,13 +464,21 @@ const db = getFirestore(app);
   await updateProfile(user, { displayName: firstName });
 
   // Save to Firestore
-  await setDoc(doc(db, 'users', user.uid), {
-    firstName,
-    email,
-    createdAt: new Date().toISOString(),
-    emailVerified: false  // optional: track it yourself too
-  });
+  // 🟢 UPDATED setDoc BLOCK (Add Consent Object)
+// Save to Firestore
+  await setDoc(doc(db, 'users', user.uid), {
+    firstName,
+    email,
+    createdAt: new Date().toISOString(),
+    emailVerified: false,  // optional: track it yourself too
 
+    // ⭐ NEW: Legal Consent Record ⭐
+    consent: {
+      timestamp: new Date().toISOString(), 
+      policyVersion: '1.0', // This should be updated if you change your policy
+      termsVersion: '1.0'   // This should be updated if you change your terms
+    }
+  });
   // ... inside isSignup block
 // SEND VERIFICATION EMAIL
 await sendEmailVerification(user);
@@ -457,12 +545,20 @@ return; // Crucial — don't go to the redirect code below
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      await setDoc(doc(db, 'users', user.uid), {
-        firstName: user.displayName?.split(' ')[0] || 'User',
-        email: user.email,
-        photoURL: user.photoURL,
-        createdAt: new Date().toISOString()
-      }, { merge: true });
+      // 🟢 UPDATED setDoc BLOCK (Add Consent Object)
+      await setDoc(doc(db, 'users', user.uid), {
+        firstName: user.displayName?.split(' ')[0] || 'User',
+        email: user.email,
+        photoURL: user.photoURL,
+        createdAt: new Date().toISOString(),
+
+        // ⭐ NEW: Legal Consent Record (Google) ⭐
+        consent: {
+          timestamp: new Date().toISOString(), 
+          policyVersion: '1.0', 
+          termsVersion: '1.0'  
+        }
+      }, { merge: true }); // Keep { merge: true } for Google to update existing profiles
 
       // If user signed in with Google and has no password yet → carry am go set password page
 const hasPassword = user.providerData.some(p => p.providerId === 'password');
