@@ -688,6 +688,40 @@
     font-size: 1rem;  /* down from 1.1rem */
   }
 }
+
+/* ——— CHATBOT BUTTONS ——— */
+.ai .chat-btn {
+    display: inline-block !important;
+    margin: 10px 8px 4px 0 !important;
+    padding: 11px 18px !important;
+    background: #28A745 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 50px !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    box-shadow: 0 3px 8px rgba(40,167,69,0.3) !important;
+    transition: all 0.25s ease !important;
+    line-height: 1.2 !important;
+}
+
+.ai .chat-btn:hover {
+    background: #218838 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 16px rgba(40,167,69,0.4) !important;
+}
+
+/* Stack buttons nicely on mobile */
+@media (max-width: 480px) {
+    .ai .chat-btn {
+        display: block !important;
+        width: 90% !important;
+        margin: 8px auto !important;
+        text-align: center !important;
+    }
+}
         
     </style>
     <div id="taxc-chat-widget">
@@ -1055,6 +1089,10 @@ const Ada = {
       return `PAYE (Pay As You Earn) is tax your employer deducts monthly from your salary and remits to the government. You still need to file annually to reconcile.`;
     }
 
+    if (/student.*pay tax/.test(l) || /nysc.*tax/.test(l)) {
+      return `Students in Nigeria pay no tax on scholarships, bursaries, or allowances, these are fully exempt under the Personal Income Tax Act. However, if a student earns other income (for example, from freelance work, a business, or employment) that exceeds ₦800,000 per annum after applying deductions, that portion becomes taxable. In practice, the vast majority of full-time students fall below this threshold and remain completely tax-free. NYSC allowance is mostly tax-free or attracts minimal PAYE.`;
+    }
+
     if (/pay.*tax|tax.*pay|dont.*pay|not.*pay|fail.*pay|non.*pay|evade|avoid.*tax|consequence.*tax|what.*happen.*not.*pay/i.test(l)) {
   return `Not paying tax in Nigeria leads to penalties: 10% of the unpaid amount + 1.25% monthly interest. Serious cases can result in fines up to ₦1 million, asset seizure, or up to 3 years in prison under NTA 2025. Pay on time to avoid!`;
 }
@@ -1114,10 +1152,6 @@ const Ada = {
 
     if (/when.*pay.*tax/.test(l) || l.includes("deadline")) {
       return `Deadline for annual filing and final payment: 31 March of the following year.`;
-    }
-
-    if (/student.*pay tax/.test(l) || /nysc.*tax/.test(l)) {
-      return `Students in Nigeria pay no tax on scholarships, bursaries, or allowances, these are fully exempt under the Personal Income Tax Act. However, if a student earns other income (for example, from freelance work, a business, or employment) that exceeds ₦800,000 per annum after applying deductions, that portion becomes taxable. In practice, the vast majority of full-time students fall below this threshold and remain completely tax-free. NYSC allowance is mostly tax-free or attracts minimal PAYE.`;
     }
 
     if (l.includes("not pay tax") || l.includes("tax free") || l.includes("exempt")) {
@@ -1301,11 +1335,13 @@ if (/penalty|late.*(filing|payment|file|submission)|file.*late|overdue|miss.*dea
 
     // Now combine the custom response with the list of capabilities
     return `
-        ${responseText}<br><br>
-        However, I can definitely help if you have any other questions like tax calculation, deductions, etc.
-        <button class="chat-btn" onclick="location.href='index.html#calculator'">Calculate My Tax</button>
-        <button class="chat-btn" onclick="location.href='ebooks.html#free'">Download Free Guides</button>
-    `;
+    ${responseText}<br><br>
+    However, I can definitely help if you have any other questions like tax calculation, deductions, etc.
+    <div style="margin-top:12px;">
+        <a href="index.html#calculator" class="chat-btn">Calculate My Tax</a>
+        <a href="ebooks.html#free" class="chat-btn">Download Free Guides</a>
+    </div>
+`;
 } 
 };
 
