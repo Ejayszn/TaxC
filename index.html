@@ -2048,7 +2048,7 @@ Sleep well and wake up refreshed. I go dey here whenever you need me tomorrow. S
     }
 
     if (l.includes("crypto") || l.includes("bitcoin") || l.includes("usdt")) {
-      return `Yes. Profit from selling cryptocurrency attracts 10% Capital Gains Tax. Income earned in crypto is taxed as regular income.`;
+      return `Profit from selling cryptocurrency attracts 10% Capital Gains Tax. Income earned in crypto is taxed as regular income.`;
     }
 
     if (l.includes("non-resident") || l.includes("expat") || l.includes("foreigner") || l.includes("work in nigeria") || l.includes("tax for foreigner")) {
@@ -2075,7 +2075,7 @@ Sleep well and wake up refreshed. I go dey here whenever you need me tomorrow. S
     // Refined: More precise with regex
     if (l.includes("landlord") || l.includes("rental income") || l.includes("rent i collect") || /tenant.*tax/.test(l)) {
       return `
-        Yes, as a landlord you must pay Personal Income Tax on rental income.<br><br>
+        As a landlord you must pay Personal Income Tax on rental income.<br><br>
         Key points:<br>
         • Rental income is taxed at your normal PIT rate<br>
         • Your tenant should deduct 10% Withholding Tax (WHT) and remit it — you get credit<br>
@@ -2104,7 +2104,7 @@ Sleep well and wake up refreshed. I go dey here whenever you need me tomorrow. S
 
 NYSC allowance is also not taxable. The Federal Government classifies it as a stipend, not employment income. Most corps members pay zero tax on their monthly allawee.<br><br>
 
-You (students, NYSC corpers, and Nigerians as a whole) only pay tax if you are tax eligible, and have separate income (business/job/freelance) that goes above ₦800,000 per year.`;
+Although, students, NYSC corpers, and Nigerians as a whole only pay tax if you are tax eligible, and have separate income (business/job/freelance) that goes above ₦800,000 per year.`;
 }
 
 
@@ -2138,7 +2138,7 @@ if (/(dont pay|not pay|fail to pay|non-payment|evade|avoid tax|consequence|penal
 }
 
     if (l.includes("previous year") || l.includes("never filed") || l.includes("back tax")) {
-      return `Yes, you can file for previous years now. Penalties apply, but voluntary filing reduces them. Many states offer waiver programmes.`;
+      return `You can file for previous years now. Penalties apply, but voluntary filing reduces them. Many states offer waiver programmes.`;
     }
 
     if (l.includes("tin") || l.includes("tax identification number")) {
@@ -2160,7 +2160,7 @@ if (/(dont pay|not pay|fail to pay|non-payment|evade|avoid tax|consequence|penal
     }
 
     if (l.includes("lost job") || /unemployed.*file/.test(l)) {
-      return `Yes, you should still file a Nil return to maintain a clean tax record.`;
+      return `You should still file a Nil return to maintain a clean tax record.`;
     }
 
     if (l.includes("freelance") || l.includes("remote") || l.includes("self-employed")) {
@@ -2265,7 +2265,7 @@ if (/consolidated.*relief|relief.*allowance|CRA/i.test(l)) {
 
     // Are the calculations accurate / correct?
     if (l.includes("accurate") || l.includes("correct") || l.includes("can i trust") || l.includes("calculations")) {
-      return `Yes. All TaxC calculations strictly follow the official 2025/2026 Nigerian Tax Act.<br><br>For complex cases or extra peace of mind, you can connect with a verified tax lawyer here:<br><br>
+      return `All TaxC calculations strictly follow the official 2025/2026 Nigerian Tax Act.<br><br>For complex cases or extra peace of mind, you can connect with a verified tax lawyer here:<br><br>
         <button class="chat-btn" onclick="location.href='https://taxc.com.ng/lawyer'">Connect With Tax Lawyer</button>`;
     }
 
@@ -2304,7 +2304,7 @@ if (/consolidated.*relief|relief.*allowance|CRA/i.test(l)) {
       )
     ) {
       return `
-        Yes, your state of residence is needed for an accurate and complete tax result.<br><br>
+        Your state of residence is needed for an accurate and complete tax result.<br><br>
         Here’s why:<br>
         • Personal Income Tax is paid to your State Internal Revenue Service (not federal)<br>
         • The final PDF report TaxC generates must show the correct state so you can file properly<br>
@@ -2324,7 +2324,7 @@ if (/consolidated.*relief|relief.*allowance|CRA/i.test(l)) {
     }
 
     if (l.includes("what is my name") || l.includes("remember my name")) {
-      return this.memory.name ? `Yes, your name is ${this.memory.name}.` : `You haven’t shared your name yet.`;
+      return this.memory.name ? `Your name is ${this.memory.name}.` : `You haven’t shared your name yet.`;
     }
 
     if (l.includes("my state") || l.includes("i live in") || l.includes("i stay in")) {

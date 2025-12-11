@@ -481,13 +481,11 @@ const db = getFirestore(app);
   });
   // ... inside isSignup block
 // SEND VERIFICATION EMAIL
-await sendEmailVerification(user);
+await sendEmailVerification(user, {
+  url: window.location.origin + '/login.html?mode=login' // Important: tell Firebase where to go after clicking link
+});
 
-// 🔥 CRUCIAL: Sign out the user immediately so they cannot enter the app until verification.
-// The onAuthStateChanged listener will not be triggered with a logged-in user.
-await auth.signOut(); // <--- ADD THIS LINE
-
-showSuccess('Account created successfully! 🎉 Check your email (including spam) for the verification link. Please log in after verification.'); // <--- Update message
+showSuccess('Account created! Check your email (including spam) for the verification link.');
 
 // Reset button and stop redirect
 $('submitBtn').disabled = false;
@@ -609,29 +607,27 @@ window.location.href = redirectUrl;
     }
   });
 
-  // Auto redirect if already logged in AND email is verified
-onAuthStateChanged(auth, async (user) => { // ADD 'async' here
-  // We only care about users trying to access the login page when they are already signed in.
+ onAuthStateChanged(auth, async (user) => {
   if (user) {
-    // Crucial: reload the user to get the latest emailVerified status from Firebase
-    await user.reload(); // <--- ADD THIS LINE
+    await user.reload(); // refresh emailVerified status
 
     if (user.emailVerified) {
-      // If the user is logged in and verified, take them straight to the app
+      // USER IS FULLY VERIFIED → send them inside the app immediately
       const hasPassword = user.providerData.some(p => p.providerId === 'password');
       const finalRedirect = hasPassword ? redirectTo : `set-password.html?redirect=${encodeURIComponent(redirectTo)}`;
       window.location.href = finalRedirect;
+      return;
     } else {
-      // User is logged in but not verified (this happens if they clicked the verification link,
-      // were signed in automatically, and then landed back on login.html).
-      // We should sign them out again and force them to login, which will
-      // perform the verification check in the submit handler.
+      // Email NOT verified yet → show message + sign them out (optional but cleaner)
       if (!isSignup) {
-        await auth.signOut();
-        console.log("User found but not verified, signing out to force login/check.");
+        showSuccess('Check your email for the verification link to complete your signup.');
+        $('email').value = user.email || '';
       }
+      // Optional: sign them out so they don't stay "half-logged-in"
+      // await auth.signOut();
     }
   }
+  // If no user → do nothing, just show login form
 });
 
   // Password toggle eye (unchanged — already perfect)
