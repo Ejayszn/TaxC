@@ -318,15 +318,14 @@ h2.section-title {
     left: 0;
     right: 0;
     background: white;
-    border-radius: 24px 24px 0 0;
-    box-shadow: 0 -12px 40px rgba(0,0,0,0.18);
-    max-height: calc(100vh - 34px);     /* almost full screen */
-    top: 280px;                          /* tiny gap at top */
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.15);
+    max-height: 90vh;
     overflow-y: auto;
-    padding: 8px 0 50px;                /* space for handle + content */
+    padding: 20px 0 40px;
     z-index: 999;
     transform: translateY(100%);
-    transition: transform 0.42s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     display: flex;
     flex-direction: column;
 }
@@ -335,44 +334,49 @@ h2.section-title {
     transform: translateY(0);
 }
 
-/* THE ICONIC HANDLE BAR (this is what makes it feel premium) */
-.mobile-menu::before {
-    content: '';
-    width: 44px;
-    height: 5px;
-    background: #d1d1d1;
-    border-radius: 3px;
-    margin: 14px auto 24px;
-    display: block;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+/* Backdrop (dark overlay) */
+.menu-backdrop {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+    z-index: 998;
 }
 
-/* Clean, big menu items */
+.menu-backdrop.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Handle bar at the top (like iOS bottom sheet) */
+.menu-handle {
+    width: 40px;
+    height: 5px;
+    background: #ddd;
+    border-radius: 3px;
+    margin: 0 auto 20px;
+}
+
+/* Bigger, cleaner menu items */
 .mobile-menu a,
 .mobile-menu .dropdown-toggle {
-    padding: 18px 28px;
-    font-size: 1.15rem;
+    padding: 16px 24px;
+    font-size: 1.1rem;
     font-weight: 600;
-    color: #222;
+    color: #333;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: background 0.2s;
 }
 
-.mobile-menu a:hover,
-.mobile-menu .dropdown-toggle:hover {
-    background: #f7f7f7;
-}
-
-/* Dropdown inside the sheet */
+/* Dropdown inside bottom sheet */
 .mobile-menu .dropdown-content {
-    background: #f9f9f9;
-    padding: 18px 28px;
-    margin: 0 28px 18px;
-    border-radius: 14px;
-    font-size: 0.95rem;
-    line-height: 1.6;
+    background: #f8f9fa;
+    padding: 16px 24px;
+    margin: 0 24px;
+    border-radius: 12px;
 }
 
 /* -------------------- General Card & Form Styles -------------------- */
@@ -1546,33 +1550,39 @@ input:focus, select:focus {
   <span class="hamburger-badge"></span>
 </button>
 
-        <!-- MOBILE MENU -->
-        <nav id="menu" class="mobile-menu nav-dropdown-menu">
-            <div class="dropdown" id="mobile-dropdown">
-                <span class="dropdown-toggle" onclick="toggleDropdown(event, 'mobile-dropdown')">
-                    Detailed Report content
-                    <span class="dropdown-arrow">▼</span>
-                </span>
-                <div class="dropdown-content">
-                    <ul>
-                        <li><strong>Your tax summary explained clearly</strong></li>
-                        <li>All your income sources listed</li>
-                        <li>Step-by-step: How your tax was calculated (we do the math!)</li>
-                        <li>How much tax you <em>really</em> owe</li>
-                        <li>Monthly breakdown (so you can plan)</li>
-                        <li>Tips on legally minimizing your tax next year</li>
-                        <li>Any tax already paid</li>
-                        <li><strong>Direct link to pay your state IRS</strong></li>
-                        <li>How & when to file your tax</li>
-                        <li>Print-ready PDF, keep it forever</li>
-                    </ul>
-                </div>
-            </div>
-            <a href="index.html">Connect with a tax lawyer</a>
-            <a href="faq.html">Frequently Asked Questions</a>
-            <a href="ebooks.html">Ebooks</a>
-            <button class="cta-small" id="auth-button-mobile"></button>
-        </nav>
+        <!-- BACKDROP -->
+<div class="menu-backdrop" id="menu-backdrop" onclick="toggleMobileMenu()"></div>
+
+<!-- MOBILE MENU (now bottom sheet) -->
+<nav id="menu" class="mobile-menu">
+    <div class="menu-handle"></div>
+    
+    <div class="dropdown" id="mobile-dropdown">
+        <span class="dropdown-toggle" onclick="toggleDropdown(event, 'mobile-dropdown')">
+            Detailed Report content
+            <span class="dropdown-arrow">▼</span>
+        </span>
+        <div class="dropdown-content">
+            <ul>
+                <li><strong>Your tax summary explained clearly</strong></li>
+                <li>All your income sources listed</li>
+                <li>Step-by-step: How your tax was calculated (we do the math!)</li>
+                <li>How much tax you <em>really</em> owe</li>
+                <li>Monthly breakdown (so you can plan)</li>
+                <li>Tips on legally minimizing your tax next year</li>
+                <li>Any tax already paid</li>
+                <li><strong>Direct link to pay your state IRS</strong></li>
+                <li>How & when to file your tax</li>
+                <li>Print-ready PDF, keep it forever</li>
+            </ul>
+        </div>
+    </div>
+    
+    <a href="index.html">Connect with a tax lawyer</a>
+    <a href="faq.html">Frequently Asked Questions</a>
+    <a href="ebooks.html">Ebooks</a>
+    <button class="cta-small" id="auth-button-mobile"></button>
+</nav>
     </header>
     <main class="container">
         
@@ -2671,20 +2681,22 @@ document.head.appendChild(style);
 
         function toggleMobileMenu() {
     const menu = document.getElementById('menu');
+    const backdrop = document.getElementById('menu-backdrop');
     const hamburger = document.getElementById('hamburger');
-
-    // Reset inline styles from swipe in case they lingered
-    menu.style.transform = '';
-    menu.style.opacity = '';
-    menu.style.transition = '';
 
     if (menu.hasAttribute('open')) {
         menu.removeAttribute('open');
+        backdrop.classList.remove('active');
         hamburger.classList.remove('is-active');
     } else {
         menu.setAttribute('open', '');
+        backdrop.classList.add('active');
         hamburger.classList.add('is-active');
     }
+
+    // Remove the "new" badge forever after first open
+    hamburger.classList.remove('is-new');
+    localStorage.setItem('taxc_menu_seen', 'true');
 }
 
         function scrollToSection(event) {
