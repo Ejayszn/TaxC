@@ -1211,6 +1211,7 @@ input:focus, select:focus {
   font-size: 1rem;
   cursor: pointer;
   margin-left: 20px;
+  position: relative;
 }
 .user-avatar {
   position: relative;
@@ -1254,7 +1255,7 @@ input:focus, select:focus {
 .profile-dropdown {
   position: absolute;
   top: 100%;
-  right: 0;
+  right: -100px;
   background: white;
   min-width: 160px;
   border-radius: 8px;
@@ -1275,9 +1276,6 @@ input:focus, select:focus {
 .profile-dropdown a:hover {
   background: #f8fff8;
   color: var(--green);
-}
-.profile-dropdown {
-  display: none;
 }
 /* Mobile fix — tap works */
 @media (max-width: 768px) {
@@ -1874,7 +1872,7 @@ input:focus, select:focus {
       <h4>Legal</h4>
       <ul>
         <li><a href="privacy.html">Privacy Policy</a></li>
-        <!-- <li><a href="terms.html">Terms of Service</a></li> -->
+        <li><a href="terms.html">Terms of Service</a></li>
       </ul>
     </div>
 

@@ -251,7 +251,19 @@ For the rules governing the use of the service, please read our
         </label>
       </div>
 
-      <a href="login.html?mode=signup" class="btn-back">Back to TaxC</a>
+      <a href="#" id="smartBack" class="btn-back">Back to TaxC</a>
+
+<script>
+  // Super lightweight — no Firebase needed
+  const params = new URLSearchParams(location.search);
+  const fromSignup = params.get('from') === 'signup';
+
+  if (fromSignup) {
+    document.getElementById('smartBack').href = 'login.html?mode=signup';
+  } else {
+    document.getElementById('smartBack').href = 'index.html';
+  }
+</script>
     </div>
   </div>
 
