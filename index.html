@@ -311,24 +311,68 @@ h2.section-title {
     top: 0;
 }
 
+/*Mobile menu hamburger*/
 .mobile-menu {
-    display: none;
-    position: absolute;
-    top: 100%;
+    position: fixed;
+    bottom: 0;
     left: 0;
     right: 0;
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 10px 0;
-    flex-direction: column;
-    z-index: 99;
-}
-.mobile-menu[open] {
+    background: white;
+    border-radius: 24px 24px 0 0;
+    box-shadow: 0 -12px 40px rgba(0,0,0,0.18);
+    max-height: calc(100vh - 34px);     /* almost full screen */
+    top: 280px;                          /* tiny gap at top */
+    overflow-y: auto;
+    padding: 8px 0 50px;                /* space for handle + content */
+    z-index: 999;
+    transform: translateY(100%);
+    transition: transform 0.42s cubic-bezier(0.22, 0.61, 0.36, 1);
     display: flex;
+    flex-direction: column;
 }
-.mobile-menu a {
-    padding: 10px 20px;
-    border-bottom: 1px solid #eee;
+
+.mobile-menu[open] {
+    transform: translateY(0);
+}
+
+/* THE ICONIC HANDLE BAR (this is what makes it feel premium) */
+.mobile-menu::before {
+    content: '';
+    width: 44px;
+    height: 5px;
+    background: #d1d1d1;
+    border-radius: 3px;
+    margin: 14px auto 24px;
+    display: block;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Clean, big menu items */
+.mobile-menu a,
+.mobile-menu .dropdown-toggle {
+    padding: 18px 28px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #222;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s;
+}
+
+.mobile-menu a:hover,
+.mobile-menu .dropdown-toggle:hover {
+    background: #f7f7f7;
+}
+
+/* Dropdown inside the sheet */
+.mobile-menu .dropdown-content {
+    background: #f9f9f9;
+    padding: 18px 28px;
+    margin: 0 28px 18px;
+    border-radius: 14px;
+    font-size: 0.95rem;
+    line-height: 1.6;
 }
 
 /* -------------------- General Card & Form Styles -------------------- */
@@ -4181,6 +4225,80 @@ document.getElementById('hamburger')?.addEventListener('click', function() {
 if (localStorage.getItem('taxc_menu_seen') === 'true') {
   document.getElementById('hamburger')?.classList.remove('is-new');
 }
+</script>
+
+<script>
+// FULL SWIPE-TO-CLOSE FOR MOBILE MENU
+let startY = 0;
+let currentY = 0;
+let isDragging = false;
+const menu = document.getElementById('menu');
+const hamburger = document.getElementById('hamburger');
+
+menu.addEventListener('touchstart', e => {
+    if (!menu.hasAttribute('open')) return;
+    startY = e.touches[0].clientY;
+    isDragging = true;
+    menu.style.transition = 'none'; // disable animation while dragging
+});
+
+menu.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    currentY = e.touches[0].clientY;
+    const diff = currentY - startY;
+
+    // Only allow dragging down
+    if (diff > 0) {
+        menu.style.transform = `translateY(${diff}px)`;
+        // Optional: fade out slightly while dragging
+        menu.style.opacity = 1 - (diff / 400);
+    }
+});
+
+menu.addEventListener('touchend', () => {
+    if (!isDragging) return;
+    isDragging = false;
+    menu.style.transition = 'transform 0.42s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.3s';
+
+    const diff = currentY - startY;
+
+    // If dragged more than 150px → close it
+    if (diff > 150) {
+        toggleMobileMenu(); // your existing function
+    } else {
+        // Snap back
+        menu.style.transform = 'translateY(0)';
+        menu.style.opacity = '1';
+    }
+});
+
+// Also support mouse drag on desktop (for testing)
+menu.addEventListener('mousedown', e => {
+    if (!menu.hasAttribute('open')) return;
+    startY = e.clientY;
+    isDragging = true;
+    menu.style.transition = 'none';
+});
+document.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    const diff = e.clientY - startY;
+    if (diff > 0) {
+        menu.style.transform = `translateY(${diff}px)`;
+        menu.style.opacity = 1 - (diff / 400);
+    }
+});
+document.addEventListener('mouseup', () => {
+    if (!isDragging) return;
+    isDragging = false;
+    menu.style.transition = 'transform 0.42s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.3s';
+    const diff = currentY - startY;
+    if (diff > 150) {
+        toggleMobileMenu();
+    } else {
+        menu.style.transform = 'translateY(0)';
+        menu.style.opacity = '1';
+    }
+});
 </script>
     </body>
 </html>
