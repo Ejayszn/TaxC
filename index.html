@@ -221,6 +221,39 @@ h2.section-title {
             overflow: hidden;
         }
 
+        /* PREVENT ACCIDENTAL CLICKS DURING SWIPE */
+.mobile-menu .dropdown-content {
+    pointer-events: none; /* Disable interaction on container */
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    padding: 0 20px !important;
+}
+
+.mobile-menu .dropdown[open] .dropdown-content {
+    pointer-events: auto;   /* Re-enable only when open */
+    opacity: 1;
+    max-height: 600px;      /* Large enough for content */
+    padding: 15px 20px !important;
+}
+
+/* Make sure the toggle itself is clickable */
+.mobile-menu .dropdown-toggle {
+    pointer-events: auto !important;
+    touch-action: manipulation;
+}
+
+/* Stop text selection & callouts during swipe */
+.mobile-menu {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    touch-action: pan-y; /* Allows vertical scroll/swipe only */
+}
+
 /* -------------------- Header & Navigation (HEIGHT REDUCED) -------------------- */
 .main-header {
     background-color: #ffffff;
@@ -1558,25 +1591,27 @@ input:focus, select:focus {
     <div class="menu-handle"></div>
     
     <div class="dropdown" id="mobile-dropdown">
-        <span class="dropdown-toggle" onclick="toggleDropdown(event, 'mobile-dropdown')">
-            Detailed Report content
-            <span class="dropdown-arrow">▼</span>
-        </span>
-        <div class="dropdown-content">
-            <ul>
-                <li><strong>Your tax summary explained clearly</strong></li>
-                <li>All your income sources listed</li>
-                <li>Step-by-step: How your tax was calculated (we do the math!)</li>
-                <li>How much tax you <em>really</em> owe</li>
-                <li>Monthly breakdown (so you can plan)</li>
-                <li>Tips on legally minimizing your tax next year</li>
-                <li>Any tax already paid</li>
-                <li><strong>Direct link to pay your state IRS</strong></li>
-                <li>How & when to file your tax</li>
-                <li>Print-ready PDF, keep it forever</li>
-            </ul>
-        </div>
+    <div class="dropdown-toggle" 
+         onclick="toggleDropdown(event, 'mobile-dropdown')"
+         style="cursor: pointer; -webkit-tap-highlight-color: transparent;">
+        Detailed Report content
+        <span class="dropdown-arrow">▼</span>
     </div>
+    <div class="dropdown-content" style="pointer-events: none; user-select: none;">
+        <ul style="pointer-events: auto;">
+            <li><strong>Your tax summary explained clearly</strong></li>
+            <li>All your income sources listed</li>
+            <li>Step-by-step: How your tax was calculated (we do the math!)</li>
+            <li>How much tax you <em>really</em> owe</li>
+            <li>Monthly breakdown (so you can plan)</li>
+            <li>Tips on legally minimizing your tax next year</li>
+            <li>Any tax already paid</li>
+            <li><strong>Direct link to pay your state IRS</strong></li>
+            <li>How & when to file your tax</li>
+            <li>Print-ready PDF, keep it forever</li>
+        </ul>
+    </div>
+</div>
     
     <a href="index.html">Connect with a tax lawyer</a>
     <a href="faq.html">Frequently Asked Questions</a>
@@ -4257,13 +4292,11 @@ menu.addEventListener('touchstart', e => {
 
 menu.addEventListener('touchmove', e => {
     if (!isDragging) return;
+    e.preventDefault();  // ← THIS LINE STOPS CLICK EVENTS & RELOADS
     currentY = e.touches[0].clientY;
     const diff = currentY - startY;
-
-    // Only allow dragging down
     if (diff > 0) {
         menu.style.transform = `translateY(${diff}px)`;
-        // Optional: fade out slightly while dragging
         menu.style.opacity = 1 - (diff / 400);
     }
 });
