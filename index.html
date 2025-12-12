@@ -2670,21 +2670,22 @@ document.head.appendChild(style);
         }
 
         function toggleMobileMenu() {
-            const menu = document.getElementById('menu');
-            const hamburger = document.getElementById('hamburger');
+    const menu = document.getElementById('menu');
+    const hamburger = document.getElementById('hamburger');
 
-            if (menu.hasAttribute('open')) {
-                menu.removeAttribute('open');
-                hamburger.classList.remove('is-active');
-            } else {
-                menu.setAttribute('open', '');
-                hamburger.classList.add('is-active');
-                const dropdown = menu.querySelector('.nav-dropdown-menu');
-                if (dropdown && dropdown.hasAttribute('open')) {
-                    dropdown.removeAttribute('open');
-                }
-            }
-        }
+    // Reset inline styles from swipe in case they lingered
+    menu.style.transform = '';
+    menu.style.opacity = '';
+    menu.style.transition = '';
+
+    if (menu.hasAttribute('open')) {
+        menu.removeAttribute('open');
+        hamburger.classList.remove('is-active');
+    } else {
+        menu.setAttribute('open', '');
+        hamburger.classList.add('is-active');
+    }
+}
 
         function scrollToSection(event) {
             event.preventDefault();
