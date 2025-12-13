@@ -1531,6 +1531,29 @@ input:focus, select:focus {
 </head>
 <body>
 
+  <script>
+    (function() {
+        const ua = navigator.userAgent || navigator.vendor || window.opera;
+        
+        const isInstagram = /Instagram/i.test(ua);
+        const isFacebook = /FBAN|FBAV/i.test(ua);
+        const isTikTok = /TikTok/i.test(ua);
+        const isSnapchat = /Snapchat/i.test(ua);  // Optional but harmless
+
+        const url = new URL(window.location.href);
+        
+        // Guardrail: stop if already redirected
+        if (url.searchParams.get('browser-check') === 'true') {
+            return;
+        }
+
+        if (isInstagram || isFacebook || isTikTok || isSnapchat) {
+            url.searchParams.set('browser-check', 'true');
+            window.location.replace(url.toString());
+        }
+    })();
+</script>
+
     <audio id="ada-message-sound" preload="auto">
   <source src="taxcaiadamessage.mp3" type="audio/mpeg">
 </audio>
