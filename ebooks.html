@@ -1357,7 +1357,56 @@ body.menu-open {
 </footer>
 
   <script>
+
+function detectAndShowBrowserWarning() {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    let is_inapp = false;
+
+    // 1. Detect common In-App Browsers by user agent strings
+    // FBAN/FBAV are Facebook app identifiers
+    if (userAgent.match(/FBAN|FBAV|Twitter|LinkedIn|WebView/i)) {
+        is_inapp = true;
+    } 
+    // 2. Specific check for iOS WKWebView (often used by in-app browsers on iOS)
+    if (/(iPhone|iPad|iPod).*AppleWebKit(?!.*Safari)/i.test(userAgent)) {
+        // We only trigger this if FBAN/FBAV isn't found to avoid redundancy, 
+        // but this single check is a strong indicator of an embedded view.
+        if (!is_inapp) is_inapp = true; 
+    }
     
+    // Add another simple check for common browsers NOT being present
+    // if (!is_inapp && !userAgent.match(/Chrome|Safari|Firefox|Edge/i)) {
+    //     is_inapp = true;
+    // }
+
+    if (is_inapp) {
+        // Create the warning element dynamically
+        const warningDiv = document.createElement('div');
+        
+        // Use your preferred styles, ensuring it's prominent and clear
+        warningDiv.style.cssText = "background:#fffbe6;padding:15px;text-align:center;font-weight:600;border:1px solid #ffcc33;margin-bottom:20px;";
+        
+        // Use your concise warning text here
+        warningDiv.innerHTML = `
+            📱 **Having trouble?** You might be in an in-app browser (like Instagram/Facebook). 
+            Please tap the **(...) menu** and select **'Open in Browser'** for a smooth payment experience!
+        `;
+        
+        // Insert it right after the body starts
+        const body = document.body;
+        if (body.firstChild) {
+            body.insertBefore(warningDiv, body.firstChild);
+        } else {
+            body.appendChild(warningDiv);
+        }
+    }
+}
+
+// Call the function when the page loads
+document.addEventListener('DOMContentLoaded', detectAndShowBrowserWarning);
+
+
+  // === ADA CHATBOT LOGIC ===  
 const Ada = {
   memory: { name: "", state: "" },
 
@@ -2739,55 +2788,6 @@ window.updateDoc = updateDoc; // updateDoc is good to have too, though maybe not
       btn.onclick = () => signOut(auth).then(() => location.reload());
     });
   });
-</script>
-
-<script>
-function detectAndShowBrowserWarning() {
-    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-    let is_inapp = false;
-
-    // 1. Detect common In-App Browsers by user agent strings
-    // FBAN/FBAV are Facebook app identifiers
-    if (userAgent.match(/FBAN|FBAV|Twitter|LinkedIn|WebView/i)) {
-        is_inapp = true;
-    } 
-    // 2. Specific check for iOS WKWebView (often used by in-app browsers on iOS)
-    if (/(iPhone|iPad|iPod).*AppleWebKit(?!.*Safari)/i.test(userAgent)) {
-        // We only trigger this if FBAN/FBAV isn't found to avoid redundancy, 
-        // but this single check is a strong indicator of an embedded view.
-        if (!is_inapp) is_inapp = true; 
-    }
-    
-    // Add another simple check for common browsers NOT being present
-    // if (!is_inapp && !userAgent.match(/Chrome|Safari|Firefox|Edge/i)) {
-    //     is_inapp = true;
-    // }
-
-    if (is_inapp) {
-        // Create the warning element dynamically
-        const warningDiv = document.createElement('div');
-        
-        // Use your preferred styles, ensuring it's prominent and clear
-        warningDiv.style.cssText = "background:#fffbe6;padding:15px;text-align:center;font-weight:600;border:1px solid #ffcc33;margin-bottom:20px;";
-        
-        // Use your concise warning text here
-        warningDiv.innerHTML = `
-            📱 **Having trouble?** You might be in an in-app browser (like Instagram/Facebook). 
-            Please tap the **(...) menu** and select **'Open in Browser'** for a smooth payment experience!
-        `;
-        
-        // Insert it right after the body starts
-        const body = document.body;
-        if (body.firstChild) {
-            body.insertBefore(warningDiv, body.firstChild);
-        } else {
-            body.appendChild(warningDiv);
-        }
-    }
-}
-
-// Call the function when the page loads
-document.addEventListener('DOMContentLoaded', detectAndShowBrowserWarning);
 </script>
 
 <script>
