@@ -1,6 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>
+        function isWebView() {
+            const userAgent = navigator.userAgent;
+            if (
+                /FBAN|FBAV|Instagram|TikTok|Line|Puffin|KAKAOTalk|Twitter|Pinterest/i.test(userAgent) ||
+                /wv/.test(userAgent)
+            ) {
+                return true;
+            }
+            return false;
+        }
+
+        function openInSystemBrowser(url) {
+            // 1. Try standard window.open, which works well with user click
+            const newWindow = window.open(url, '_blank');
+            
+            // 2. If it failed, try the intent method (Android)
+            if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+                if (navigator.userAgent.match(/Android/i)) {
+                    // Android Intent to open in Chrome
+                    window.location.href = 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;end';
+                } else {
+                    // Final fallback
+                    window.location.href = url;
+                }
+            }
+        }
+
+        window.onload = function() {
+            const redirectPrompt = document.getElementById('redirect-prompt');
+            const openButton = document.getElementById('open-external-button');
+            const currentUrl = window.location.href;
+
+            if (isWebView() && redirectPrompt && openButton) {
+                // Show the prompt, hide the main app content
+                redirectPrompt.style.display = 'block';
+                document.body.style.overflow = 'hidden'; // Prevents scrolling behind the overlay
+
+                // Attach the escape logic to the user's click
+                openButton.onclick = function() {
+                    openInSystemBrowser(currentUrl);
+                };
+            }
+        };
+    </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TaxC - Nigerian Tax Calculator</title>
@@ -1528,54 +1573,16 @@ input:focus, select:focus {
 }
 
 </style>
-<script>
-    // ** Function to check if we are inside a known in-app browser (WebView) **
-    function isWebView() {
-        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-        
-        // Instagram, Facebook, and common iOS/Android WebViews
-        return /Instagram|FBAN|FBAV|WebView|CriOS/i.test(userAgent) && !/Safari/i.test(userAgent);
-    }
-
-    // ** Function to safely redirect to the system browser **
-    function openInSystemBrowser(url) {
-        // Attempt the most reliable method for iOS and Android
-        if (navigator.userAgent.match(/iPad|iPhone|iPod/i)) {
-            // iOS: Attempts to use custom URL schemes for Safari
-            window.location.href = 'x-safari-https://' + url.replace(/^https?:\/\//, '');
-        } else if (navigator.userAgent.match(/Android/i)) {
-            // Android: Triggers an Intent which usually forces an external browser (works better than a simple window.open)
-            window.location.href = 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;end';
-        } else {
-            // Fallback for other environments or simply open a new blank tab
-            window.open(url, '_blank');
-        }
-    }
-
-    // ** Main logic to check and execute the escape **
-    window.onload = function() {
-        const currentUrl = window.location.href;
-        
-        if (isWebView()) {
-            // Set a flag in localStorage to avoid an infinite redirect loop 
-            // if the first attempt fails (though should be rare for this logic)
-            if (sessionStorage.getItem('opened_externally') !== 'true') {
-                sessionStorage.setItem('opened_externally', 'true');
-                
-                // Alert the user before attempting the redirect
-                alert("It looks like you are using an in-app browser (like from Instagram). For secure and successful payment, this page will now open in your device's default browser (Chrome/Safari).");
-
-                // Execute the redirect
-                openInSystemBrowser(currentUrl);
-            }
-        }
-        
-        // Clear the flag once the page has loaded successfully in what we hope is the external browser
-        sessionStorage.removeItem('opened_externally');
-    };
-</script>
 </head>
 <body>
+
+  <div id="redirect-prompt" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9999; text-align: center; padding-top: 20vh; box-sizing: border-box;">
+        <h2>🚨 Important: Payment Security</h2>
+        <p>For a secure and successful payment, please open this page in your device's full browser.</p>
+        <button id="open-external-button" style="padding: 15px 30px; margin-top: 20px; font-size: 1.1em; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            Continue in Chrome / Safari
+        </button>
+    </div>
 
     <audio id="ada-message-sound" preload="auto">
   <source src="taxcaiadamessage.mp3" type="audio/mpeg">
