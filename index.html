@@ -14,39 +14,20 @@
         }
 
         function openInSystemBrowser(url) {
-    // 1. First, try the standard way with '_blank' (often the simplest and best)
-    const newWindow = window.open(url, '_blank');
-    
-    if (newWindow && !newWindow.closed) {
-        // If it successfully opened a new window, we're done.
-        return;
-    }
-
-    // 2. If blocked, try the Android Intent scheme
-    if (navigator.userAgent.match(/Android/i)) {
-        window.location.href = 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;end';
-        return;
-    } 
-    
-    // 3. The New Escape Hatch: Simulate Link Click (Best for iOS/Safari WebViews)
-    if (navigator.userAgent.match(/iPad|iPhone|iPod/i)) {
-        // Create a temporary link element
-        const a = document.createElement('a');
-        a.href = url;
-        
-        // This is the key trick for iOS WebViews
-        a.target = '_system'; // Tells some WebViews to open externally
-        
-        // Append it, click it, and remove it immediately
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        return;
-    }
-
-    // 4. Final Fallback (may cause a reload, but better than nothing)
-    window.location.href = url;
-}
+            // 1. Try standard window.open, which works well with user click
+            const newWindow = window.open(url, '_blank');
+            
+            // 2. If it failed, try the intent method (Android)
+            if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+                if (navigator.userAgent.match(/Android/i)) {
+                    // Android Intent to open in Chrome
+                    window.location.href = 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;end';
+                } else {
+                    // Final fallback
+                    window.location.href = url;
+                }
+            }
+        }
 
         window.onload = function() {
             const redirectPrompt = document.getElementById('redirect-prompt');
