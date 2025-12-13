@@ -6,23 +6,26 @@
     function isWebView() {
     const userAgent = navigator.userAgent;
 
-    // 1. Explicitly check for known restricted apps (including the Telegram fix)
-    const restrictedApps = /FBAN|FBAV|Instagram|TikTok|Line|Puffin|KAKAOTalk|Twitter|Pinterest|Telegram|Reddit|Discord|LinkedIn|Snapchat|Zalo/i.test(userAgent);
+    // 1. Known apps
+    const restrictedApps = /FBAN|FBAV|Instagram|TikTok|Line|Puffin|KAKAOTalk|Twitter|Pinterest|Telegram|Reddit|Discord|LinkedIn|Snapchat|Zalo|LinkedInApp/i.test(userAgent);
     
-    // 2. Check for generic Android WebView flag
+    // 2. Android WebView
     const androidWebView = /wv/i.test(userAgent);
 
-    // 3. Check for minimalist/non-standard UAs (often used by Telegram/others)
-    // If the browser identifies itself as 'Mozilla' AND does NOT contain the common mobile tags 'Mobile' or 'Safari'
-    // This catches many generic, masked WebViews that skip unique IDs.
-    const genericWebView = /Mozilla/i.test(userAgent) && !/Chrome|CriOS|Safari|Mobile/i.test(userAgent);
+    // 3. Generic/minimalist
+    const genericWebView = /Mozilla/i.test(userAgent) && !/Chrome|CriOS|Safari|Mobile|Version/i.test(userAgent);
     
-    // 4. Check for lack of standard mobile indicators on iOS (especially for social media apps)
-    // If the browser is iOS (iPhone/iPad) but doesn't contain 'Safari' or 'CriOS' (Chrome iOS)
+    // 4. iOS masked
     const iosGeneric = /iPhone|iPad|iPod/i.test(userAgent) && !/Safari|CriOS/i.test(userAgent);
-    const missingExpectedFeatures = !('ontouchstart' in window) && /iPhone|iPad/.test(userAgent); // rare but suspicious
 
-    return restrictedApps || androidWebView || genericWebView || iosGeneric|| missingExpectedFeatures;
+    // 5. Suspicious missing touch (rare but good)
+    const missingExpectedFeatures = !('ontouchstart' in window) && /iPhone|iPad/.test(userAgent);
+
+    // 6. Telegram-specific (SUPER reliable)
+    const telegramiOS = typeof window.TelegramWebviewProxy !== 'undefined';
+    const telegramAndroid = typeof window.TelegramWebview !== 'undefined';
+
+    return restrictedApps || androidWebView || genericWebView || iosGeneric || missingExpectedFeatures || telegramiOS || telegramAndroid;
 }
 
         window.onload = function() {
