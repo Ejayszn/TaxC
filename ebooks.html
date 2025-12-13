@@ -74,12 +74,25 @@
     a { text-decoration: none; }
     button { font-family: inherit; }
 
+    .container {
+  padding-top: 60px; /* Adjust to your header height (measure in dev tools, ~50-70px) */
+}
+
     /* === HEADER === */
     .main-header {
-      background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      padding: 5px 20px; display: flex; justify-content: space-between;
-      align-items: center; position: sticky; top: 0; z-index: 100;
-    }
+  background: #fff; 
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  padding: 5px 20px; 
+  display: flex; 
+  justify-content: space-between;
+  align-items: center; 
+  position: fixed;    /* Change from sticky to fixed */
+  top: 0;            /* Pin to top */
+  left: 0;           /* Full width start */
+  width: 100%;       /* Span full screen */
+  z-index: 1000;     /* Above menu/backdrop */
+  box-sizing: border-box; /* Include padding in width */
+}
     .logo { font-size: 1.8rem; font-weight: 700; color: #28A745; display: flex; align-items: center; gap: 8px; }
     .logo-icon { height: 24px; width: 24px; }
     .desktop-nav { display: none; }
@@ -160,11 +173,60 @@
       transform: translate3d(0, -8px, 0) rotate(-90deg);
       background-color: #28A745;
     }
-    .mobile-menu { display: none; position: absolute; top: 100%; left: 0; right: 0;
-      background: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); flex-direction: column; z-index: 99; }
-    .mobile-menu[open] { display: flex; }
-    .mobile-menu a { padding: 12px 20px; border-bottom: 1px solid #eee; color: #343A40; font-weight: 600; }
-    .mobile-menu a:hover { color: #28A745; }
+
+    /* ==================== BOTTOM-SHEET MOBILE MENU ==================== */
+.menu-backdrop {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+    z-index: 998;
+}
+.menu-backdrop.active { opacity: 1; visibility: visible; }
+    .mobile-menu {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: white;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.15);
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 20px 0 40px;
+    z-index: 999;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex;
+    flex-direction: column;
+}
+    .mobile-menu[open] { transform: translateY(0) !important; }
+
+  .menu-handle {
+    width: 40px;
+    height: 5px;
+    background: #ddd;
+    border-radius: 3px;
+    margin: 0 auto 20px;
+}
+
+/* Prevent body scroll when menu open */
+body.menu-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+} 
+    .mobile-menu a {
+            padding: 10px 20px;
+            border-bottom: 1px solid #eee;
+            text-decoration: none;
+            color: var(--dark-text);
+            font-weight: 600;
+        }
+        .mobile-menu a:hover {
+            color: var(--main-color);
+        }
 
     /* === HERO === */
     .hero-section {
@@ -612,17 +674,6 @@
   }
 }
 
-/* Fix sticky header blocking content on anchor jump */
-html {
-  scroll-padding-top: 80px; /* Height of your header */
-}
-
-@media (max-width: 768px) {
-  html {
-    scroll-padding-top: 70px;
-  }
-}
-
 .reset-library-btn {
   padding: 6px 12px;
   background: #a72828;
@@ -890,14 +941,19 @@ html {
     <span class="hamburger-inner"></span>
   </span>
 </button>
-    <nav id="menu" class="mobile-menu">
-      <a href="index.html">Home</a>
-      <a href="ebooks.html">Connect with a tax lawyer</a>
-      <a href="faq.html">Frequently Asked Questions</a>
-      <a href="index.html#calculator">Calculator</a>
-      <button class="cta-small" id="auth-button-mobile"></button>
+    <!-- BACKDROP -->
+<div class="menu-backdrop" id="menu-backdrop" onclick="toggleMobileMenu()"></div>
 
-    </nav>
+<!-- BOTTOM-SHEET MOBILE MENU -->
+<nav id="menu" class="mobile-menu">
+    <div class="menu-handle"></div>
+
+    <a href="index.html" class="nav-link">Home</a>
+    <a href="ebooks.html" class="nav-link">Connect with a tax lawyer</a>
+    <a href="faq.html" class="nav-link">Frequently Asked Quesntions</a>
+    <a href="index.html#calculator" class="nav-link">Calculator</a>
+    <button class="cta-small" id="auth-button-mobile"></button>
+</nav>
   </header>
 
   <div class="container">
@@ -2407,18 +2463,6 @@ async function loadLibraryFromFirestore() {
       grid.classList.add('open');
       toggle.textContent = 'Close';
     }
-  }  
-
-  function toggleMobileMenu() {
-    const menu = document.getElementById('menu');
-    const hamburger = document.getElementById('hamburger');
-    if (menu.hasAttribute('open')) {
-      menu.removeAttribute('open');
-      hamburger.classList.remove('is-active');
-    } else {
-      menu.setAttribute('open', '');
-      hamburger.classList.add('is-active');
-    }
   }
 
   // === FILTER + SEARCH ===
@@ -2690,6 +2734,106 @@ document.querySelectorAll('.ebook-buy-btn').forEach(btn => {
     
     handler.openIframe();
   });
+});
+</script>
+<script>
+/* ---------- BOTTOM-SHEET MENU LOGIC (exact copy from index.html) ---------- */
+let savedScrollY = 0;   // keep scroll position when menu opens
+
+function toggleMobileMenu() {
+    const menu      = document.getElementById('menu');
+    const backdrop  = document.getElementById('menu-backdrop');
+    const hamburger = document.getElementById('hamburger');
+    const body      = document.body;
+
+    const isOpen = menu.hasAttribute('open');
+
+    if (isOpen) {
+        // ----- CLOSING -----
+        menu.style.opacity = '0';
+        menu.style.transform = 'translateY(100%)';
+
+        menu.removeAttribute('open');
+        backdrop.classList.remove('active');
+        hamburger.classList.remove('is-active');
+
+        body.classList.remove('menu-open');
+        body.style.overflow = '';
+        body.style.position = '';
+        body.style.width = '';
+        body.style.height = '';
+        body.style.top = '';
+        window.scrollTo(0, savedScrollY);
+
+        setTimeout(() => {
+            menu.style.transform = '';
+            menu.style.opacity = '';
+            menu.style.transition = '';
+        }, 400);
+    } else {
+        // ----- OPENING -----
+        savedScrollY = window.pageYOffset;
+        body.style.top = `-${savedScrollY}px`;
+
+        menu.setAttribute('open', '');
+        backdrop.classList.add('active');
+        hamburger.classList.add('is-active');
+
+        body.classList.add('menu-open');
+        body.style.overflow = 'hidden';
+        body.style.position = 'fixed';
+        body.style.width = '100%';
+        body.style.height = '100%';
+    }
+
+    // remove "new" badge forever
+    hamburger.classList.remove('is-new');
+    localStorage.setItem('taxc_menu_seen', 'true');
+}
+
+/* ---------- SWIPE-TO-CLOSE (touch) ---------- */
+let startY = 0, isDragging = false;
+const menu = document.getElementById('menu');
+
+menu.addEventListener('touchstart', e => {
+    if (!menu.hasAttribute('open')) return;
+    startY = e.touches[0].clientY;
+    isDragging = true;
+    menu.style.transition = 'none';
+});
+
+menu.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    e.preventDefault();
+
+    const diff = e.touches[0].clientY - startY;
+    if (diff > 0) {
+        menu.style.transform = `translateY(${diff}px)`;
+        menu.style.opacity = Math.max(0.3, 1 - diff / 400);
+    }
+});
+
+menu.addEventListener('touchend', () => {
+    if (!isDragging) return;
+    isDragging = false;
+
+    const diff = parseInt(menu.style.transform?.match(/-?\d+/g)?.[0] || 0);
+    menu.style.transition = 'transform 0.42s cubic-bezier(0.22,0.61,0.36,1), opacity 0.3s';
+
+    if (diff > 120) {
+        toggleMobileMenu();
+        setTimeout(() => { menu.style.transform = ''; menu.style.opacity = ''; }, 400);
+    } else {
+        menu.style.transform = 'translateY(0)';
+        menu.style.opacity = '1';
+    }
+});
+
+/* ---------- CLEANUP ON PAGE LOAD / REFRESH ---------- */
+window.addEventListener('load', () => {
+    document.body.classList.remove('menu-open');
+    document.body.style.overflow = '';
+    document.getElementById('menu')?.removeAttribute('open');
 });
 </script>
 </body>
