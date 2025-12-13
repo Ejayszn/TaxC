@@ -293,15 +293,18 @@
         
         /* -------------------- Header & Navigation (Slim Style) -------------------- */
 .main-header {
-    background-color: var(--card);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    padding: 5px 20px; /* Slimmest vertical padding */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: sticky;
-    top: 0;
-    z-index: 50;
+  background: #fff; 
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  padding: 5px 20px; 
+  display: flex; 
+  justify-content: space-between;
+  align-items: center; 
+  position: fixed;    /* Change from sticky to fixed */
+  top: 0;            /* Pin to top */
+  left: 0;           /* Full width start */
+  width: 100%;       /* Span full screen */
+  z-index: 1000;     /* Above menu/backdrop */
+  box-sizing: border-box; /* Include padding in width */
 }
 
 .logo {

@@ -82,6 +82,9 @@ body {
     margin: 0 auto;
     padding: 20px;
 }
+.container {
+  padding-top: 60px; /* Adjust to your header height (measure in dev tools, ~50-70px) */
+}
 h2.section-title {
     font-size: 2rem;
     color: #28A745; /* Primary Green */
@@ -216,12 +219,6 @@ h2.section-title {
             left: auto;
         }
 
-        /* CRITICAL: Make header clickable above backdrop & menu */
-.main-header {
-    position: relative;     /* Ensure z-index works */
-    z-index: 1000 !important;  /* Above backdrop (998) and menu (999) */
-}
-
         /* PREVENT ACCIDENTAL CLICKS DURING SWIPE */
 .mobile-menu .dropdown-content {
     pointer-events: none; /* Disable interaction on container */
@@ -257,15 +254,18 @@ h2.section-title {
 
 /* -------------------- Header & Navigation (HEIGHT REDUCED) -------------------- */
 .main-header {
-    background-color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    padding: 5px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: sticky;
-    top: 0;
-    z-index: 100;
+  background: #fff; 
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  padding: 5px 20px; 
+  display: flex; 
+  justify-content: space-between;
+  align-items: center; 
+  position: fixed;    /* Change from sticky to fixed */
+  top: 0;            /* Pin to top */
+  left: 0;           /* Full width start */
+  width: 100%;       /* Span full screen */
+  z-index: 1000;     /* Above menu/backdrop */
+  box-sizing: border-box; /* Include padding in width */
 }
 
 .logo {
