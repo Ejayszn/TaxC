@@ -1528,6 +1528,52 @@ input:focus, select:focus {
 }
 
 </style>
+<script>
+    // ** Function to check if we are inside a known in-app browser (WebView) **
+    function isWebView() {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        
+        // Instagram, Facebook, and common iOS/Android WebViews
+        return /Instagram|FBAN|FBAV|WebView|CriOS/i.test(userAgent) && !/Safari/i.test(userAgent);
+    }
+
+    // ** Function to safely redirect to the system browser **
+    function openInSystemBrowser(url) {
+        // Attempt the most reliable method for iOS and Android
+        if (navigator.userAgent.match(/iPad|iPhone|iPod/i)) {
+            // iOS: Attempts to use custom URL schemes for Safari
+            window.location.href = 'x-safari-https://' + url.replace(/^https?:\/\//, '');
+        } else if (navigator.userAgent.match(/Android/i)) {
+            // Android: Triggers an Intent which usually forces an external browser (works better than a simple window.open)
+            window.location.href = 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;end';
+        } else {
+            // Fallback for other environments or simply open a new blank tab
+            window.open(url, '_blank');
+        }
+    }
+
+    // ** Main logic to check and execute the escape **
+    window.onload = function() {
+        const currentUrl = window.location.href;
+        
+        if (isWebView()) {
+            // Set a flag in localStorage to avoid an infinite redirect loop 
+            // if the first attempt fails (though should be rare for this logic)
+            if (sessionStorage.getItem('opened_externally') !== 'true') {
+                sessionStorage.setItem('opened_externally', 'true');
+                
+                // Alert the user before attempting the redirect
+                alert("It looks like you are using an in-app browser (like from Instagram). For secure and successful payment, this page will now open in your device's default browser (Chrome/Safari).");
+
+                // Execute the redirect
+                openInSystemBrowser(currentUrl);
+            }
+        }
+        
+        // Clear the flag once the page has loaded successfully in what we hope is the external browser
+        sessionStorage.removeItem('opened_externally');
+    };
+</script>
 </head>
 <body>
 
