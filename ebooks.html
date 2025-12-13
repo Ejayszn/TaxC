@@ -2413,7 +2413,7 @@ async function buyEbook() {
         const result = await res.json();
 
         if (result.success && result.downloadUrl) {
-          alert("Payment verified! Download starting...");
+          alert("Payment verified! Download starting, scroll to the bottom to check library...");
           window.open(result.downloadUrl, '_blank');
           addToLibrary(currentEbook);
         } else {
@@ -2433,7 +2433,7 @@ async function buyEbook() {
     }
   });
 
-  handler.openIframe();
+  handler.open();
 }
 
   function addToLibrary(ebook) {
@@ -2824,7 +2824,7 @@ document.querySelectorAll('.ebook-buy-btn').forEach(btn => {
       }
     });
     
-    handler.openIframe();
+    handler.open();
   });
 });
 </script>
