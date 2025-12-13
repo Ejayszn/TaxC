@@ -1357,56 +1357,7 @@ body.menu-open {
 </footer>
 
   <script>
-
-function detectAndShowBrowserWarning() {
-    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-    let is_inapp = false;
-
-    // 1. Detect common In-App Browsers by user agent strings
-    // FBAN/FBAV are Facebook app identifiers
-    if (userAgent.match(/FBAN|FBAV|Twitter|LinkedIn|WebView/i)) {
-        is_inapp = true;
-    } 
-    // 2. Specific check for iOS WKWebView (often used by in-app browsers on iOS)
-    if (/(iPhone|iPad|iPod).*AppleWebKit(?!.*Safari)/i.test(userAgent)) {
-        // We only trigger this if FBAN/FBAV isn't found to avoid redundancy, 
-        // but this single check is a strong indicator of an embedded view.
-        if (!is_inapp) is_inapp = true; 
-    }
     
-    // Add another simple check for common browsers NOT being present
-    // if (!is_inapp && !userAgent.match(/Chrome|Safari|Firefox|Edge/i)) {
-    //     is_inapp = true;
-    // }
-
-    if (is_inapp) {
-        // Create the warning element dynamically
-        const warningDiv = document.createElement('div');
-        
-        // Use your preferred styles, ensuring it's prominent and clear
-        warningDiv.style.cssText = "background:#fffbe6;padding:15px;text-align:center;font-weight:600;border:1px solid #ffcc33;margin-bottom:20px;";
-        
-        // Use your concise warning text here
-        warningDiv.innerHTML = `
-            📱 **Having trouble?** You might be in an in-app browser (like Instagram/Facebook). 
-            Please tap the **(...) menu** and select **'Open in Browser'** for a smooth payment experience!
-        `;
-        
-        // Insert it right after the body starts
-        const body = document.body;
-        if (body.firstChild) {
-            body.insertBefore(warningDiv, body.firstChild);
-        } else {
-            body.appendChild(warningDiv);
-        }
-    }
-}
-
-// Call the function when the page loads
-document.addEventListener('DOMContentLoaded', detectAndShowBrowserWarning);
-
-
-  // === ADA CHATBOT LOGIC ===  
 const Ada = {
   memory: { name: "", state: "" },
 
@@ -2975,6 +2926,67 @@ window.addEventListener('load', () => {
     document.body.classList.remove('menu-open');
     document.body.style.overflow = '';
     document.getElementById('menu')?.removeAttribute('open');
+});
+</script>
+<script>
+// Function to detect in-app browsers (based on User-Agent patterns)
+function isInAppBrowser() {
+  const ua = navigator.userAgent || navigator.vendor || window.opera;
+  return (
+    // Facebook in-app
+    ua.includes('FBAN') || ua.includes('FBAV') || ua.includes('FB_IAB') ||
+    // Instagram in-app
+    ua.includes('Instagram') ||
+    // Twitter/X in-app
+    ua.includes('Twitter') ||
+    // TikTok in-app
+    ua.includes('TikTok') ||
+    // LinkedIn in-app
+    ua.includes('LinkedInApp') ||
+    // General WebView indicators (Android/iOS)
+    (ua.includes('wv') && ua.includes('Android')) || // Android WebView
+    (!ua.includes('Safari') && ua.includes('iPhone')) // iOS non-Safari (often WebView)
+  );
+}
+
+// Function to attempt opening in default browser
+function openInDefaultBrowser() {
+  // Try window.open with '_blank' – often opens externally
+  const newWindow = window.open(location.href, '_blank');
+  
+  // Fallback: If it doesn't work (e.g., blocked), show a prompt
+  if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+    // Create a floating prompt (styled like your modals)
+    const promptDiv = document.createElement('div');
+    promptDiv.style.position = 'fixed';
+    promptDiv.style.top = '50%';
+    promptDiv.style.left = '50%';
+    promptDiv.style.transform = 'translate(-50%, -50%)';
+    promptDiv.style.background = 'white';
+    promptDiv.style.padding = '20px';
+    promptDiv.style.borderRadius = '12px';
+    promptDiv.style.boxShadow = '0 4px 20px rgba(0,0,0,0.2)';
+    promptDiv.style.zIndex = '10000';
+    promptDiv.style.textAlign = 'center';
+    promptDiv.style.maxWidth = '80%';
+    promptDiv.innerHTML = `
+      <h3 style="color: #28A745; margin-bottom: 12px;">Open in Browser?</h3>
+      <p>For the best experience (e.g., payments and downloads), open TaxC in your default browser like Chrome or Safari.</p>
+      <button style="background: #28A745; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 16px;" onclick="window.open(location.href, '_blank'); this.parentElement.remove();">Open in Browser</button>
+      <button style="background: none; border: none; color: #999; margin-top: 8px; cursor: pointer;" onclick="this.parentElement.remove();">Continue Here</button>
+    `;
+    document.body.appendChild(promptDiv);
+  } else {
+    // If successful, close the in-app tab (optional, but aggressive – test it)
+    setTimeout(() => window.close(), 1000);
+  }
+}
+
+// Run on page load
+document.addEventListener('DOMContentLoaded', () => {
+  if (isInAppBrowser()) {
+    openInDefaultBrowser();
+  }
 });
 </script>
 </body>
