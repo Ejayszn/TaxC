@@ -2,64 +2,69 @@
 <html lang="en">
 <head>
   <script>
-    // --- Helper Functions (Keep these) ---
-    function isWebView() {
-        const userAgent = navigator.userAgent;
-        if (
-            /FBAN|FBAV|Instagram|TikTok|Line|Puffin|KAKAOTalk|Twitter|Pinterest/i.test(userAgent) ||
-            /wv/.test(userAgent)
-        ) {
-            return true;
-        }
-        return false;
-    }
-
-    // --- We no longer call this function, but we keep the logic to assign the external link target ---
-    function setupExternalLink(linkElement, url) {
-        // This is the new, primary redirect logic
-        // 1. Check for iOS (where the _system target is most effective)
-        if (navigator.userAgent.match(/iPad|iPhone|iPod/i)) {
-            linkElement.href = url;
-            linkElement.target = '_system'; // Highly effective on iOS WebViews
-        } 
-        // 2. Check for Android (where the Intent URL is most effective)
-        else if (navigator.userAgent.match(/Android/i)) {
-            // Android Intent URL to force open in Chrome
-            linkElement.href = 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;end';
-        }
-        // 3. Fallback for others
-        else {
-            linkElement.href = url;
-            linkElement.target = '_blank';
-        }
-    }
-
-
-    // --- CRITICAL: Execute immediately, not on load ---
-    (function() {
-        const redirectPrompt = document.getElementById('redirect-prompt');
-        const openButtonLink = document.getElementById('open-external-button');
-        const currentUrl = window.location.href;
-
-        // Ensure both the detection and the link element are present
-        if (isWebView() && openButtonLink) {
-            // Setup the link with the correct external target
-            setupExternalLink(openButtonLink, currentUrl);
-
-            // Show the prompt
-            if (redirectPrompt) {
-                redirectPrompt.style.display = 'block';
-                // Note: Removing document.body.style.overflow = 'hidden'; 
-                // in case it causes issues before body is ready.
+        function isWebView() {
+            const userAgent = navigator.userAgent;
+            if (
+                /FBAN|FBAV|Instagram|TikTok|Line|Puffin|KAKAOTalk|Twitter|Pinterest/i.test(userAgent) ||
+                /wv/.test(userAgent)
+            ) {
+                return true;
             }
-
-            // NOTE: NO window.onload and NO click handler needed!
-            // The link is now an HTML element that, when clicked,
-            // uses its href property to navigate directly, which is 
-            // the most allowed form of navigation.
+            return false;
         }
-    })();
-</script>
+
+        function openInSystemBrowser(url) {
+    // 1. First, try the standard way with '_blank' (often the simplest and best)
+    const newWindow = window.open(url, '_blank');
+    
+    if (newWindow && !newWindow.closed) {
+        // If it successfully opened a new window, we're done.
+        return;
+    }
+
+    // 2. If blocked, try the Android Intent scheme
+    if (navigator.userAgent.match(/Android/i)) {
+        window.location.href = 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;end';
+        return;
+    } 
+    
+    // 3. The New Escape Hatch: Simulate Link Click (Best for iOS/Safari WebViews)
+    if (navigator.userAgent.match(/iPad|iPhone|iPod/i)) {
+        // Create a temporary link element
+        const a = document.createElement('a');
+        a.href = url;
+        
+        // This is the key trick for iOS WebViews
+        a.target = '_system'; // Tells some WebViews to open externally
+        
+        // Append it, click it, and remove it immediately
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        return;
+    }
+
+    // 4. Final Fallback (may cause a reload, but better than nothing)
+    window.location.href = url;
+}
+
+        window.onload = function() {
+            const redirectPrompt = document.getElementById('redirect-prompt');
+            const openButton = document.getElementById('open-external-button');
+            const currentUrl = window.location.href;
+
+            if (isWebView() && redirectPrompt && openButton) {
+                // Show the prompt, hide the main app content
+                redirectPrompt.style.display = 'block';
+                document.body.style.overflow = 'hidden'; // Prevents scrolling behind the overlay
+
+                // Attach the escape logic to the user's click
+                openButton.onclick = function() {
+                    openInSystemBrowser(currentUrl);
+                };
+            }
+        };
+    </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TaxC - Nigerian Tax Calculator</title>
