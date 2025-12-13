@@ -7,7 +7,7 @@
     const userAgent = navigator.userAgent;
 
     // 1. Known apps
-    const restrictedApps = /FBAN|FBAV|Instagram|TikTok|Line|Puffin|KAKAOTalk|Twitter|Pinterest|Telegram|Reddit|Discord|LinkedIn|Snapchat|Zalo|LinkedInApp/i.test(userAgent);
+    const restrictedApps = /FBAN|FBAV|Instagram|TikTok|Line|Puffin|KAKAOTalk|Twitter|X|Pinterest|Telegram|Reddit|Discord|LinkedIn|Snapchat|Zalo|LinkedInApp|TwitterAndroid/i.test(userAgent);
     
     // 2. Android WebView
     const androidWebView = /wv/i.test(userAgent);
