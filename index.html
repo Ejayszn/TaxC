@@ -2104,9 +2104,22 @@ Sleep well and wake up refreshed. I go dey here whenever you need me tomorrow. S
 
     // === ALL HIGH-PROBABILITY QUESTIONS RESTORED (Professional English) ===
 
-    if (l.includes("am i tax eligible") || l.includes("who must pay tax") ||  l.includes("who pays tax") || l.includes("who then pays tax") || l.includes("personal income tax") || l.includes("do I need to pay tax in nigeria") || l.includes("unemployed")) {
-      return `You are required to pay Personal Income Tax if you are tax eligible, and your total annual income exceeds ₦800,000 after deductions.<br><br>The first ₦800,000 is completely tax-free.<br><br><button class="chat-btn" onclick="location.href='ebooks.html#free'">Check Your Eligibility</button>`;
-    }
+    const lowerL = l.toLowerCase(); // Convert once to lowercase
+
+if (
+  lowerL.includes("am i tax eligible") ||
+  lowerL.includes("who must pay tax") ||
+  lowerL.includes("who pays tax") ||
+  lowerL.includes("who then pays tax") ||
+  lowerL.includes("personal income tax") ||
+  lowerL.includes("do i need to pay tax") ||  // Add this simpler version
+  lowerL.includes("need to pay tax") ||
+  lowerL.includes("have to pay tax") ||
+  lowerL.includes("do i pay tax") ||
+  lowerL.includes("unemployed")
+) {
+  return `You are required to pay Personal Income Tax if you are tax eligible, and your total annual income exceeds ₦800,000 after deductions.<br><br>The first ₦800,000 is completely tax-free.<br><br><button class="chat-btn" onclick="location.href='ebooks.html#free'">Check Your Eligibility</button>`;
+}
 
     if (l.includes("tax on gifts")) {
       return `No. Gifts received by individuals are fully exempt from Personal Income Tax under the 2026 Nigeria Tax Act.`;
