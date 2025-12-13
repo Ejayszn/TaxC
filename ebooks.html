@@ -395,6 +395,22 @@ body.menu-open {
       padding: 6px 12px; background: #28A745; color: white; border: none;
       border-radius: 6px; font-size: 0.8rem; cursor: pointer;
     }
+    .library-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-spinner {
+  font-size: 1.2em;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 
     /* === MODALS === */
     .modal {
@@ -2294,7 +2310,12 @@ document.head.appendChild(style);
           <div class="library-name">${item.title}</div>
           <div class="library-type">${item.price === 0 ? 'Free' : 'Purchased'}</div>
         </div>
-        <button class="library-btn" onclick="window.open('${item.file}', '_blank')">Open</button>
+        <button class="library-btn" onclick="openEbookFromLibrary('${item.file}', this)" ${
+  item.price === 0 ? '' : 'data-paid="true"'
+}>
+  Open
+  <span class="btn-spinner" style="display:none; margin-left:8px;">⟳</span>
+</button>
       `;
       grid.appendChild(div);
     });
@@ -2478,6 +2499,59 @@ async function loadLibraryFromFirestore() {
     }
   }
 
+  async function openEbookFromLibrary(filename, button) {
+  const user = auth.currentUser;
+  if (!user) {
+    alert("Please log in again.");
+    if (button) resetButton(button);
+    return;
+  }
+
+  // For free ebooks: open instantly without generation
+  if (button.dataset.paid !== 'true') {
+    window.open(filename, '_blank');
+    return;
+  }
+
+  // For paid: show loading and generate secure URL
+  button.disabled = true;
+  button.querySelector('.btn-spinner').style.display = 'inline';
+  if (!button.innerHTML.includes('Open')) {
+    button.insertAdjacentHTML('afterbegin', 'Open ');
+  }
+
+  const idToken = await user.getIdToken();
+  try {
+    const res = await fetch('https://us-central1-taxc-ebooks.cloudfunctions.net/getEbookDownloadUrl', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + idToken
+      },
+      body: JSON.stringify({ file: filename })
+    });
+    const result = await res.json();
+    if (result.success && result.downloadUrl) {
+      window.open(result.downloadUrl, '_blank');
+    } else {
+      alert("Access denied or ebook not found in your library.");
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Failed to open ebook. Try again.");
+  } finally {
+    resetButton(button);
+  }
+}
+
+function resetButton(button) {
+  button.disabled = false;
+  button.querySelector('.btn-spinner').style.display = 'none';
+  if (!button.innerHTML.includes('Open')) {
+    button.insertAdjacentHTML('afterbegin', 'Open ');
+  }
+}
+
   // === FILTER + SEARCH ===
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -2568,13 +2642,18 @@ async function loadLibraryFromFirestore() {
     document.getElementById('resetModal').classList.add('open');
   }
 
-  function resetLibraryConfirm() {
-    library = [];
-    updateLibraryCount();
-    renderLibrary();
-    closeModal('resetModal');
-    alert("Library cleared! All ebooks removed.");
+  async function resetLibraryConfirm() {
+  library = [];
+  updateLibraryCount();
+  renderLibrary();
+  closeModal('resetModal');
+  alert("Library cleared! All ebooks removed.");
+
+  // Add this to clear Firestore too
+  if (currentUserId) {
+    await setDoc(doc(db, 'userLibraries', currentUserId), { ebooks: [] });
   }
+}
 
   // === INIT ===
 document.addEventListener('DOMContentLoaded', () => {

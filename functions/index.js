@@ -92,3 +92,75 @@ exports.generateEbookDownload = functions.onRequest(async (req, res) => {
     return res.status(500).send({ success: false, message: error.message });
   }
 });
+
+// New function: getEbookDownloadUrl
+// Only allows authenticated users to get a signed URL for ebooks they own
+exports.getEbookDownloadUrl = functions.onRequest(async (req, res) => {
+  const origin = req.headers.origin;
+  // Allow your origins
+  if (ALLOWED_ORIGINS.includes(origin)) {
+    res.set('Access-Control-Allow-Origin', origin);
+  } else {
+    res.set('Access-Control-Allow-Origin', ''); // or deny
+  }
+
+  // Critical: Allow these headers
+  res.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.set('Access-Control-Max-Age', '3600');
+
+  // Handle preflight OPTIONS request
+  if (req.method === 'OPTIONS') {
+    return res.status(204).send('');
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).send({ success: false });
+  }
+
+  try {
+    const { file } = req.body;
+
+    // Get the Firebase Auth token from headers (sent by client)
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) {
+      return res.status(401).send({ success: false, message: 'Unauthorized' });
+    }
+
+    const idToken = authHeader.split('Bearer ')[1];
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const uid = decodedToken.uid;
+
+    // Check if this user owns this ebook (from Firestore library)
+    const userDoc = await admin.firestore()
+      .collection('userLibraries')
+      .doc(uid)
+      .get();
+
+    if (!userDoc.exists) {
+      return res.status(403).send({ success: false, message: 'No library' });
+    }
+
+    const ownedEbooks = userDoc.data().ebooks || [];
+    const ownsBook = ownedEbooks.some(e => e.file === file);
+
+    if (!ownsBook) {
+      return res.status(403).send({ success: false, message: 'Not purchased' });
+    }
+
+    // Generate fresh signed URL
+    const [url] = await admin.storage()
+      .bucket()
+      .file(`ebooks/paid/${file}`)
+      .getSignedUrl({
+        action: 'read',
+        expires: Date.now() + 60 * 60 * 1000, // 1 hour
+      });
+
+    return res.status(200).send({ success: true, downloadUrl: url });
+
+  } catch (error) {
+    console.error('getEbookDownloadUrl error:', error);
+    return res.status(500).send({ success: false, message: 'Server error' });
+  }
+});
