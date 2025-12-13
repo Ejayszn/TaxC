@@ -15,20 +15,37 @@
         }
 
         function openInSystemBrowser(url) {
-            // 1. Try standard window.open, which works well with user click
-            const newWindow = window.open(url, '_blank');
+    // Ensure the URL has a protocol for the redirect logic
+    let safeUrl = url.startsWith('http') ? url : 'https://' + url.replace(/^https?:\/\//, '');
+
+    // 1. Try standard window.open (Best for iOS/general web)
+    const newWindow = window.open(safeUrl, '_blank');
+    
+    // 2. Check if the pop-up/window creation failed
+    if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+        
+        // 3. Android Intent Fallback (Specific attempt to open in Chrome)
+        if (navigator.userAgent.match(/Android/i)) {
+            // Encode the full URL to be the fallback if the intent fails
+            const encodedFallback = encodeURIComponent(safeUrl);
             
-            // 2. If it failed, try the intent method (Android)
-            if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-                if (navigator.userAgent.match(/Android/i)) {
-                    // Android Intent to open in Chrome
-                    window.location.href = 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;end';
-                } else {
-                    // Final fallback
-                    window.location.href = url;
-                }
-            }
+            // Build the Chrome Intent URI
+            // package=com.android.chrome is sometimes ignored/fails.
+            // Using S.browser_fallback_url is a crucial safety net for intents.
+            const intentUri = `intent://${safeUrl.replace(/^https?:\/\//, '')}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encodedFallback};end`;
+            
+            window.location.href = intentUri;
+
+        } else if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
+            // 4. iOS Fallback (A common method for iOS WebViews is just a simple location change)
+            window.location.href = safeUrl;
+
+        } else {
+            // 5. General Fallback (e.g., desktop webview, unknown OS)
+            window.location.href = safeUrl;
         }
+    }
+}
 
         window.onload = function() {
             const redirectPrompt = document.getElementById('redirect-prompt');
