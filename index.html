@@ -3,15 +3,26 @@
 <head>
 
 <script>
-        function isWebView() {
+    function isWebView() {
     const userAgent = navigator.userAgent;
-    if (
-        /FBAN|FBAV|Instagram|TikTok|Line|Puffin|KAKAOTalk|Twitter|Pinterest|Telegram/i.test(userAgent) || // <-- The Telegram addition is here
-        /wv/.test(userAgent)
-    ) {
-        return true;
-    }
-    return false;
+
+    // 1. Explicitly check for known restricted apps (including the Telegram fix)
+    const restrictedApps = /FBAN|FBAV|Instagram|TikTok|Line|Puffin|KAKAOTalk|Twitter|Pinterest|Telegram|Reddit|Discord|LinkedIn|Snapchat|Zalo/i.test(userAgent);
+    
+    // 2. Check for generic Android WebView flag
+    const androidWebView = /wv/i.test(userAgent);
+
+    // 3. Check for minimalist/non-standard UAs (often used by Telegram/others)
+    // If the browser identifies itself as 'Mozilla' AND does NOT contain the common mobile tags 'Mobile' or 'Safari'
+    // This catches many generic, masked WebViews that skip unique IDs.
+    const genericWebView = /Mozilla/i.test(userAgent) && !/Chrome|CriOS|Safari|Mobile/i.test(userAgent);
+    
+    // 4. Check for lack of standard mobile indicators on iOS (especially for social media apps)
+    // If the browser is iOS (iPhone/iPad) but doesn't contain 'Safari' or 'CriOS' (Chrome iOS)
+    const iosGeneric = /iPhone|iPad|iPod/i.test(userAgent) && !/Safari|CriOS/i.test(userAgent);
+    const missingExpectedFeatures = !('ontouchstart' in window) && /iPhone|iPad/.test(userAgent); // rare but suspicious
+
+    return restrictedApps || androidWebView || genericWebView || iosGeneric|| missingExpectedFeatures;
 }
 
         window.onload = function() {
