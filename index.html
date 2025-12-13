@@ -4,15 +4,15 @@
 
 <script>
         function isWebView() {
-            const userAgent = navigator.userAgent;
-            if (
-                /FBAN|FBAV|Instagram|TikTok|Line|Puffin|KAKAOTalk|Twitter|Pinterest/i.test(userAgent) ||
-                /wv/.test(userAgent)
-            ) {
-                return true;
-            }
-            return false;
-        }
+    const userAgent = navigator.userAgent;
+    if (
+        /FBAN|FBAV|Instagram|TikTok|Line|Puffin|KAKAOTalk|Twitter|Pinterest|Telegram/i.test(userAgent) || // <-- The Telegram addition is here
+        /wv/.test(userAgent)
+    ) {
+        return true;
+    }
+    return false;
+}
 
         window.onload = function() {
     const redirectPrompt = document.getElementById('redirect-prompt');
