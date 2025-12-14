@@ -581,7 +581,7 @@ body.menu-open {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 40px 60px;
-  padding: 0 20px 0 70px;;           /* This line fixes the alignment perfectly */
+  padding: 0 20px 0 70px;           /* This line fixes the alignment perfectly */
 }
 
 .footer-section h4 {
@@ -849,7 +849,7 @@ body.menu-open {
 
 .coming-soon-badge {
   display: inline-block;
-  margin-left: 50px;          /* Increases the gap – adjust to 12px-20px as needed */
+  margin-left: 20px;          /* Increases the gap – adjust to 12px-20px as needed */
   padding: 4px 10px;          /* Optional: adds a subtle pill background */
   background: rgba(40, 167, 69, 0.15); /* Light green tint to match your brand */
   color: #28A745;
@@ -859,32 +859,6 @@ body.menu-open {
 }
         
     </style>
-    <div id="taxc-chat-widget">
-  <div class="chat-launcher" onclick="toggleChat()" aria-label="Chat with TaxC Assistant">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-    </svg>
-    <div class="chat-tooltip">Chat with Ada</div>
-  </div>
-
-  <div class="chat-window" id="chat-window">
-    <div class="chat-header">
-      Ada — TaxC Assistant
-      <button class="chat-clear" onclick="clearChat()" title="Clear chat">Clear</button>
-      <button class="chat-close" onclick="toggleChat()">×</button></div>
-    <div class="chat-body" id="chat-body">
-    </div>
-    <div class="chat-input">
-      <textarea 
-  id="chat-input" 
-  placeholder="Type here..." 
-  rows="1"
-  onkeypress="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendMessage();}"
-></textarea>
-      <button onclick="sendMessage()">Send</button>
-    </div>
-  </div>
-</div>
 </head>
 <body>
 
@@ -980,7 +954,7 @@ body.menu-open {
             <details class="faq-item fade-in">
                 <summary>Can TaxC help with company or corporate taxes?</summary>
                 <div class="faq-content">
-                    <p>Currently, TaxC focuses on Personal Income Tax for individuals. For corporate taxes, consult a <a href="index.html">tax professional</a> or contact your State IRS. Our <a href="ebooks.html">eBooks</a> may offer additional resources for company owners.</p>
+                    <p>Currently, TaxC focuses on Personal Income Tax for individuals. For corporate taxes, consult a <a href="faq.html">tax professional</a> or contact your State IRS. Our <a href="ebooks.html">eBooks</a> may offer additional resources for company owners.</p>
                 </div>
             </details>
         </div>
@@ -1938,5 +1912,31 @@ window.addEventListener('load', () => {
     document.getElementById('menu')?.removeAttribute('open');
 });
 </script>
+<div id="taxc-chat-widget">
+  <div class="chat-launcher" onclick="toggleChat()" aria-label="Chat with TaxC Assistant">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+    <div class="chat-tooltip">Chat with Ada</div>
+  </div>
+  <div class="chat-window" id="chat-window">
+    <div class="chat-header">
+      Ada — TaxC Assistant
+      <button class="chat-clear" onclick="clearChat()" title="Clear chat">Clear</button>
+      <button class="chat-close" onclick="toggleChat()">×</button>
+    </div>
+    <div class="chat-body" id="chat-body">
+    </div>
+    <div class="chat-input">
+      <textarea
+  id="chat-input"
+  placeholder="Type here..."
+  rows="1"
+  onkeypress="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendMessage();}"
+></textarea>
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

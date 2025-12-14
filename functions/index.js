@@ -64,16 +64,23 @@ exports.generateEbookDownload = functions.onRequest(async (req, res) => {
   if (req.method !== 'POST') return res.status(405).send({ success: false });
 
   try {
-    const { reference, file } = req.body;
-    if (!reference || !file) return res.status(400).send({ success: false });
+    const { reference, file, amount } = req.body;  // ← amount is now required (in kobo)
+    if (!reference || !file || !amount) {
+      return res.status(400).send({ success: false, message: "Missing reference, file or amount" });
+    }
 
     const paystackRes = await axios.get(`https://api.paystack.co/transaction/verify/${reference}`, {
       headers: { Authorization: `Bearer ${PAYSTACK_SECRET_KEY}` }
     });
 
     const tx = paystackRes.data.data;
-    if (tx.status !== 'success' || tx.amount < 10000) {
-      return res.status(402).send({ success: false });
+    if (tx.status !== 'success') {
+      return res.status(402).send({ success: false, message: "Payment not successful" });
+    }
+
+    // ← NEW: Check that the paid amount matches the ebook price exactly
+    if (tx.amount !== amount) {
+      return res.status(402).send({ success: false, message: "Incorrect payment amount" });
     }
 
     // CLEAN SIGNED URL — no more clientEmail hack needed

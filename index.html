@@ -123,10 +123,7 @@ body {
 .container {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 20px;
-}
-.container {
-  padding-top: 100px; /* Adjust to your header height (measure in dev tools, ~50-70px) */
+    padding: 100px 20px 20px; /* top + sides */
 }
 h2.section-title {
     font-size: 2rem;
@@ -1841,7 +1838,7 @@ input:focus, select:focus {
         <option value="Jigawa">Jigawa</option>
         <option value="Kaduna">Kaduna</option>
         <option value="Kano">Kano</option>
-        <option value="Katsina">Kastina</option>
+        <option value="Katsina">Katsina</option>
         <option value="Kebbi">Kebbi</option>
         <option value="Kogi">Kogi</option>
         <option value="Kwara">Kwara</option>
@@ -2033,33 +2030,6 @@ input:focus, select:focus {
 </div>
   </div>
 </template>
-<!-- FLOATING CHAT -->
-<div id="taxc-chat-widget">
-  <div class="chat-launcher" onclick="toggleChat()" aria-label="Chat with TaxC Assistant">
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-    </svg>
-    <div class="chat-tooltip">Chat with Ada</div>
-  </div>
-  <div class="chat-window" id="chat-window">
-    <div class="chat-header">
-      Ada — TaxC Assistant
-      <button class="chat-clear" onclick="clearChat()" title="Clear chat">Clear</button>
-      <button class="chat-close" onclick="toggleChat()">×</button>
-    </div>
-    <div class="chat-body" id="chat-body">
-    </div>
-    <div class="chat-input">
-      <textarea 
-  id="chat-input" 
-  placeholder="Type here..." 
-  rows="1"
-  onkeypress="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendMessage();}"
-></textarea>
-      <button onclick="sendMessage()">Send</button>
-    </div>
-  </div>
-</div>
 
     <footer class="main-footer fade-in">
   <div class="footer-container">
@@ -4527,5 +4497,32 @@ function toggleMobileMenu() {
     localStorage.setItem('taxc_menu_seen', 'true');
 }
 </script>
+<!-- FLOATING CHAT -->
+<div id="taxc-chat-widget">
+  <div class="chat-launcher" onclick="toggleChat()" aria-label="Chat with TaxC Assistant">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+    <div class="chat-tooltip">Chat with Ada</div>
+  </div>
+  <div class="chat-window" id="chat-window">
+    <div class="chat-header">
+      Ada — TaxC Assistant
+      <button class="chat-clear" onclick="clearChat()" title="Clear chat">Clear</button>
+      <button class="chat-close" onclick="toggleChat()">×</button>
+    </div>
+    <div class="chat-body" id="chat-body">
+    </div>
+    <div class="chat-input">
+      <textarea 
+  id="chat-input" 
+  placeholder="Type here..." 
+  rows="1"
+  onkeypress="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendMessage();}"
+></textarea>
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+</div>
     </body>
 </html>
