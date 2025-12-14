@@ -12,22 +12,20 @@
     // 2. Android WebView
     const androidWebView = /wv/i.test(userAgent);
 
-    // 3. AGGRESSIVE FALLBACK: Check for UAs that lack key browser identifiers AND key OS identifiers
-    // This is the most likely candidate for catching minimalist, masked WebViews like Telegram's.
-    const aggressiveGenericCheck = !/Chrome|CriOS|Safari|Firefox|Edge|SamsungBrowser|OPR/i.test(userAgent) && 
-                                   !/Android|iPhone|iPad|Macintosh|Windows NT/i.test(userAgent);
+    // 3. Generic/minimalist
+    const genericWebView = /Mozilla/i.test(userAgent) && !/Chrome|CriOS|Safari|Mobile|Version/i.test(userAgent);
     
     // 4. iOS masked
     const iosGeneric = /iPhone|iPad|iPod/i.test(userAgent) && !/Safari|CriOS/i.test(userAgent);
 
-    // 5. SIMPLE CHECK: If the UA string is unusually short (e.g., less than 70 characters)
-    const shortUA = userAgent.length < 70;
+    // 5. Suspicious missing touch (rare but good)
+    const missingExpectedFeatures = !('ontouchstart' in window) && /iPhone|iPad/.test(userAgent);
 
     // 6. Telegram-specific (SUPER reliable)
     const telegramiOS = typeof window.TelegramWebviewProxy !== 'undefined';
     const telegramAndroid = typeof window.TelegramWebview !== 'undefined';
 
-    return restrictedApps || androidWebView || iosGeneric || aggressiveGenericCheck || shortUA;
+    return restrictedApps || androidWebView || genericWebView || iosGeneric || missingExpectedFeatures || telegramiOS || telegramAndroid;
 }
 
         window.onload = function() {
