@@ -6,10 +6,10 @@
     function isWebView() {
     const userAgent = navigator.userAgent;
 
-    // 1. Explicitly check for known restricted apps (your existing comprehensive list)
-    const restrictedApps = /FBAN|FBAV|Instagram|TikTok|Line|Puffin|KAKAOTalk|Twitter|Pinterest|Telegram|Reddit|Discord|Snapchat|Zalo|LinkedIn/i.test(userAgent);
+    // 1. Known apps
+    const restrictedApps = /FBAN|FBAV|Instagram|TikTok|Line|Puffin|KAKAOTalk|Twitter|Pinterest|Telegram|Reddit|Discord|LinkedIn|Snapchat|Zalo|LinkedInApp/i.test(userAgent);
     
-    // 2. Check for generic Android WebView flag
+    // 2. Android WebView
     const androidWebView = /wv/i.test(userAgent);
 
     // 3. AGGRESSIVE FALLBACK: Check for UAs that lack key browser identifiers AND key OS identifiers
@@ -17,11 +17,15 @@
     const aggressiveGenericCheck = !/Chrome|CriOS|Safari|Firefox|Edge|SamsungBrowser|OPR/i.test(userAgent) && 
                                    !/Android|iPhone|iPad|Macintosh|Windows NT/i.test(userAgent);
     
-    // 4. Check for lack of standard mobile indicators on iOS
+    // 4. iOS masked
     const iosGeneric = /iPhone|iPad|iPod/i.test(userAgent) && !/Safari|CriOS/i.test(userAgent);
 
     // 5. SIMPLE CHECK: If the UA string is unusually short (e.g., less than 70 characters)
     const shortUA = userAgent.length < 70;
+
+    // 6. Telegram-specific (SUPER reliable)
+    const telegramiOS = typeof window.TelegramWebviewProxy !== 'undefined';
+    const telegramAndroid = typeof window.TelegramWebview !== 'undefined';
 
     return restrictedApps || androidWebView || iosGeneric || aggressiveGenericCheck || shortUA;
 }
