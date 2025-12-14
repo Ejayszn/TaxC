@@ -1570,6 +1570,57 @@ input:focus, select:focus {
   }
 }
 
+.coming-soon-desktop {
+  /* For the disabled look */
+  color: #AAAAAA; /* Gray color to indicate it's not active */
+  cursor: default; /* Change the mouse pointer */
+  opacity: 0.6; /* Optionally dim it */
+  position: relative; /* Essential for the tooltip positioning */
+}
+
+/* Tooltip container and text */
+.coming-soon-desktop::after {
+  content: "Coming soon"; /* The message to display */
+  
+  /* Tooltip styling */
+  position: absolute;
+  top: 100%; /* Position above the text */
+  left: 50%;
+  transform: translateX(-50%); /* Center the tooltip */
+  
+  /* Appearance */
+  background-color: #333;
+  color: white;
+  padding: 5px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  font-size: 0.8rem;
+  z-index: 10;
+  margin-top: 6px;
+  
+  /* Hide by default */
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* Show the tooltip on hover */
+.coming-soon-desktop:hover::after {
+  visibility: visible;
+  opacity: 1;
+}
+
+.coming-soon-badge {
+  display: inline-block;
+  margin-left: 16px;          /* Increases the gap – adjust to 12px-20px as needed */
+  padding: 4px 10px;          /* Optional: adds a subtle pill background */
+  background: rgba(40, 167, 69, 0.15); /* Light green tint to match your brand */
+  color: #28A745;
+  font-size: 0.85em;
+  font-weight: 600;
+  border-radius: 20px;        /* Pill shape for a modern "tag" look */
+}
+
 </style>
 </head>
 <body>
@@ -1638,7 +1689,8 @@ input:focus, select:focus {
                     </ul>
                 </div>
             </div>
-            <a href="index.html">Tax lawyer</a>
+
+            <a class="nav-item coming-soon-desktop">Tax Agents</a>
             <a href="faq.html">FAQ</a>
             <a href="ebooks.html">Ebooks</a>
             <button class="cta-small" id="auth-button"></button>
@@ -1682,7 +1734,11 @@ input:focus, select:focus {
     </div>
 </div>
     
-    <a href="index.html">Connect with a tax lawyer</a>
+    
+    <a href="#" class="coming-soon" onclick="return false;">
+  Connect with a Tax Agent
+  <span class="coming-soon-badge">Coming soon</span>
+</a>
     <a href="faq.html">Frequently Asked Questions</a>
     <a href="ebooks.html">Ebooks</a>
     <button class="cta-small" id="auth-button-mobile"></button>
@@ -1832,9 +1888,8 @@ input:focus, select:focus {
       <span class="tooltip-icon">?</span>
       <span class="tooltiptext pdf-tooltiptext">
         <strong>What’s different from the tax summary?</strong><br><br>
-        The free result shows the number.
-        The detailed report explains why, how, and what to do next.<br>
-        Most users give feedback that they used the detailed report to understand their taxes from scratch, and can now file confidently without hiring an accountant. 
+        Free = just the number.<br>
+        Detailed report = the breakdown, explanations, tips to reduce next year’s tax, and a lot more, all in one PDF.
         <a href="#" 
    class="mobile-only-pdf-link"
    onclick="scrollToWhyReport(event); return false;"
@@ -2014,7 +2069,9 @@ input:focus, select:focus {
       <ul>
         <li><a href="index.html#calculator">Calculator</a></li>
         <li><a href="ebooks.html">Ebooks & Guides</a></li>
-        <li><a href="index.html#lawyer">Connect with a Tax Lawyer</a></li>
+        <li><a class="coming-soon-desktop">
+        Tax Agents
+        </a></li>
       </ul>
     </div>
 
@@ -2150,7 +2207,7 @@ Sleep well and wake up refreshed. I go dey here whenever you need me tomorrow. S
       "how does taxc handle deductions": "TaxC allows you to input pension contributions and annual rent paid. For salaried or self-employed individuals, rent relief is calculated as 20% of your rent, capped at ₦500,000. These deductions reduce your taxable income, lowering your tax liability. Other deductions may include life insurance, NHF, etc.",
       "what is withholding tax": "Withholding Tax (WHT) is a tax deducted at source on certain incomes, like rental income (10%), or investment income (10%). TaxC lets you input WHT paid or applies default rates, which are credited against your final tax liability to avoid double taxation.",
       "is my data safe": "Yes, TaxC prioritizes your privacy. We don’t store sensitive payment information. Payments are securely handled by Interswitch. Your input data is used only for calculations and report generation, and we adhere to strict data protection standards.",
-      "what’s included in the pdf report": "The PDF report includes a step-by-step breakdown of your tax calculation, deduction summary (pension, rent relief, etc), tax band details, and filing guidance tailored to your state’s IRS. It’s perfect for keeping records or sharing with a tax lawyer.",
+      "what’s included in the pdf report": "The PDF report includes a step-by-step breakdown of your tax calculation, deduction summary (pension, rent relief, etc), tax band details, and filing guidance tailored to your state’s IRS. It’s perfect for keeping records or sharing with a tax agent.",
       "how do i file my taxes": "TaxC provides an estimate to guide you. To file, submit your tax details to your State IRS, either online via their portal or in person. Our ₦500 report includes specific filing guidance for your state.",
       "can taxc help with business taxes": "Currently, TaxC focuses on Personal Income Tax for individuals. For business or corporate taxes, consult a tax professional or contact your State IRS. Our eBooks may offer additional resources for business owners."
     };
@@ -2221,7 +2278,7 @@ if (
     }
 
     if (l.includes("non-resident") || l.includes("expat") || l.includes("foreigner") || l.includes("work in nigeria") || l.includes("tax for foreigner")) {
-      return `Non-residents pay PIT only on Nigeria-sourced income.<br><br>If here >183 days, you're a resident and taxed on worldwide income.<br><br>Double taxation treaties may apply.<br><br>Consult a professional for your case.<br><br><button class="chat-btn" onclick="location.href='https://taxc.com.ng/lawyer'">Connect With Expert</button>`;
+      return `Non-residents pay PIT only on Nigeria-sourced income.<br><br>If here >183 days, you're a resident and taxed on worldwide income.<br><br>Double taxation treaties may apply.<br><br>Consult a professional for your case.<br><br><button class="chat-btn" onclick="location.href='https://taxc.com.ng/agent'">Connect With Expert</button>`;
     }
 
     if (l.includes("vat") || l.includes("value added tax")) {
@@ -2233,7 +2290,7 @@ if (
     } 
 
     if (l.includes("appeal") || l.includes("disagree") || l.includes("contest tax") || l.includes("wrong assessment")) {
-      return `You can appeal to your State IRS within 30 days of assessment.<br><br>Provide evidence; escalate to Tax Appeal Tribunal if needed.<br><br>Our lawyers can assist.<br><br><button class="chat-btn" onclick="location.href='https://taxc.com.ng/lawyer'">Get Appeal Help</button>`;
+      return `You can appeal to your State IRS within 30 days of assessment.<br><br>Provide evidence; escalate to Tax Appeal Tribunal if needed.<br><br>Our tax agents can assist.<br><br><button class="chat-btn" onclick="location.href='index.html'">Get Appeal Help (Coming soon)</button>`;
     }
 
     if (l.includes("register tin") || l.includes("get tin") || l.includes("apply for tin")) {
@@ -2434,8 +2491,8 @@ if (/consolidated.*relief|relief.*allowance|CRA/i.test(l)) {
 
     // Are the calculations accurate / correct?
     if (l.includes("accurate") || l.includes("correct") || l.includes("can i trust") || l.includes("calculations")) {
-      return `All TaxC calculations strictly follow the official 2025/2026 Nigerian Tax Act.<br><br>For complex cases or extra peace of mind, you can connect with a verified tax lawyer here:<br><br>
-        <button class="chat-btn" onclick="location.href='https://taxc.com.ng/lawyer'">Connect With Tax Lawyer</button>`;
+      return `All TaxC calculations strictly follow the official 2025/2026 Nigerian Tax Act.<br><br>For complex cases or extra peace of mind, you can connect with a verified tax agent here:<br><br>
+        <button class="chat-btn" onclick="location.href='index.html'">Connect With Tax Agent (Coming soon)</button>`;
     }
 
     // === WHAT ARE THE TAX BANDS? (2026 Nigerian PIT Rates – Clean & Beautiful) + typos + pidgin
