@@ -6,22 +6,24 @@
     function isWebView() {
     const userAgent = navigator.userAgent;
 
-    // 1. Explicitly check for known restricted apps (including the Telegram fix)
-    const restrictedApps = /FBAN|FBAV|Instagram|TikTok|Line|Puffin|KAKAOTalk|Twitter|Pinterest|Telegram|Reddit|Discord/i.test(userAgent);
+    // 1. Explicitly check for known restricted apps (your existing comprehensive list)
+    const restrictedApps = /FBAN|FBAV|Instagram|TikTok|Line|Puffin|KAKAOTalk|Twitter|Pinterest|Telegram|Reddit|Discord|Snapchat|Zalo|LinkedIn/i.test(userAgent);
     
     // 2. Check for generic Android WebView flag
     const androidWebView = /wv/i.test(userAgent);
 
-    // 3. Check for minimalist/non-standard UAs (often used by Telegram/others)
-    // If the browser identifies itself as 'Mozilla' AND does NOT contain the common mobile tags 'Mobile' or 'Safari'
-    // This catches many generic, masked WebViews that skip unique IDs.
-    const genericWebView = /Mozilla/i.test(userAgent) && !/Chrome|CriOS|Safari|Mobile/i.test(userAgent);
+    // 3. AGGRESSIVE FALLBACK: Check for UAs that lack key browser identifiers AND key OS identifiers
+    // This is the most likely candidate for catching minimalist, masked WebViews like Telegram's.
+    const aggressiveGenericCheck = !/Chrome|CriOS|Safari|Firefox|Edge|SamsungBrowser|OPR/i.test(userAgent) && 
+                                   !/Android|iPhone|iPad|Macintosh|Windows NT/i.test(userAgent);
     
-    // 4. Check for lack of standard mobile indicators on iOS (especially for social media apps)
-    // If the browser is iOS (iPhone/iPad) but doesn't contain 'Safari' or 'CriOS' (Chrome iOS)
+    // 4. Check for lack of standard mobile indicators on iOS
     const iosGeneric = /iPhone|iPad|iPod/i.test(userAgent) && !/Safari|CriOS/i.test(userAgent);
 
-    return restrictedApps || androidWebView || genericWebView || iosGeneric;
+    // 5. SIMPLE CHECK: If the UA string is unusually short (e.g., less than 70 characters)
+    const shortUA = userAgent.length < 70;
+
+    return restrictedApps || androidWebView || iosGeneric || aggressiveGenericCheck || shortUA;
 }
 
         window.onload = function() {
