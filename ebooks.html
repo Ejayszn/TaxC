@@ -1113,11 +1113,11 @@ body.menu-open {
       <div class="ebook-card fade-in" data-type="paid" data-title="How to Legally Minimize Your Tax">
         <img src="./covers/minimize-tax.png" alt="How to Legally Minimize Your Tax" class="ebook-cover">
         <div class="ebook-body">
-          <div class="ebook-badge badge-paid">₦2,500</div>
+          <div class="ebook-badge badge-paid">₦2,900</div>
           <h3 class="ebook-title">How to Legally Minimize Your Tax</h3>
           <p class="ebook-author">TaxC Team</p>
           <p class="ebook-desc">Proven strategies to reduce your tax bill <em>legally</em>.</p>
-          <button class="ebook-btn btn-paid" onclick="openPaidModal('How to Legally Minimize Your Tax', 2500, 'How_to_Legally_Minimize_Your_Tax.pdf')">Buy for ₦2,500</button>
+          <button class="ebook-btn btn-paid" onclick="openPaidModal('How to Legally Minimize Your Tax', 2900, 'How_to_Legally_Minimize_Your_Tax_TaxC.pdf')">Buy for ₦2,900</button>
         </div>
       </div>
 
@@ -1128,7 +1128,7 @@ body.menu-open {
           <h3 class="ebook-title">How Do I File My Tax by State IRS?</h3>
           <p class="ebook-author">TaxC Team</p>
           <p class="ebook-desc">37 states + FCT: portals, forms, deadlines, penalties.</p>
-          <button class="ebook-btn btn-paid" onclick="openPaidModal('How Do I File My Tax by State IRS?', 2900, 'file-tax-by-state.pdf')">Buy for ₦2,900</button>
+          <button class="ebook-btn btn-paid" onclick="openPaidModal('How Do I File My Tax by State IRS?', 2900, 'How_To_File_My_Tax_TaxC.pdf')">Buy for ₦2,900</button>
         </div>
       </div>
 
@@ -1296,7 +1296,7 @@ body.menu-open {
     </div>
     <div class="modal-body">
       <p style="margin-bottom:16px; color:#d00;">
-        This will <strong>remove all ebooks</strong> from your library.
+        This will <strong>remove all ebooks</strong> from your library. Once removed files won't be recoverable.
       </p>
       <p style="font-size:0.9rem; color:#666; margin-bottom:20px;">
         Only removes from this browser. Files stay in your Downloads.
@@ -2146,21 +2146,21 @@ document.head.appendChild(style);
   // PAID — SAFE BULLETS
   {
     title: "How to Legally Minimize Your Tax",
-    price: 2500,
-    file: "How_to_Legally_Minimize_Your_Tax.pdf",
+    price: 2900,
+    file: "How_to_Legally_Minimize_Your_Tax_TaxC.pdf",
     cover: "./covers/minimize-tax.png",
     desc: "Proven strategies to reduce your tax bill <em>legally</em>.",
     bullets: [
       "5 legal strategies to reduce your taxable income",
       "Claim business expenses: rent, data, equipment",
       "Use gift and donation reliefs to save more",
-      "Printable checklist to track all deductions"
+      "Should I register a company(LTD)? Pros & cons"
     ]
   },
   {
     title: "How Do I File My Tax by State IRS?",
     price: 2900,
-    file: "file-tax-by-state.pdf",
+    file: "How_To_File_My_Tax_TaxC.pdf",
     cover: "./covers/file-tax.png",
     desc: "37 states + FCT: portals, forms, deadlines, penalties.",
     bullets: [
@@ -2471,7 +2471,7 @@ async function buyEbook() {
         const result = await res.json();
 
         if (result.success && result.downloadUrl) {
-          alert("Payment verified! Download starting, scroll to the bottom to check library...");
+          alert("Payment verified! Download starting, scroll to the bottom of your screen to check library...");
           window.open(result.downloadUrl, '_blank');
           addToLibrary(currentEbook);
         } else {

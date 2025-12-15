@@ -2365,7 +2365,7 @@ if (/(dont pay|not pay|fail to pay|non-payment|evade|avoid tax|consequence|penal
 
     // Refined: Regex
     if (/who.*collect.*tax|where.*pay.*tax|which.*irs|tax.*authority|fir.*state|state.*irs|tax.*collected.*(fir|state)/i.test(l)) {
-      return `Pay via your State IRS portal or designated banks. Example: Lagos → paydirect.lirs.net`;
+      return `Pay via your State IRS portal or designated banks. Example: Lagos → https://etax.lirs.net/`;
     }
 
     if (l.includes("installment") || l.includes("part payment")) {
@@ -2986,13 +2986,13 @@ document.head.appendChild(style);
 
         if (type === 'other') {
             tooltip.innerHTML = `
-                Enter actual WHT paid (if any, e.g. 5-10% on consulting fees).<br>
-                Students, gifts, personal sales? Leave blank (₦0—no credit needed).
+                Enter the total Withholding Tax already deducted and paid to government on this income.<br>
+                If none was deducted or you're unsure, leave blank (₦0).
             `;
         } else {
             tooltip.innerHTML = `
-                WHT = 10% tax your tenant/bank pays to govt BEFORE giving you the rest.<br>
-                Leave blank → we use standard 10%.
+                Enter the total Withholding Tax already deducted and paid to government on this income (usually by corporate tenants or banks).<br>
+                If none was deducted or you're unsure, leave blank (₦0).
             `;
         }
     } else {
@@ -3265,17 +3265,12 @@ function calculateTax() {
         }
 
         const whtInput = document.getElementById(`wht_${index}`);
-let wht = getRawValue(whtInput);  // Always start with user input (0 if blank)
+        let wht = getRawValue(whtInput);  // Always start with user input (0 if blank)
 
-// Auto-apply 10% ONLY for Rental & Investment if user left blank
-if (wht === 0 && (type === 'rental' || type === 'investment')) {
-    wht = income * 0.10;  // Standard deduction at source
-}
-
-// For "Other": If blank, stays 0. No auto. (User enters actual if any)
-if (type === 'other' && wht === 0) {
-    wht = 0;  // Explicit: No default—perfect for students/gifts
-}
+        // For "Other": If blank, stays 0. No auto. (User enters actual if any)
+        if (type === 'other' && wht === 0) {
+            wht = 0;  // Explicit: No default—perfect for students/gifts
+        }
 
 totalWhtCredit += wht;
 
@@ -3895,32 +3890,32 @@ const stateIRS = {
     'Cross River': 'https://irs.cr.gov.ng',
     'Delta': 'https://irs.dt.gov.ng',
     'Ebonyi': 'https://irs.eb.gov.ng',
-    'Edo': 'https://irs.ed.gov.ng',
+    'Edo': 'https://eirs.gov.ng',  // Updated — official now redirects here
     'Ekiti': 'https://irs.ek.gov.ng',
     'Enugu': 'https://irs.en.gov.ng',
     'Gombe': 'https://irs.go.gov.ng',
     'Imo': 'https://irs.im.gov.ng',
     'Jigawa': 'https://irs.ji.gov.ng',
-    'Kaduna': 'https://irs.kd.gov.ng',
-    'Kano': 'https://kirs.kn.gov.ng',
+    'Kaduna': 'https://kadirs.kdsg.gov.ng',  // Bonus update — more current
+    'Kano': 'https://kirs.gov.ng',
     'Katsina': 'https://irs.kt.gov.ng',
     'Kebbi': 'https://irs.ke.gov.ng',
     'Kogi': 'https://irs.kg.gov.ng',
     'Kwara': 'https://kirs.kw.gov.ng',
-    'Lagos': 'https://lirs.lg.gov.ng',
-    'Nasarawa': 'https://irs.ns.gov.ng',
-    'Niger': 'https://irs.ng.gov.ng',
-    'Ogun': 'https://irs.og.gov.ng',
-    'Ondo': 'https://irs.od.gov.ng',
+    'Lagos': 'https://lirs.gov.ng',
+    'Nasarawa': 'https://www.irs.na.gov.ng',
+    'Niger': 'https://www.ngsirs.gov.ng',
+    'Ogun': 'https://portal.ogetax.ogunstate.gov.ng/',
+    'Ondo': 'https://www.odirs.ng',
     'Osun': 'https://irs.os.gov.ng',
-    'Oyo': 'https://irs.oy.gov.ng',
+    'Oyo': 'https://oyostaterevenue.com/',
     'Plateau': 'https://irs.pl.gov.ng',
-    'Rivers': 'https://irs.rv.gov.ng',
+    'Rivers': 'https://rivtamis.riversbirs.gov.ng',  // Bonus — current filing portal
     'Sokoto': 'https://irs.so.gov.ng',
     'Taraba': 'https://irs.tr.gov.ng',
     'Yobe': 'https://irs.yo.gov.ng',
     'Zamfara': 'https://irs.zm.gov.ng',
-    'FCT': 'https://firs.gov.ng'
+    'FCT Abuja': 'https://fctirs.gov.ng/'  // Updated — FCT has dedicated IRS
 }[stateName] || 'https://firs.gov.ng';  // fallback to FIRS
 
 doc.setFont('helvetica', 'normal');
