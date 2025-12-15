@@ -3724,7 +3724,7 @@ doc.addPage();
 
         doc.setFontSize(11);
         doc.setFont('helvetica', 'normal');
-        doc.text(`You already saved ${money(data.totalDeductions)} this year just because some money was removed before tax was calculated. Nice one!`, margin, y);
+        doc.text(`You already saved ${money(data.totalDeductions)} this year just because some money was removed before tax was calculated!`, margin, y);
         y += 12;
     }
 
@@ -3773,7 +3773,7 @@ doc.addPage();
     doc.setTextColor(0);
     doc.setFontSize(11);
     doc.setFont('helvetica', 'normal');
-    doc.text('We follow the official 2026 Nigerian Personal Income Tax rates. First NGN 800,000 is completely exempt,<br><br> then higher earnings are taxed at increasing rates (progressive tax).', margin, y);
+    doc.text('We follow the official 2026 Nigerian Personal Income Tax rates. Note: First NGN 800,000 is completely exempt.', margin, y);
     y += 15;
 
     // TAX BANDS TABLE (CORRECT 2026 BANDS)
