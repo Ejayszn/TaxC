@@ -15,7 +15,9 @@ const PAYSTACK_SECRET_KEY = "sk_test_641762d96b73f923c15dde3fac89678e491afc78";
 const ALLOWED_ORIGINS = [
   'http://127.0.0.1:5500',
   'https://ejayszn.github.io',
-  'https://taxc.com.ng'
+  'https://taxc.com.ng',
+  'https://taxc-ebooks.web.app',   // ← ADD THIS LINE
+  'https://taxc-ebooks.firebaseapp.com'  // optional, same as .web.app
 ];
 
 // ==================== verifyPayment ====================

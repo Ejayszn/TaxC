@@ -1146,11 +1146,11 @@ body.menu-open {
       <div class="ebook-card fade-in" data-type="paid" data-title="Self-Employed Tax Guide">
         <img src="./covers/tax-guide.png" alt="Self-Employed Tax Guide" class="ebook-cover">
         <div class="ebook-body">
-          <div class="ebook-badge badge-paid">₦2,500</div>
+          <div class="ebook-badge badge-paid">₦z,500</div>
           <h3 class="ebook-title">Self-Employed Tax Guide</h3>
           <p class="ebook-author">TaxC Team</p>
           <p class="ebook-desc">Register, file, and pay tax as a freelancer or gig worker.</p>
-          <button class="ebook-btn btn-paid" onclick="openPaidModal('Self-Employed Tax Guide', 2500, 'self-employed-tax.pdf')">Buy for ₦2,500</button>
+          <button class="ebook-btn btn-paid" onclick="openPaidModal('Self-Employed Tax Guide', 2500, 'Self-Employed_Tax_Guide_TaxC.pdf')">Buy for ₦2,500</button>
         </div>
       </div>
 
@@ -1526,7 +1526,8 @@ if (
   lowerL.includes("do i need to pay tax") ||  // Add this simpler version
   lowerL.includes("need to pay tax") ||
   lowerL.includes("have to pay tax") ||
-  lowerL.includes("do i pay tax") ||
+  lowerL.includes("pit") ||
+  lowerL.includes("p.i.t") ||
   lowerL.includes("unemployed")
 ) {
   return `You are required to pay Personal Income Tax if you are tax eligible, and your total annual income exceeds ₦800,000 after deductions.<br><br>The first ₦800,000 is completely tax-free.<br><br><button class="chat-btn" onclick="location.href='ebooks.html#free'">Check Your Eligibility</button>`;
@@ -1540,10 +1541,9 @@ if (
       return `Most allowances are taxable. However, medical reimbursements, leave allowance (up to limits), and certain transport subsidies may qualify for relief.`;
     }
 
-    // Refined: Use regex for more precise matching
-    if (/bank.*deduct.*tax/.test(l)) {
-      return `No. Banks do not automatically deduct Personal Income Tax from accounts. They only report high-value transactions above ₦25 million monthly. PAYE is deducted by employers.`;
-    }
+    if (/(tax).*(monthly|every month|deduct|deducted|taken)/.test(l)) {
+  return `Tax is deducted monthly only if you earn a salary under PAYE. Banks do not deduct tax from your account automatically. Self-employed individuals must file and pay tax themselves.`;
+}
 
     if (l.includes("minimum wage") && l.includes("tax") || l.includes("70k") && l.includes("tax")) {
       return `No. The ₦70,000 minimum wage (₦840,000/year) is mostly within the tax-free threshold of ₦800,000. Minimum wage earners pay little or no tax.`;
@@ -1566,7 +1566,7 @@ if (
     }
 
     if (l.includes("side hustle") || l.includes("gig") || l.includes("uber") || l.includes("bolt") || l.includes("online business") || l.includes("extra income tax")) {
-      return `Income from side hustles is taxable as self-employment income under PIT.<br><br>Deduct business expenses (e.g., fuel, data) to reduce liability.<br><br>File quarterly if income > ₦25m/year.<br><br><button class="chat-btn" onclick="location.href='index.html#calculator'">Calculate Side Income Tax</button>`;
+      return `Income from side hustles is taxable as self-employment income under PIT.<br><br>Deduct business expenses (e.g., fuel, data) to reduce liability.<br><br><button class="chat-btn" onclick="location.href='index.html#calculator'">Calculate Side Income Tax</button>`;
     }
 
     if (l.includes("crypto") || l.includes("bitcoin") || l.includes("usdt")) {
@@ -1686,7 +1686,7 @@ if (/(dont pay|not pay|fail to pay|non-payment|evade|avoid tax|consequence|penal
     }
 
     if (l.includes("freelance") || l.includes("remote") || l.includes("self-employed")) {
-      return `Freelancers and remote workers (basically people who do not work in a structured Nigerian organization) must register with their State IRS, file annually by 31 March, and may pay advance tax quarterly. TaxC guides you step by step.`;
+      return `Freelancers and remote workers (basically people who do not work in a structured Nigerian organization) must register with their State IRS, and file annually before the deadline (by 31st March the following year). TaxC guides you step by step.`;
     }
 
     // Refined: Regex
@@ -1748,7 +1748,7 @@ if (/(dont pay|not pay|fail to pay|non-payment|evade|avoid tax|consequence|penal
 
     // 4. Who made you / Who created TaxC?
     if (l.includes("who made you") || l.includes("who created") || l.includes("creator") || l.includes("who made taxc")) {
-      return `TaxC and I (Ada) were created by Emmanuel Oguibe, a Nigerian tax expert dedicated to making tax simple and accessible for everyone.`;
+      return `TaxC and I (Ada) were created by Emmanuel Oguibe, a Nigerian tax enthusiast dedicated to making tax simple and accessible for everyone.`;
     }
 
     // 5. How can I save money on tax? / Reduce tax? + pidgin
@@ -2186,14 +2186,14 @@ document.head.appendChild(style);
   {
     title: "Self-Employed Tax Guide",
     price: 2500,
-    file: "self-employed-tax.pdf",
+    file: "Self-Employed_Tax_Guide_TaxC.pdf",
     cover: "./covers/tax-guide.png",
     desc: "Register, file, and pay tax as a freelancer or gig worker.",
     bullets: [
       "Register for TIN online in 48 hours",
-      "File quarterly returns to avoid lump sum",
-      "Track expenses: phone, data, laptop, rent",
-      "Printable 12-month expense log"
+      "Stay tax-aware all year to avoid year-end panic",
+      "Track real, legal business expenses: phone, data, laptop, rent",
+      "Use a printable 12-month expense log"
     ]
   },
   {
